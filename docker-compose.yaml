@@ -1,7 +1,21 @@
 services:
-  oracle:
-    image: 'gvenzl/oracle-free:latest'
-    environment:
-      - 'ORACLE_PASSWORD=secret'
+  oracle-db:
+    image: gvenzl/oracle-free:latest
+    container_name: intern-connect-db
     ports:
-      - '1521'
+      - "1521:1521"
+    environment:
+      - ORACLE_PASSWORD=OracleTestPassword
+      - APP_USER=OracleTestUser
+      - APP_USER_PASSWORD=TestUserPassword
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  mail-server:
+    image: axllent/mailpit
+    container_name: intern-connect-mail
+    ports:
+      - "1025:1025"
+      - "8025:8025"

@@ -1,3 +1,41 @@
 spring:
   application:
     name: intern-connect
+
+  # Database Configuration
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/FREEPDB1
+    username: OracleTestUser
+    password: TestUserPassword
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  # Docker Compose Integration
+  docker:
+    compose:
+      enabled: true
+      lifecycle-management: start_and_stop
+
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+  # Security / OAuth2 Placeholder
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
