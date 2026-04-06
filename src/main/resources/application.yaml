@@ -31,11 +31,8 @@ spring:
           starttls:
             enable: false
 
-  # Security / OAuth2 Placeholder
-  # security:
-  #   oauth2:
-  #     client:
-  #       registration:
-  #         github:
-  #           client-id: ${GITHUB_CLIENT_ID}
-  #           client-secret: ${GITHUB_CLIENT_SECRET}
+  security:
+    user:
+      name: admin
+      password: adminpassword
+  
