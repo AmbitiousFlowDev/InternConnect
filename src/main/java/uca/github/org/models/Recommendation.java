@@ -1,19 +1,19 @@
 package uca.github.org.models;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
-
 @Entity
-@Table(name = "bookmarks")
+@Table(name = "recommendations")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Bookmark {
+public class Recommendation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,9 +27,9 @@ public class Bookmark {
     @JoinColumn(name = "internship_id", nullable = false)
     private Internship internship;
 
-    @Column(name = "added_at")
-    private LocalDate addedAt;
+    @Column(precision = 5, scale = 4)
+    private BigDecimal score;
 
-    @Column(name = "alert_enabled", nullable = false)
-    private Boolean alertEnabled = false;
+    @Column(name = "generated_at")
+    private LocalDateTime generatedAt;
 }

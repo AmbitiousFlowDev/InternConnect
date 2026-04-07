@@ -8,7 +8,7 @@ import lombok.*;
 @Entity
 @Table(name = "notifications")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-class Notification {
+public class Notification {
  
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

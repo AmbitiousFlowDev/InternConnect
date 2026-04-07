@@ -3,15 +3,13 @@ package uca.github.org.models;
 import jakarta.persistence.*;
 import lombok.*;
  
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
- 
+
 
 @Entity
 @Table(name = "reports")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-class Report {
+public class Report {
  
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
