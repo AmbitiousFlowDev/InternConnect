@@ -17,6 +17,14 @@ import java.util.List;
 @Builder
 public class Internship {
 
+    public enum InternshipStatus {
+        DRAFT,
+        ACTIVE,
+        CLOSED,
+        REJECTED,
+        ARCHIVED
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -59,19 +67,20 @@ public class Internship {
     @Column(name = "expires_at")
     private LocalDate expiresAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Application> applications = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Report> reports = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recommendation> recommendations = new ArrayList<>();
-    
-    public enum InternshipStatus {
-        DRAFT, ACTIVE, CLOSED, REJECTED, ARCHIVED
-    }
+
 }

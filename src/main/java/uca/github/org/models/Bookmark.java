@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-
 @Entity
 @Table(name = "bookmarks")
 @Getter
@@ -30,6 +29,7 @@ public class Bookmark {
     @Column(name = "added_at")
     private LocalDate addedAt;
 
+    @Builder.Default
     @Column(name = "alert_enabled", nullable = false)
     private Boolean alertEnabled = false;
 }

@@ -31,6 +31,7 @@ public class Notification {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean read = false;
 }
