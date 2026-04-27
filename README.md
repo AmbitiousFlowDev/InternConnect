@@ -162,6 +162,15 @@ Submitted → [Receive] → Under Review → [Positive Decision] → Accepted
 
 ---
 
+## 👥 Project Team
+
+- Mohamed LAFROUH 
+- Hafsa FARAH
+- Meryem KACHANI
+- Khadija ELBIARI
+
+---
+
 <p align="center">
   <i>Document prepared as part of the Master ISI – FSSM, Cadi Ayyad University, Marrakech.</i>
 </p>
