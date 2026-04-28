@@ -1,7 +1,5 @@
 package uca.github.org.controllers;
 
-import java.security.Principal;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,14 +21,9 @@ public class DashboardController {
      * their username is added to the model to be displayed on the dashboard page.
      */
     @GetMapping("/dashboard")
-    public String dashboard(Model model, @AuthenticationPrincipal Object principal) {
-        // If you are using a custom UserDetails, cast it here
-        if (principal instanceof User currentUser) {
-            model.addAttribute("user", currentUser);
-        } else {
-            // Fallback: This prevents the 'null' error if session is weird
-            return "redirect:/login";
-        }
+    public String dashboard(Model model, @AuthenticationPrincipal User currentUser) {
+        if (currentUser == null) return "redirect:/login";
+        model.addAttribute("user", currentUser);
         return "pages/dashboard";
     }
 }
