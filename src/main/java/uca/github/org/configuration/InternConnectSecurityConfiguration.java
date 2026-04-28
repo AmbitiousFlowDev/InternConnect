@@ -33,7 +33,7 @@ public class InternConnectSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/", "/home", "/ register ", "/css /**", "/js /**")
+                .requestMatchers("/", "/home", "/register", "/css/**", "/js/**")
                 .permitAll()
                 .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login")
@@ -42,13 +42,12 @@ public class InternConnectSecurityConfiguration {
                 .logout(logout -> logout.logoutSuccessUrl("/")
                 .permitAll())
                 .sessionManagement(session -> session.sessionFixation().migrateSession().maximumSessions(1)
-                .expiredUrl("/login? expired "));
+                .expiredUrl("/login?expired"));
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-
         UserDetails user = User.builder()
                 .username("user")
                 .password(passwordEncoder.encode("password"))
