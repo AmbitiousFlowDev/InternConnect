@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages - InternConnect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../styles/fonts.css">
+  <link rel="stylesheet" href="../styles/theme.css">
+</head>
+<body class="bg-[#f7f9fb]">
+  <!-- Top Navigation -->
+  <nav class="sticky top-0 z-50 bg-white border-b border-gray-100">
+    <div class="max-w-[1400px] mx-auto px-6 py-3">
+      <div class="flex items-center justify-between">
+        <!-- Left: Logo & Search -->
+        <div class="flex items-center gap-8">
+          <a href="home.html" class="text-2xl font-display font-bold" style="color: var(--primary);">InternConnect</a>
+          <div class="relative">
+            <input type="text" placeholder="Search messages..."
+                   class="w-80 pl-10 pr-4 py-2 rounded-lg bg-[#f2f4f6] focus:outline-none focus:ring-2 focus:ring-[#163274]/20">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Right: Nav Icons -->
+        <div class="flex items-center gap-6">
+          <a href="home.html" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+          </a>
+          <a href="search.html" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </a>
+          <a href="messages.html" class="p-2 bg-[#163274]/10 rounded-lg transition-colors relative">
+            <svg class="w-6 h-6" style="color: var(--primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-[#00677f] rounded-full" th:if="${unreadCount > 0}"></span>
+          </a>
+          <a href="notifications.html" class="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
+            <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-[#d4183d] rounded-full" th:if="${notificationCount > 0}"></span>
+          </a>
+          <div class="relative">
+            <button onclick="toggleProfileMenu()" class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white text-sm font-medium"
+                   th:text="${#strings.substring(user?.firstName ?: 'A',0,1) + #strings.substring(user?.lastName ?: 'M',0,1)}">AM</div>
+              <svg class="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Messages Layout -->
+  <div class="max-w-[1400px] mx-auto px-6 py-6">
+    <div class="flex gap-4 h-[calc(100vh-140px)]">
+
+      <!-- Left: Conversations List -->
+      <div class="w-[360px] bg-white rounded-xl overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="p-4 border-b border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-display font-bold">Messages</h2>
+            <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="New message">
+              <svg class="w-5 h-5" style="color: var(--primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Filter Tabs -->
+          <div class="flex gap-2">
+            <button onclick="filterConversations('all')" class="px-3 py-1.5 text-sm font-medium rounded-lg bg-[#163274] text-white transition-colors">
+              All
+            </button>
+            <button onclick="filterConversations('unread')" class="px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-gray-100 text-gray-600 transition-colors">
+              Unread
+            </button>
+            <button onclick="filterConversations('archived')" class="px-3 py-1.5 text-sm font-medium rounded-lg hover:bg-gray-100 text-gray-600 transition-colors">
+              Archived
+            </button>
+          </div>
+        </div>
+
+        <!-- Conversations List -->
+        <div class="flex-1 overflow-y-auto">
+          <!-- Conversation Item (Active) -->
+          <div th:each="conversation, iterStat : ${conversations}"
+               th:classappend="${iterStat.index == 0 ? 'bg-[#f7f9fb]' : ''}"
+               class="p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+               onclick="selectConversation(this)">
+            <div class="flex gap-3">
+              <div class="relative">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white font-medium"
+                     th:text="${#strings.substring(conversation?.name ?: 'SJ',0,1) + (#strings.length(conversation?.name ?: 'SJ') > 1 ? #strings.substring(conversation?.name ?: 'SJ', #strings.indexOf(conversation?.name ?: 'SJ', ' ') + 1, #strings.indexOf(conversation?.name ?: 'SJ', ' ') + 2) : '')}">SJ</div>
+                <div th:if="${conversation?.online}" class="absolute bottom-0 right-0 w-3 h-3 bg-[#00677f] border-2 border-white rounded-full"></div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between mb-1">
+                  <h3 class="font-medium truncate" th:text="${conversation?.name ?: 'Sarah Johnson'}">Sarah Johnson</h3>
+                  <span class="text-xs text-gray-500 flex-shrink-0 ml-2" th:text="${conversation?.time ?: '2h'}">2h</span>
+                </div>
+                <p class="text-sm text-gray-600 truncate" th:text="${conversation?.lastMessage ?: 'Thanks for sharing! I\'ll review the application and get back to you soon.'}">
+                  Thanks for sharing! I'll review the application and get back to you soon.
+                </p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span th:if="${conversation?.unread > 0}"
+                        class="text-xs font-medium px-2 py-0.5 bg-[#00677f] text-white rounded-full"
+                        th:text="${conversation?.unread}">3</span>
+                  <span th:if="${conversation?.typing}" class="text-xs text-[#00677f]">typing...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Static Fallback Conversations -->
+          <div class="p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" onclick="selectConversation(this)">
+            <div class="flex gap-3">
+              <div class="relative">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#2a4a8f] to-[#163274] flex items-center justify-center text-white font-medium">DC</div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between mb-1">
+                  <h3 class="font-medium truncate">David Chen</h3>
+                  <span class="text-xs text-gray-500 flex-shrink-0 ml-2">1d</span>
+                </div>
+                <p class="text-sm text-gray-600 truncate">
+                  Great! When would be a good time for a quick call?
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" onclick="selectConversation(this)">
+            <div class="flex gap-3">
+              <div class="relative">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#00677f] to-[#163274] flex items-center justify-center text-white font-medium">MG</div>
+                <div class="absolute bottom-0 right-0 w-3 h-3 bg-[#00677f] border-2 border-white rounded-full"></div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between mb-1">
+                  <h3 class="font-medium truncate">Maria Garcia</h3>
+                  <span class="text-xs text-gray-500 flex-shrink-0 ml-2">3d</span>
+                </div>
+                <p class="text-sm text-gray-600 truncate">
+                  The team loved your profile! Are you available next week?
+                </p>
+                <span class="text-xs font-medium px-2 py-0.5 bg-[#00677f] text-white rounded-full">1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" onclick="selectConversation(this)">
+            <div class="flex gap-3">
+              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#163274] to-[#00677f] flex items-center justify-center text-white font-medium">JS</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between mb-1">
+                  <h3 class="font-medium truncate">James Smith</h3>
+                  <span class="text-xs text-gray-500 flex-shrink-0 ml-2">5d</span>
+                </div>
+                <p class="text-sm text-gray-600 truncate">
+                  I've forwarded your resume to the hiring manager.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors" onclick="selectConversation(this)">
+            <div class="flex gap-3">
+              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#2a4a8f] to-[#00677f] flex items-center justify-center text-white font-medium">EW</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between mb-1">
+                  <h3 class="font-medium truncate">Emma Wilson</h3>
+                  <span class="text-xs text-gray-500 flex-shrink-0 ml-2">1w</span>
+                </div>
+                <p class="text-sm text-gray-600 truncate">
+                  Thanks for the recommendation! Really appreciate it.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Chat Thread -->
+      <div class="flex-1 bg-white rounded-xl overflow-hidden flex flex-col">
+        <!-- Chat Header -->
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white font-medium"
+                   th:text="${#strings.substring(activeConversation?.name ?: 'SJ',0,1) + (#strings.length(activeConversation?.name ?: 'SJ') > 1 ? #strings.substring(activeConversation?.name ?: 'SJ', #strings.indexOf(activeConversation?.name ?: 'SJ', ' ') + 1, #strings.indexOf(activeConversation?.name ?: 'SJ', ' ') + 2) : '')}">SJ</div>
+              <div class="absolute bottom-0 right-0 w-3 h-3 bg-[#00677f] border-2 border-white rounded-full"></div>
+            </div>
+            <div>
+              <h3 class="font-medium" th:text="${activeConversation?.name ?: 'Sarah Johnson'}">Sarah Johnson</h3>
+              <p class="text-sm text-gray-500" th:text="${activeConversation?.title ?: 'HR Manager at TechCorp'}">HR Manager at TechCorp</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Video call">
+              <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            </button>
+            <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="More options">
+              <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+          <!-- Date Separator -->
+          <div class="flex items-center gap-4 my-4">
+            <div class="flex-1 h-px bg-gray-200"></div>
+            <span class="text-xs text-gray-500 font-medium">Today</span>
+            <div class="flex-1 h-px bg-gray-200"></div>
+          </div>
+
+          <!-- Message Loop -->
+          <div th:each="message : ${messages}">
+            <!-- Received Message -->
+            <div th:if="${!message?.sent}" class="flex gap-3 mb-4">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white text-sm font-medium flex-shrink-0"
+                   th:text="${#strings.substring(message?.author ?: 'SJ',0,1) + (#strings.length(message?.author ?: 'SJ') > 1 ? #strings.substring(message?.author ?: 'SJ', #strings.indexOf(message?.author ?: 'SJ', ' ') + 1, #strings.indexOf(message?.author ?: 'SJ', ' ') + 2) : '')}">SJ</div>
+              <div class="flex-1">
+                <div class="inline-block bg-[#f2f4f6] rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[70%]">
+                  <p class="text-sm" th:text="${message?.text}">Hi! I saw your application for the Software Engineering internship. Would you be available for a quick chat this week?</p>
+                </div>
+                <div class="flex items-center gap-2 mt-1 ml-1">
+                  <span class="text-xs text-gray-500" th:text="${message?.time ?: '10:23 AM'}">10:23 AM</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sent Message -->
+            <div th:if="${message?.sent}" class="flex gap-3 mb-4 justify-end">
+              <div class="flex-1 flex justify-end">
+                <div class="inline-block bg-[#163274] text-white rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[70%]">
+                  <p class="text-sm" th:text="${message?.text}">Hello Sarah! Yes, I'd love to discuss the opportunity. I'm available this week on Tuesday and Thursday afternoons. What works best for you?</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Static Fallback Messages -->
+          <div class="flex gap-3 mb-4">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white text-sm font-medium flex-shrink-0">SJ</div>
+            <div class="flex-1">
+              <div class="inline-block bg-[#f2f4f6] rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[70%]">
+                <p class="text-sm">Hi! I saw your application for the Software Engineering internship. Would you be available for a quick chat this week?</p>
+              </div>
+              <div class="flex items-center gap-2 mt-1 ml-1">
+                <span class="text-xs text-gray-500">10:23 AM</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-3 mb-4 justify-end">
+            <div class="flex-1 flex justify-end">
+              <div class="inline-block bg-[#163274] text-white rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[70%]">
+                <p class="text-sm">Hello Sarah! Yes, I'd love to discuss the opportunity. I'm available this week on Tuesday and Thursday afternoons. What works best for you?</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-3 mb-4">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white text-sm font-medium flex-shrink-0">SJ</div>
+            <div class="flex-1">
+              <div class="inline-block bg-[#f2f4f6] rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[70%]">
+                <p class="text-sm">Perfect! Thursday at 2 PM works great for me. I'll send you a calendar invite with the video call link.</p>
+              </div>
+              <div class="flex items-center gap-2 mt-1 ml-1">
+                <span class="text-xs text-gray-500">10:45 AM</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-3 mb-4 justify-end">
+            <div class="flex-1 flex justify-end">
+              <div class="inline-block bg-[#163274] text-white rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[70%]">
+                <p class="text-sm">Sounds great! Looking forward to it. Thanks!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Internship Card in Chat -->
+          <div class="flex gap-3 mb-4">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white text-sm font-medium flex-shrink-0">SJ</div>
+            <div class="flex-1">
+              <div class="inline-block bg-[#f2f4f6] rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[70%]">
+                <p class="text-sm mb-3">By the way, here's the detailed job posting:</p>
+                <div class="bg-white rounded-lg p-4 border border-gray-100">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white font-bold flex-shrink-0">TC</div>
+                    <div class="flex-1">
+                      <h4 class="font-medium text-gray-900">Software Engineering Intern</h4>
+                      <p class="text-sm text-gray-600">TechCorp</p>
+                      <p class="text-sm text-gray-500">San Francisco, CA • 3 months</p>
+                    </div>
+                  </div>
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-[#163274]/10 text-[#163274] text-xs rounded-full">React</span>
+                    <span class="px-2 py-1 bg-[#163274]/10 text-[#163274] text-xs rounded-full">TypeScript</span>
+                    <span class="px-2 py-1 bg-[#163274]/10 text-[#163274] text-xs rounded-full">Node.js</span>
+                  </div>
+                  <button class="w-full py-2 px-4 bg-[#163274] text-white rounded-lg text-sm font-medium hover:bg-[#2a4a8f] transition-colors">
+                    View Details
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 mt-1 ml-1">
+                <span class="text-xs text-gray-500">11:02 AM</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-3 mb-4 justify-end">
+            <div class="flex-1 flex justify-end">
+              <div class="inline-block bg-[#163274] text-white rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[70%]">
+                <p class="text-sm">Thanks for sharing! I'll review the application and get back to you soon.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Typing Indicator -->
+          <div class="flex gap-3 mb-4" style="display: none;" id="typingIndicator">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white text-sm font-medium flex-shrink-0">SJ</div>
+            <div class="inline-block bg-[#f2f4f6] rounded-2xl rounded-tl-sm px-4 py-2.5">
+              <div class="flex gap-1">
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms;"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="p-4 border-t border-gray-100">
+          <form onsubmit="sendMessage(event)" class="flex items-end gap-3">
+            <div class="flex-1 flex flex-col gap-2">
+              <textarea id="messageInput"
+                        placeholder="Type a message..."
+                        rows="1"
+                        class="w-full px-4 py-3 bg-[#f2f4f6] rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[#163274]/20"
+                        onkeydown="handleKeyDown(event)"
+                        oninput="autoResize(this)"></textarea>
+              <div class="flex items-center gap-2">
+                <button type="button" class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Attach file">
+                  <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  </svg>
+                </button>
+                <button type="button" class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Insert emoji">
+                  <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <button type="submit" class="p-3 bg-[#163274] text-white rounded-lg hover:bg-[#2a4a8f] transition-colors flex-shrink-0">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleProfileMenu() {
+      // Profile menu toggle logic
+      console.log('Profile menu toggled');
+    }
+
+    function selectConversation(element) {
+      // Remove active state from all conversations
+      document.querySelectorAll('.overflow-y-auto > div').forEach(el => {
+        el.classList.remove('bg-[#f7f9fb]');
+      });
+      // Add active state to selected conversation
+      element.classList.add('bg-[#f7f9fb]');
+    }
+
+    function filterConversations(filter) {
+      // Update active tab
+      event.target.parentElement.querySelectorAll('button').forEach(btn => {
+        btn.classList.remove('bg-[#163274]', 'text-white');
+        btn.classList.add('hover:bg-gray-100', 'text-gray-600');
+      });
+      event.target.classList.add('bg-[#163274]', 'text-white');
+      event.target.classList.remove('hover:bg-gray-100', 'text-gray-600');
+
+      // Filter logic would go here
+      console.log('Filtering by:', filter);
+    }
+
+    function sendMessage(event) {
+      event.preventDefault();
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+
+      if (message) {
+        // Message sending logic would go here
+        console.log('Sending message:', message);
+        input.value = '';
+        autoResize(input);
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage(event);
+      }
+    }
+
+    function autoResize(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+    }
+  </script>
+</body>
+</html>
