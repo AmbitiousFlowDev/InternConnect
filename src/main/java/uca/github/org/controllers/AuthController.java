@@ -5,8 +5,12 @@ import java.security.Principal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import lombok.RequiredArgsConstructor;
 import uca.github.org.models.User;
+import uca.github.org.services.AuthService;
 
 /**
  * Controller for handling authentication-related requests, such as login and
@@ -17,7 +21,9 @@ import uca.github.org.models.User;
  * redirects after successful login or registration.
  */
 @Controller
+@RequiredArgsConstructor
 public class AuthController {
+    private final AuthService authService;
     /**
      * Login page (public)
      * Handles GET requests to "/login" and displays the login form. It also checks
@@ -51,7 +57,6 @@ public class AuthController {
     public String home() {
         return "pages/home";
     }
-
     /**
      * Dashboard (protected)
      * Handles GET requests to "/dashboard" and displays the dashboard page. This
@@ -66,7 +71,6 @@ public class AuthController {
         }
         return "pages/dashboard";
     }
-
     /**
      * Registration page (public)
      * Handles GET requests to "/register" and displays the registration form.
@@ -77,5 +81,21 @@ public class AuthController {
     public String register(Model model) {
         model.addAttribute("user", new User());
         return "auth/register";
+    }
+    /**
+     * Process registration (public)
+     * Handles POST requests to "/register" and processes the registration form submission. It checks if a user with the provided email already exists, and if so, it adds an error message to the model and redisplays the registration form. If the email is unique, it saves the new user and redirects to the login page with a success parameter.
+     * @param user
+     * @param model
+     * @return
+     */
+    @PostMapping("/register")
+    public String processRegistration(@ModelAttribute("user") User user, Model model) {
+        if (authService.existsByEmail(user.getEmail())) {
+            model.addAttribute("error", "An account with this email already exists.");
+            return "auth/register";
+        }
+        authService.register(user);
+        return "redirect:/login?success";
     }
 }

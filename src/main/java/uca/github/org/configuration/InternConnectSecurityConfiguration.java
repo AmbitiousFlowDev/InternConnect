@@ -29,7 +29,6 @@ public class InternConnectSecurityConfiguration {
         return new BCryptPasswordEncoder();
 
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
@@ -44,22 +43,5 @@ public class InternConnectSecurityConfiguration {
                 .sessionManagement(session -> session.sessionFixation().migrateSession().maximumSessions(1)
                 .expiredUrl("/login?expired"));
         return http.build();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("password"))
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("admin"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
     }
 }
