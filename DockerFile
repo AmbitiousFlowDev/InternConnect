@@ -1,13 +1,15 @@
-FROM eclipse-temurin:21-jdk-jammy AS build
+FROM eclipse-temurin:25-jdk-jammy AS build
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
+RUN chmod +x mvnw
+RUN ./mvnw dependency:go-offline -B
 COPY src ./src
-COPY package.json pnpm-lock.yaml* ./styles.css ./
-RUN ./mvnw clean package -DskipTests
-FROM eclipse-temurin:21-jre-jammy
+COPY package.json pnpm-lock.yaml* ./
+COPY styles.css ./
+RUN ./mvnw clean package -DskipTests -B
+FROM eclipse-temurin:25-jre-jammy
 WORKDIR /app
 COPY --from=build /app/target/*.war app.war
 EXPOSE 8080

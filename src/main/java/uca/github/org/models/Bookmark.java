@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "bookmarks")
@@ -16,7 +17,7 @@ public class Bookmark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -26,10 +27,13 @@ public class Bookmark {
     @JoinColumn(name = "internship_id", nullable = false)
     private Internship internship;
 
-    @Column(name = "added_at")
     private LocalDate addedAt;
 
     @Builder.Default
-    @Column(name = "alert_enabled", nullable = false)
     private Boolean alertEnabled = false;
+
+    @PrePersist
+    public void prePersist() {
+        this.addedAt = LocalDate.now();
+    }
 }

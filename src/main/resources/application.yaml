@@ -1,21 +1,17 @@
 spring:
   application:
     name: intern-connect
-
-  # Database Configuration
   datasource:
-    url: jdbc:oracle:thin:@localhost:1521/FREEPDB1
-    username: OracleTestUser
-    password: TestUserPassword
-    driver-class-name: oracle.jdbc.OracleDriver
-
+    url: jdbc:mysql://localhost:3306/intern_connect?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: app_user
+    password: app_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    database-platform: org.hibernate.dialect.OracleDialect
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
 
-  # Docker Compose Integration
   docker:
     compose:
       enabled: true
@@ -30,9 +26,7 @@ spring:
           auth: false
           starttls:
             enable: false
-
   security:
     user:
       name: admin
       password: adminpassword
-  

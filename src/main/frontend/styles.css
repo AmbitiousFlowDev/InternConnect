@@ -1,1 +1,36 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+:root {
+  --font-sans: 'Poppins', sans-serif;
+  --font-display: 'Playfair Display', serif;
+  /* Primary (left panel gradient base) */
+  --primary-900: #142a6e;
+  --primary-800: #17357f;
+  --primary-700: #1a3f91;
+
+  /* Accent / CTA */
+  --primary: #1f4bd8;
+  --primary-hover: #173bb0;
+
+  /* Backgrounds */
+  --surface: #f7f9fc;
+  --surface-card: #ffffff;
+  --surface-soft: #eef2f7;
+
+  /* Text */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  /* Borders */
+  --border: #e5e7eb;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}

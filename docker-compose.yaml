@@ -1,18 +1,20 @@
 services:
-  oracle-db:
-    image: gvenzl/oracle-free:latest
+  mysql-db:
+    image: mysql:8.0
     container_name: intern-connect-db
     ports:
-      - "1521:1521"
+      - "3306:3306"
     environment:
-      - ORACLE_PASSWORD=OracleTestPassword
-      - APP_USER=OracleTestUser
-      - APP_USER_PASSWORD=TestUserPassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: intern_connect
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
     healthcheck:
-      test: ["CMD", "healthcheck.sh"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
+
   mail-server:
     image: axllent/mailpit
     container_name: intern-connect-mail
