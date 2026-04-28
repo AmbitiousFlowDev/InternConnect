@@ -6,11 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>InternConnect - Connexion</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts (from your fonts.css) -->
-  <link rel="stylesheet" th:href="@{/styles/fonts.css}">
-
+  <!-- Vite/Tailwind build output -->
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 
 <body class="h-screen overflow-hidden font-sans">
@@ -48,22 +45,30 @@
       <div class="grid grid-cols-2 gap-6 text-sm">
 
         <div class="flex items-center gap-3">
-          <div class="p-2 rounded-lg bg-white/10">🎓</div>
+          <div class="p-2 rounded-lg bg-white/10">
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+          </div>
           <span>Opportunités exclusives</span>
         </div>
 
         <div class="flex items-center gap-3">
-          <div class="p-2 rounded-lg bg-white/10">👥</div>
+          <div class="p-2 rounded-lg bg-white/10">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
           <span>Réseau étudiant</span>
         </div>
 
         <div class="flex items-center gap-3">
-          <div class="p-2 rounded-lg bg-white/10">🔎</div>
+          <div class="p-2 rounded-lg bg-white/10">
+            <i data-lucide="search" class="w-5 h-5"></i>
+          </div>
           <span>Recherche avancée</span>
         </div>
 
         <div class="flex items-center gap-3">
-          <div class="p-2 rounded-lg bg-white/10">📈</div>
+          <div class="p-2 rounded-lg bg-white/10">
+            <i data-lucide="trending-up" class="w-5 h-5"></i>
+          </div>
           <span>Recommandations IA</span>
         </div>
 
@@ -90,29 +95,41 @@
         <!-- EMAIL -->
         <div>
           <label class="text-sm text-[#475569]">Email universitaire</label>
-          <input
-            type="email"
-            name="username"
-            placeholder="prenom.nom@university.edu"
-            class="w-full mt-1 px-4 py-3 rounded-lg bg-[#eef2f7]
-                   border border-transparent
-                   focus:border-[#1f4bd8] focus:ring-2 focus:ring-blue-100
-                   outline-none transition"
-            required>
+
+          <div class="relative mt-1">
+            <i data-lucide="mail"
+               class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+
+            <input
+              type="email"
+              name="username"
+              placeholder="prenom.nom@university.edu"
+              class="w-full pl-10 px-4 py-3 rounded-lg bg-[#eef2f7]
+                     border border-transparent
+                     focus:border-[#1f4bd8] focus:ring-2 focus:ring-blue-100
+                     outline-none transition"
+              required>
+          </div>
         </div>
 
         <!-- PASSWORD -->
         <div>
           <label class="text-sm text-[#475569]">Mot de passe</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            class="w-full mt-1 px-4 py-3 rounded-lg bg-[#eef2f7]
-                   border border-transparent
-                   focus:border-[#1f4bd8] focus:ring-2 focus:ring-blue-100
-                   outline-none transition"
-            required>
+
+          <div class="relative mt-1">
+            <i data-lucide="lock"
+               class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+
+            <input
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              class="w-full pl-10 px-4 py-3 rounded-lg bg-[#eef2f7]
+                     border border-transparent
+                     focus:border-[#1f4bd8] focus:ring-2 focus:ring-blue-100
+                     outline-none transition"
+              required>
+          </div>
         </div>
 
         <!-- OPTIONS -->
@@ -154,12 +171,14 @@
           <button type="button"
             class="flex items-center justify-center gap-2 py-3 rounded-lg
                    bg-[#eef2f7] hover:bg-[#e2e8f0] transition text-sm">
+            <i data-lucide="chrome" class="w-4 h-4"></i>
             Google
           </button>
 
           <button type="button"
             class="flex items-center justify-center gap-2 py-3 rounded-lg
                    bg-[#eef2f7] hover:bg-[#e2e8f0] transition text-sm">
+            <i data-lucide="briefcase" class="w-4 h-4"></i>
             LinkedIn
           </button>
 
@@ -178,6 +197,9 @@
   </div>
 
 </div>
+
+<!-- Vite bundle (Tailwind + icons init) -->
+<script src="/js/main.js"></script>
 
 </body>
 </html>

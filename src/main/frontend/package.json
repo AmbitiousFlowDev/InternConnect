@@ -9,13 +9,14 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.0",
+    "@tailwindcss/postcss": "^4.2.4",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.12",
     "tailwindcss": "^4.2.4",
     "vite": "^8.0.10"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
-    "autoprefixer": "^10.5.0",
-    "lucide": "^1.11.0",
-    "postcss": "^8.5.12"
+    "lucide": "^1.11.0"
   }
 }
