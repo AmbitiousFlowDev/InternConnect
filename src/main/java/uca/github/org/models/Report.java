@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "reports")
@@ -15,14 +16,12 @@ import java.time.LocalDate;
 public class Report {
 
     public enum ReportStatus {
-        PENDING,
-        PROCESSED,
-        ARCHIVED
+        PENDING, PROCESSED, ARCHIVED
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
@@ -43,7 +42,10 @@ public class Report {
     @Column(nullable = false)
     private ReportStatus status;
 
-    @Column(name = "reported_at")
     private LocalDate reportedAt;
 
+    @PrePersist
+    public void prePersist() {
+        this.reportedAt = LocalDate.now();
+    }
 }

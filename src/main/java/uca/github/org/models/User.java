@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -18,21 +19,16 @@ import java.util.*;
 public class User implements UserDetails {
 
     public enum Role {
-        VISITOR,
-        USER,
-        POSTER,
-        ADMIN
+        VISITOR, USER, POSTER, ADMIN
     }
 
     public enum AccountStatus {
-        ACTIVE,
-        SUSPENDED,
-        DELETED
+        ACTIVE, SUSPENDED, DELETED
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @Column(nullable = false, length = 100)
     private String lastName;
@@ -57,49 +53,36 @@ public class User implements UserDetails {
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private transient Profile profile;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Profile profile;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "poster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private transient List<Internship> postedInternships = new ArrayList<>();
+    @OneToMany(mappedBy = "poster", fetch = FetchType.LAZY)
+    private List<Internship> postedInternships = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "applicant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private transient List<Application> applications = new ArrayList<>();
+    @OneToMany(mappedBy = "applicant", fetch = FetchType.LAZY)
+    private List<Application> applications = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private transient List<Message> sentMessages = new ArrayList<>();
+    @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
+    private List<Message> sentMessages = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private transient List<Message> receivedMessages = new ArrayList<>();
+    @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
+    private List<Message> receivedMessages = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private transient List<Bookmark> bookmarks = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private transient List<Report> reports = new ArrayList<>();
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private List<Report> reports = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private transient List<Recommendation> recommendations = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Recommendation> recommendations = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private transient List<Notification> notifications = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Notification> notifications = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
     }
 
     @Override
@@ -126,5 +109,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return status == AccountStatus.ACTIVE;
     }
-
 }

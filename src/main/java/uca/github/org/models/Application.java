@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "applications")
@@ -14,9 +15,13 @@ import java.time.LocalDateTime;
 @Builder
 public class Application {
 
+    public enum ApplicationStatus {
+        SUBMITTED, UNDER_REVIEW, ACCEPTED, REJECTED, WITHDRAWN
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "applicant_id", nullable = false)
@@ -26,20 +31,19 @@ public class Application {
     @JoinColumn(name = "internship_id", nullable = false)
     private Internship internship;
 
-    @Column(name = "cover_letter", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String coverLetter;
 
-    @Column(name = "resume_file", length = 255)
     private String resumeFile;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ApplicationStatus status;
 
-    @Column(name = "submitted_at")
     private LocalDateTime submittedAt;
 
-    public enum ApplicationStatus {
-        SUBMITTED, UNDER_REVIEW, ACCEPTED, REJECTED, WITHDRAWN
+    @PrePersist
+    public void prePersist() {
+        this.submittedAt = LocalDateTime.now();
     }
 }

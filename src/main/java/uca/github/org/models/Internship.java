@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "internships")
@@ -18,16 +19,12 @@ import java.util.List;
 public class Internship {
 
     public enum InternshipStatus {
-        DRAFT,
-        ACTIVE,
-        CLOSED,
-        REJECTED,
-        ARCHIVED
+        DRAFT, ACTIVE, CLOSED, REJECTED, ARCHIVED
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poster_id", nullable = false)
@@ -39,48 +36,34 @@ public class Internship {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(length = 150)
     private String company;
-
-    @Column(length = 100)
     private String sector;
-
-    @Column(length = 100)
     private String location;
-
-    @Column(length = 50)
     private String duration;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal compensation;
 
-    @Column(name = "required_skills", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String requiredSkills;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InternshipStatus status;
 
-    @Column(name = "published_at")
     private LocalDate publishedAt;
-
-    @Column(name = "expires_at")
     private LocalDate expiresAt;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
     private List<Application> applications = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
     private List<Report> reports = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "internship", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
     private List<Recommendation> recommendations = new ArrayList<>();
 
 }
