@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternConnect - Tableau de bord</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="bg-[#f8f9fa] font-sans">
+    <div class="flex h-screen">
+        <aside class="w-64 bg-white flex flex-col border-r border-gray-200 p-6">
+            <div class="mb-10">
+                <h1 class="text-2xl font-bold text-[#1a365d]">InternConnect</h1>
+            </div>
+
+            <button sec:authorize="hasRole('POSTER')" th:onclick="|window.location.href='@{/internships/post}'|" 
+                    class="w-full mb-8 px-4 py-3 bg-[#1a365d] text-white rounded-lg font-medium hover:bg-opacity-90 transition-all">
+                + Publier une offre
+            </button>
+
+            <nav class="flex-1 space-y-2">
+                <a th:href="@{/dashboard}" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#3b5998] text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12l2-2m0 0l7-7 7 7M4 12v8a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    <span class="font-medium text-sm">Tableau de bord</span>
+                </a>
+                <a th:href="@{/internships/search}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <span class="font-medium text-sm">Rechercher</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    <span class="font-medium text-sm">Mes candidatures</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                    <span class="font-medium text-sm">Offres sauvegardées</span>
+                </a>
+            </nav>
+
+            <div class="space-y-2 border-t pt-6">
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    <span class="font-medium text-sm">Administration</span>
+                </a>
+                
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                        <span class="font-medium text-sm">Déconnexion</span>
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto">
+            <div class="p-10">
+                <header class="flex justify-between items-center mb-10">
+                    <div>
+                        <h2 class="text-4xl font-bold text-gray-900">
+                            Bonjour, <span th:text="${user?.firstName ?: 'Étudiant'}">Alex</span> !
+                        </h2>
+                        <p class="text-gray-500 mt-1" th:text="${notificationCount ?: '3'} + ' nouvelles notifications'">3 nouvelles notifications</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-6">
+                        <button class="relative p-2 text-gray-400 hover:text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        
+                        <div class="flex items-center gap-4 bg-white p-2 pr-6 rounded-xl shadow-sm">
+                            <div class="w-12 h-12 rounded-full bg-[#1a365d] flex items-center justify-center text-white font-bold text-lg"
+                                 th:text="${user != null ? #strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1) : 'AM'}">
+                                AM
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-900 leading-none" th:text="${user?.firstName + ' ' + user?.lastName ?: 'Alex Martin'}">Alex Martin</p>
+                                <p class="text-xs text-gray-500 mt-1">Computer Science Student</p>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <section class="grid grid-cols-3 gap-8 mb-12">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative">
+                        <p class="text-sm font-semibold text-gray-400">Candidatures</p>
+                        <p class="text-4xl font-bold text-gray-900 mt-2" th:text="${appCount ?: '8'}">8</p>
+                        <p class="text-sm text-gray-500 mt-1">3 en attente</p>
+                        <div class="absolute top-8 right-8 w-2 h-2 bg-teal-400 rounded-full"></div>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative">
+                        <p class="text-sm font-semibold text-gray-400">Entretiens</p>
+                        <p class="text-4xl font-bold text-gray-900 mt-2" th:text="${interviewCount ?: '2'}">2</p>
+                        <p class="text-sm text-gray-500 mt-1">1 cette semaine</p>
+                        <div class="absolute top-8 right-8 w-2 h-2 bg-[#1a365d] rounded-full"></div>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative">
+                        <p class="text-sm font-semibold text-gray-400">Offres vues</p>
+                        <p class="text-4xl font-bold text-gray-900 mt-2" th:text="${viewCount ?: '12'}">12</p>
+                        <p class="text-sm text-gray-500 mt-1">4 sauvegardées</p>
+                        <div class="absolute top-8 right-8 w-2 h-2 bg-gray-300 rounded-full"></div>
+                    </div>
+                </section>
+
+                <div class="flex gap-10">
+                    <div class="flex-grow w-2/3">
+                        <div class="flex justify-between items-end mb-6">
+                            <h3 class="text-2xl font-bold text-gray-900">Candidatures récentes</h3>
+                            <a href="#" class="text-[#1a365d] font-bold text-sm">Voir tout</a>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div th:each="app : ${applications ?: dummyApps}" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
+                                <div>
+                                    <div class="flex items-center gap-4 mb-2">
+                                        <h4 class="text-lg font-bold text-gray-900" th:text="${app.title}">Stage Dev Web</h4>
+                                        <span th:classappend="${app.status == 'Acceptée' ? 'bg-green-600' : (app.status == 'Soumise' ? 'bg-gray-500' : 'bg-teal-600')}" 
+                                              class="text-[10px] text-white px-3 py-1 rounded-full font-bold uppercase" 
+                                              th:text="${app.status}">En examen</span>
+                                    </div>
+                                    <div class="flex items-center gap-6 text-sm text-gray-400 font-medium">
+                                        <span class="flex items-center gap-2">🏢 <span th:text="${app.company}">TechCorp</span></span>
+                                        <span class="flex items-center gap-2">🕒 <span th:text="${app.date}">il y a 2 jours</span></span>
+                                    </div>
+                                </div>
+                                <button class="bg-gray-50 text-gray-900 px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors">Voir le détail</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-1/3">
+                        <div class="flex items-center gap-3 mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                            <h3 class="text-2xl font-bold text-gray-900">Recommandations IA</h3>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div th:each="rec : ${recommendations ?: dummyRecs}" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                <h4 class="text-lg font-bold text-gray-900 mb-2" th:text="${rec.title}">Stage Back-end Java</h4>
+                                <div class="flex items-center gap-2 text-gray-400 font-medium text-sm mb-4">
+                                    <span>🏢 <span th:text="${rec.company}">TechCorp</span></span>
+                                </div>
+                                <div class="flex gap-6 text-xs text-gray-400 font-bold mb-6 uppercase tracking-wider">
+                                    <span>📍 <span th:text="${rec.location}">Casablanca</span></span>
+                                    <span>⌛ <span th:text="${rec.duration}">3 mois</span></span>
+                                </div>
+                                <div class="flex gap-2 mb-6 flex-wrap">
+                                    <span th:each="tag : ${rec.tags}" class="bg-gray-50 text-gray-500 px-3 py-1 rounded-md text-[10px] font-bold" th:text="${tag}">Java</span>
+                                </div>
+                                <button class="w-full bg-[#1a365d] text-white py-4 rounded-xl font-bold text-sm hover:bg-opacity-90 transition-all">Voir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

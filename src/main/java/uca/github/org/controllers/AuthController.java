@@ -58,20 +58,6 @@ public class AuthController {
         return "pages/home";
     }
     /**
-     * Dashboard (protected)
-     * Handles GET requests to "/dashboard" and displays the dashboard page. This
-     * page is protected and requires authentication. If the user is authenticated,
-     * their username is added to the model to be displayed on the dashboard page.
-     */
-    @GetMapping("/dashboard")
-    public String dashboard(Model model, Principal principal) {
-
-        if (principal != null) {
-            model.addAttribute("username", principal.getName());
-        }
-        return "pages/dashboard";
-    }
-    /**
      * Registration page (public)
      * Handles GET requests to "/register" and displays the registration form.
      * This page is accessible to all users, regardless of their authentication
