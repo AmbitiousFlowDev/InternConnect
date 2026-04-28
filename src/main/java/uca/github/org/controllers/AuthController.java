@@ -37,7 +37,7 @@ public class AuthController {
             model.addAttribute("error", "Session expirée, veuillez vous reconnecter");
         }
 
-        return "login"; // maps to login.html
+        return "auth/login"; // maps to login.html
     }
 
     /**
@@ -47,7 +47,7 @@ public class AuthController {
      */
     @GetMapping({ "/", "/home" })
     public String home() {
-        return "home";
+        return "pages/home";
     }
 
     /**
@@ -62,7 +62,7 @@ public class AuthController {
         if (principal != null) {
             model.addAttribute("username", principal.getName());
         }
-        return "dashboard";
+        return "pages/dashboard";
     }
 
     /**
@@ -73,6 +73,6 @@ public class AuthController {
      */
     @GetMapping("/register")
     public String register() {
-        return "register";
+        return "auth/register";
     }
 }

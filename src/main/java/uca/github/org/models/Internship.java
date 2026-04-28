@@ -55,15 +55,19 @@ public class Internship {
     private LocalDate expiresAt;
 
     @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Application> applications = new ArrayList<>();
 
     @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Bookmark> bookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Report> reports = new ArrayList<>();
 
     @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Recommendation> recommendations = new ArrayList<>();
 
 }

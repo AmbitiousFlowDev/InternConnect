@@ -16,6 +16,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SuppressWarnings("java:S1948")
 public class User implements UserDetails {
 
     public enum Role {
@@ -57,27 +58,35 @@ public class User implements UserDetails {
     private Profile profile;
 
     @OneToMany(mappedBy = "poster", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Internship> postedInternships = new ArrayList<>();
 
     @OneToMany(mappedBy = "applicant", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Application> applications = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Message> sentMessages = new ArrayList<>();
 
     @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Message> receivedMessages = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Bookmark> bookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Report> reports = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Recommendation> recommendations = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Notification> notifications = new ArrayList<>();
 
     @Override
