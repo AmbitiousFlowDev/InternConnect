@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import uca.github.org.models.User;
+
 /**
  * Controller for handling authentication-related requests, such as login and
  * registration.
@@ -72,7 +74,8 @@ public class AuthController {
      * status, and allows new users to create an account.
      */
     @GetMapping("/register")
-    public String register() {
+    public String register(Model model) {
+        model.addAttribute("user", new User());
         return "auth/register";
     }
 }
