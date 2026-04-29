@@ -1,5 +1,5 @@
 package uca.github.org.repositories;
 
-public @interface NotificationRepository {
+public interface NotificationRepository {
     
 }

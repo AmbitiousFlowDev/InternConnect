@@ -1,5 +1,5 @@
 package uca.github.org.repositories;
 
-public class ReportRepository {
+public interface ReportRepository {
     
 }
