@@ -26,16 +26,9 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     @Override
     @Transactional
     public User register(User user) {
-        // Encrypt the plain text password before saving to the database
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Set default values for a new account
         user.setStatus(User.AccountStatus.ACTIVE);
         user.setRegistrationDate(LocalDate.now());
-
-        // Note: The 'role' field is automatically populated by Thymeleaf
-        // through the radio buttons in the registration form.
-
         return userRepository.save(user);
     }
 
