@@ -8,6 +8,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uca.github.org.models.Profile;
@@ -24,27 +25,54 @@ import java.io.IOException;
 public class ProfileServiceImpl implements ProfileService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProfileDTO buildProfileForm(User user) {
+        User currentUser = getCurrentUser(user);
+        Profile profile = currentUser.getProfile();
+
+        return ProfileDTO.builder()
+                .firstName(currentUser.getFirstName())
+                .lastName(currentUser.getLastName())
+                .email(currentUser.getEmail())
+                .description(profile != null ? profile.getDescription() : "")
+                .education(profile != null ? profile.getEducation() : "")
+                .skills(profile != null ? profile.getSkills() : "")
+                .experience(profile != null ? profile.getExperience() : "")
+                .preferences(profile != null ? profile.getPreferences() : "")
+                .build();
+    }
 
     @Override
     @Transactional
-    public void updateProfile(User user, ProfileDTO profileDTO) {
-        User currentUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public void updateProfile(User authenticatedUser, ProfileDTO profileDTO) {
+        User currentUser = getCurrentUser(authenticatedUser);
 
-        currentUser.setFirstName(profileDTO.getFirstName());
-        currentUser.setLastName(profileDTO.getLastName());
+        validateProfileUpdate(currentUser, profileDTO);
+
+        currentUser.setFirstName(clean(profileDTO.getFirstName()));
+        currentUser.setLastName(clean(profileDTO.getLastName()));
+        currentUser.setEmail(clean(profileDTO.getEmail()).toLowerCase());
+
+        updatePasswordIfRequested(currentUser, profileDTO);
 
         Profile profile = currentUser.getProfile();
+
         if (profile == null) {
-            profile = Profile.builder().user(currentUser).build();
+            profile = Profile.builder()
+                    .user(currentUser)
+                    .build();
+
             currentUser.setProfile(profile);
         }
 
-        profile.setDescription(profileDTO.getDescription());
-        profile.setEducation(profileDTO.getEducation());
-        profile.setSkills(profileDTO.getSkills());
-        profile.setExperience(profileDTO.getExperience());
-        profile.setPreferences(profileDTO.getPreferences());
+        profile.setDescription(clean(profileDTO.getDescription()));
+        profile.setEducation(clean(profileDTO.getEducation()));
+        profile.setSkills(clean(profileDTO.getSkills()));
+        profile.setExperience(clean(profileDTO.getExperience()));
+        profile.setPreferences(clean(profileDTO.getPreferences()));
 
         userRepository.save(currentUser);
     }
@@ -52,20 +80,70 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public int calculateCompleteness(User user) {
         Profile profile = user.getProfile();
-        int points = 20;
-        if (profile == null)
-            return points;
 
-        if (isNotBlank(profile.getDescription()))
-            points += 20;
-        if (isNotBlank(profile.getEducation()))
-            points += 20;
-        if (isNotBlank(profile.getSkills()))
-            points += 20;
-        if (isNotBlank(profile.getExperience()))
-            points += 20;
+        int points = 20;
+
+        if (profile == null) {
+            return points;
+        }
+
+        if (isNotBlank(profile.getDescription())) points += 20;
+        if (isNotBlank(profile.getEducation())) points += 20;
+        if (isNotBlank(profile.getSkills())) points += 20;
+        if (isNotBlank(profile.getExperience())) points += 20;
 
         return Math.min(points, 100);
+    }
+
+    private void validateProfileUpdate(User currentUser, ProfileDTO profileDTO) {
+        String email = clean(profileDTO.getEmail());
+
+        if (!currentUser.getEmail().equalsIgnoreCase(email)) {
+            boolean emailAlreadyUsed = userRepository.existsByEmail(email);
+
+            if (emailAlreadyUsed) {
+                throw new IllegalArgumentException("Cet email est déjà utilisé.");
+            }
+        }
+
+        if (isNotBlank(profileDTO.getNewPassword())) {
+            if (!isNotBlank(profileDTO.getCurrentPassword())) {
+                throw new IllegalArgumentException("Le mot de passe actuel est obligatoire.");
+            }
+
+            if (!passwordEncoder.matches(profileDTO.getCurrentPassword(), currentUser.getPassword())) {
+                throw new IllegalArgumentException("Le mot de passe actuel est incorrect.");
+            }
+
+            if (!profileDTO.getNewPassword().equals(profileDTO.getConfirmPassword())) {
+                throw new IllegalArgumentException("Les nouveaux mots de passe ne correspondent pas.");
+            }
+        }
+    }
+
+    private void updatePasswordIfRequested(User user, ProfileDTO profileDTO) {
+        if (!isNotBlank(profileDTO.getNewPassword())) {
+            return;
+        }
+
+        user.setPassword(passwordEncoder.encode(profileDTO.getNewPassword()));
+    }
+
+    private User getCurrentUser(User authenticatedUser) {
+        if (authenticatedUser == null || authenticatedUser.getId() == null) {
+            throw new IllegalArgumentException("Utilisateur non authentifié.");
+        }
+
+        return userRepository.findById(authenticatedUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable."));
+    }
+
+    private String clean(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private boolean isNotBlank(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 
     @Override
@@ -74,7 +152,8 @@ public class ProfileServiceImpl implements ProfileService {
         response.setHeader(
                 "Content-Disposition",
                 "attachment; filename=\"cv-" + safeFileName(user.getFirstName()) + "-"
-                        + safeFileName(user.getLastName()) + ".pdf\"");
+                        + safeFileName(user.getLastName()) + ".pdf\""
+        );
 
         Document document = new Document(PageSize.A4, 50, 50, 45, 45);
 
@@ -101,10 +180,6 @@ public class ProfileServiceImpl implements ProfileService {
                 addPdfSection(document, "COMPÉTENCES", profile.getSkills(), sectionFont, bodyFont, lineColor);
                 addPdfSection(document, "EXPÉRIENCE", profile.getExperience(), sectionFont, bodyFont, lineColor);
                 addPdfSection(document, "PRÉFÉRENCES", profile.getPreferences(), sectionFont, bodyFont, lineColor);
-            } else {
-                Paragraph empty = new Paragraph("Aucune information de profil disponible.", bodyFont);
-                empty.setSpacingBefore(20);
-                document.add(empty);
             }
 
         } catch (DocumentException e) {
@@ -117,17 +192,12 @@ public class ProfileServiceImpl implements ProfileService {
     private void addHeader(Document document, User user, Font nameFont, Font subtitleFont, Color lineColor)
             throws DocumentException {
 
-        String fullName = joinNonBlank(user.getFirstName(), user.getLastName());
-        if (!isNotBlank(fullName)) {
-            fullName = "Curriculum Vitae";
-        }
-
-        Paragraph name = new Paragraph(fullName, nameFont);
+        Paragraph name = new Paragraph(user.getFirstName() + " " + user.getLastName(), nameFont);
         name.setAlignment(Element.ALIGN_CENTER);
         name.setSpacingAfter(6);
         document.add(name);
 
-        Paragraph email = new Paragraph(nullSafe(user.getEmail()), subtitleFont);
+        Paragraph email = new Paragraph(user.getEmail(), subtitleFont);
         email.setAlignment(Element.ALIGN_CENTER);
         email.setSpacingAfter(18);
         document.add(email);
@@ -141,7 +211,8 @@ public class ProfileServiceImpl implements ProfileService {
             String content,
             Font titleFont,
             Font bodyFont,
-            Color lineColor) throws DocumentException {
+            Color lineColor
+    ) throws DocumentException {
 
         if (!isNotBlank(content)) {
             return;
@@ -176,41 +247,14 @@ public class ProfileServiceImpl implements ProfileService {
         document.add(line);
     }
 
-    private String joinNonBlank(String first, String second) {
-        StringBuilder builder = new StringBuilder();
-
-        if (isNotBlank(first)) {
-            builder.append(first.trim());
-        }
-
-        if (isNotBlank(second)) {
-            if (builder.length() > 0) {
-                builder.append(" ");
-            }
-            builder.append(second.trim());
-        }
-
-        return builder.toString();
-    }
-
-    private String nullSafe(String value) {
-        return value == null ? "" : value.trim();
-    }
-
     private String safeFileName(String value) {
-        if (value == null || value.isBlank()) {
+        if (!isNotBlank(value)) {
             return "user";
         }
 
-        return value
-                .trim()
+        return value.trim()
                 .toLowerCase()
                 .replaceAll("[^a-z0-9-_]", "-")
                 .replaceAll("-+", "-");
     }
-
-    private boolean isNotBlank(String value) {
-        return value != null && !value.trim().isEmpty();
-    }
-
 }
