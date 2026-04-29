@@ -10,104 +10,94 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import uca.github.org.dto.ProfileUpdateForm;
 import uca.github.org.models.Profile;
 import uca.github.org.models.User;
+import uca.github.org.records.ProfileDTO;
 import uca.github.org.repositories.UserRepository;
 
 import java.util.Comparator;
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
 public class ProfileController {
+
     private final UserRepository userRepository;
 
     @GetMapping("/profile")
-    @Transactional(readOnly = true)
-    public String profile(Model model, @AuthenticationPrincipal User currentUser) {
-        if (currentUser == null) return "redirect:/login";
+    public String getProfilePage(@AuthenticationPrincipal User user, Model model) {
+        if (user == null)
+            return "redirect:/login";
 
-        // Reload entity from DB to safely access relationships for counts.
-        User user = userRepository.findById(currentUser.getId()).orElse(currentUser);
+        User currentUser = userRepository.findById(user.getId()).orElseThrow();
 
-        Profile profile = user.getProfile();
-        ProfileUpdateForm form = ProfileUpdateForm.from(user, profile);
+        Profile profile = currentUser.getProfile();
+        ProfileDTO form = ProfileDTO.builder()
+                .firstName(currentUser.getFirstName())
+                .lastName(currentUser.getLastName())
+                .description(profile != null ? profile.getDescription() : "")
+                .education(profile != null ? profile.getEducation() : "")
+                .skills(profile != null ? profile.getSkills() : "")
+                .experience(profile != null ? profile.getExperience() : "")
+                .preferences(profile != null ? profile.getPreferences() : "")
+                .build();
 
-        int applicationCount = user.getApplications() != null ? user.getApplications().size() : 0;
-        int savedCount = user.getBookmarks() != null ? user.getBookmarks().size() : 0;
-        int profileCompleteness = calculateCompleteness(form);
+        long appCount = currentUser.getApplications().size();
+        long savedCount = currentUser.getBookmarks().size();
+        int completeness = calculateCompleteness(currentUser, profile);
 
-        List<?> recentApplications = user.getApplications() == null ? List.of()
-                : user.getApplications().stream()
-                .sorted(Comparator.comparing(a -> a.getSubmittedAt(), Comparator.nullsLast(Comparator.naturalOrder())).reversed())
-                .limit(5)
-                .toList();
-
-        List<?> recentBookmarks = user.getBookmarks() == null ? List.of()
-                : user.getBookmarks().stream()
-                .sorted(Comparator.comparing(b -> b.getAddedAt(), Comparator.nullsLast(Comparator.naturalOrder())).reversed())
-                .limit(5)
-                .toList();
-
-        model.addAttribute("user", user);
+        model.addAttribute("user", currentUser);
         model.addAttribute("form", form);
-        model.addAttribute("applicationCount", applicationCount);
+        model.addAttribute("applicationCount", appCount);
         model.addAttribute("savedCount", savedCount);
-        model.addAttribute("profileCompleteness", profileCompleteness);
-        model.addAttribute("recentApplications", recentApplications);
-        model.addAttribute("recentBookmarks", recentBookmarks);
+        model.addAttribute("profileCompleteness", completeness);
+        model.addAttribute("recentApplications", currentUser.getApplications());
+        model.addAttribute("recentBookmarks", currentUser.getBookmarks());
+
         return "pages/profile";
     }
 
-    private static int calculateCompleteness(ProfileUpdateForm form) {
-        int total = 7;
-        int filled = 0;
-        if (hasText(form.firstName())) filled++;
-        if (hasText(form.lastName())) filled++;
-        if (hasText(form.description())) filled++;
-        if (hasText(form.skills())) filled++;
-        if (hasText(form.experience())) filled++;
-        if (hasText(form.education())) filled++;
-        if (hasText(form.preferences())) filled++;
-        return (int) Math.round((filled * 100.0) / total);
-    }
-
-    private static boolean hasText(String s) {
-        return s != null && !s.trim().isEmpty();
-    }
-
     @PostMapping("/profile")
-    @Transactional
-    public String updateProfile(
-            @ModelAttribute("form") ProfileUpdateForm form,
-            @AuthenticationPrincipal User principal,
-            RedirectAttributes redirectAttributes
-    ) {
-        if (principal == null) return "redirect:/login";
+    public String updateProfile(@AuthenticationPrincipal User user,
+            @ModelAttribute("form") ProfileDTO profileDTO,
+            RedirectAttributes redirectAttributes) {
+        User currentUser = userRepository.findById(user.getId()).orElseThrow();
 
-        User user = userRepository.findById(principal.getId()).orElse(principal);
+        currentUser.setFirstName(profileDTO.getFirstName());
+        currentUser.setLastName(profileDTO.getLastName());
 
-        user.setFirstName(form.firstName());
-        user.setLastName(form.lastName());
-
-        Profile profile = user.getProfile();
+        Profile profile = currentUser.getProfile();
         if (profile == null) {
             profile = new Profile();
-            profile.setUser(user);
-            user.setProfile(profile);
+            profile.setUser(currentUser);
+            currentUser.setProfile(profile);
         }
 
-        profile.setDescription(form.description());
-        profile.setSkills(form.skills());
-        profile.setExperience(form.experience());
-        profile.setEducation(form.education());
-        profile.setPreferences(form.preferences());
-        profile.setCoverLetter(form.coverLetter());
-        profile.setResumeFile(form.resumeFile());
+        profile.setDescription(profileDTO.getDescription());
+        profile.setEducation(profileDTO.getEducation());
+        profile.setSkills(profileDTO.getSkills());
+        profile.setExperience(profileDTO.getExperience());
+        profile.setPreferences(profileDTO.getPreferences());
 
-        userRepository.save(user);
+        userRepository.save(currentUser);
+
         redirectAttributes.addFlashAttribute("saved", true);
         return "redirect:/profile";
+    }
+
+    private int calculateCompleteness(User user, Profile profile) {
+        int points = 0;
+        if (profile == null)
+            return 20; 
+        if (profile.getDescription() != null && !profile.getDescription().isEmpty())
+            points += 20;
+        if (profile.getEducation() != null && !profile.getEducation().isEmpty())
+            points += 20;
+        if (profile.getSkills() != null && !profile.getSkills().isEmpty())
+            points += 20;
+        if (profile.getExperience() != null && !profile.getExperience().isEmpty())
+            points += 20;
+        return 20 + points;
     }
 }

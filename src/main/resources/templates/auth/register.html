@@ -6,152 +6,248 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>InternConnect - Inscription</title>
 
-  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .left-panel {
+      background: linear-gradient(to bottom, #142a6e, #17357f, #1a3f91);
+      color: white;
+      height: 100vh;
+      padding: 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .feature-icon {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .right-panel {
+      background-color: #f7f9fc;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      overflow-y: auto;
+    }
+
+    .register-card {
+      max-width: 650px;
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .form-control {
+      background-color: #eef2f7;
+      border: 1px solid transparent;
+      padding: 12px 14px;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      background-color: #eef2f7;
+      border: 1px solid #1f4bd8;
+      box-shadow: 0 0 0 0.2rem rgba(31, 75, 216, 0.1);
+    }
+
+    .input-group-text {
+      background-color: #eef2f7;
+      border: none;
+      color: #94a3b8;
+    }
+
+    .role-option {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .role-option:hover {
+      background-color: #f0f4ff;
+    }
+
+    /* Style pour simuler le focus Tailwind sur les radios */
+    input[type="radio"]:checked + span {
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background-color: #1f4bd8;
+      border: none;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: #173bb0;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+    }
+  </style>
 </head>
 
-<body class="h-screen overflow-hidden font-sans">
+<body>
 
-  <div class="flex h-screen">
+  <div class="container-fluid p-0">
+    <div class="row g-0">
 
-    <div class="w-[40%] flex flex-col justify-between p-16 text-white
-              bg-gradient-to-b from-[#142a6e] via-[#17357f] to-[#1a3f91]">
+      <div class="col-lg-5 d-none d-lg-flex left-panel">
+        <div>
+          <h1 class="display-5 fw-bold">InternConnect</h1>
+          <p class="mt-3 text-white-50 fs-5">
+            Créez votre compte et boostez votre carrière.
+          </p>
+        </div>
 
-      <div>
-        <h1 class="text-5xl font-display font-bold tracking-tight">
-          InternConnect
-        </h1>
-        <p class="mt-4 text-white/80 text-lg">
-          Créez votre compte et boostez votre carrière.
-        </p>
-      </div>
+        <div>
+          <div class="mb-5">
+            <h2 class="fw-bold h1">Prêt à commencer l'aventure ?</h2>
+            <p class="text-white-50 mt-3">
+              Rejoignez des milliers d'étudiants et de recruteurs. Gérez vos candidatures ou publiez vos offres en quelques clics.
+            </p>
+          </div>
 
-      <div class="space-y-10">
-  <div>
-    <h2 class="text-3xl font-display font-bold leading-tight">
-      Prêt à commencer l'aventure ?
-    </h2>
-    <p class="mt-4 text-white/80 text-sm leading-relaxed">
-      Rejoignez des milliers d'étudiants et de recruteurs. Gérez vos candidatures ou publiez vos offres en quelques clics.
-    </p>
-  </div>
-
-  <div class="grid grid-cols-2 gap-6 text-sm">
-    
-    <div class="flex items-center gap-3">
-      <div class="p-2 rounded-lg bg-white/10">
-        <i data-lucide="user-plus" class="w-5 h-5"></i>
-      </div>
-      <span>Inscription rapide</span>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <div class="p-2 rounded-lg bg-white/10">
-        <i data-lucide="shield-check" class="w-5 h-5"></i>
-      </div>
-      <span>Espace sécurisé</span>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <div class="p-2 rounded-lg bg-white/10">
-        <i data-lucide="briefcase" class="w-5 h-5"></i>
-      </div>
-      <span>Stages vérifiés</span>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <div class="p-2 rounded-lg bg-white/10">
-        <i data-lucide="message-square" class="w-5 h-5"></i>
-      </div>
-      <span>Contact direct</span>
-    </div>
-
-  </div>
-</div>
-    </div>
-
-    <div class="w-[60%] flex items-center justify-center p-16 bg-[#f7f9fc] overflow-y-auto">
-
-      <div class="w-full max-w-2xl bg-white p-10 rounded-2xl border border-[#e5e7eb] shadow-sm">
-
-        <h2 class="text-3xl font-bold text-[#0f172a]">Créer un compte</h2>
-        <p class="mt-2 text-[#475569]">
-          Remplissez les informations ci-dessous pour nous rejoindre
-        </p>
-
-        <form th:action="@{/register}" th:object="${user}" method="post" class="mt-8 space-y-5">
-
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="text-sm text-[#475569]">Prénom</label>
-              <div class="relative mt-1">
-                <i data-lucide="user" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
-                <input type="text" th:field="*{firstName}" placeholder="Jean" 
-                       class="w-full pl-10 px-4 py-3 rounded-lg bg-[#eef2f7] border border-transparent focus:border-[#1f4bd8] focus:ring-2 focus:ring-blue-100 outline-none transition" required>
+          <div class="row g-4 text-sm">
+            <div class="col-6 d-flex align-items-center">
+              <div class="feature-icon me-3">
+                <i data-lucide="user-plus" style="width: 20px; height: 20px;"></i>
               </div>
+              <span>Inscription rapide</span>
             </div>
 
-            <div>
-              <label class="text-sm text-[#475569]">Nom</label>
-              <div class="relative mt-1">
-                <i data-lucide="user" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
-                <input type="text" th:field="*{lastName}" placeholder="Dupont" 
-                       class="w-full pl-10 px-4 py-3 rounded-lg bg-[#eef2f7] border border-transparent focus:border-[#1f4bd8] focus:ring-2 focus:ring-blue-100 outline-none transition" required>
+            <div class="col-6 d-flex align-items-center">
+              <div class="feature-icon me-3">
+                <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
               </div>
+              <span>Espace sécurisé</span>
+            </div>
+
+            <div class="col-6 d-flex align-items-center">
+              <div class="feature-icon me-3">
+                <i data-lucide="briefcase" style="width: 20px; height: 20px;"></i>
+              </div>
+              <span>Stages vérifiés</span>
+            </div>
+
+            <div class="col-6 d-flex align-items-center">
+              <div class="feature-icon me-3">
+                <i data-lucide="message-square" style="width: 20px; height: 20px;"></i>
+              </div>
+              <span>Contact direct</span>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div>
-            <label class="text-sm text-[#475569]">Email universitaire</label>
-            <div class="relative mt-1">
-              <i data-lucide="mail" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
-              <input type="email" th:field="*{email}" placeholder="jean.dupont@univ.fr" 
-                     class="w-full pl-10 px-4 py-3 rounded-lg bg-[#eef2f7] border border-transparent focus:border-[#1f4bd8] focus:ring-2 focus:ring-blue-100 outline-none transition" required>
-            </div>
-          </div>
+      <div class="col-lg-7 col-12 right-panel">
+        <div class="card shadow-sm register-card p-4 p-md-5">
 
-          <div>
-            <label class="text-sm text-[#475569]">Mot de passe</label>
-            <div class="relative mt-1">
-              <i data-lucide="lock" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
-              <input type="password" th:field="*{password}" placeholder="••••••••" 
-                     class="w-full pl-10 px-4 py-3 rounded-lg bg-[#eef2f7] border border-transparent focus:border-[#1f4bd8] focus:ring-2 focus:ring-blue-100 outline-none transition" required>
-            </div>
-          </div>
-
-          <div>
-            <label class="text-sm text-[#475569]">Je suis un...</label>
-            <div class="grid grid-cols-2 gap-4 mt-2">
-              <label class="flex items-center gap-3 p-3 rounded-lg border border-[#e5e7eb] cursor-pointer hover:bg-blue-50 transition has-[:checked]:border-[#1f4bd8] has-[:checked]:bg-blue-50">
-                <input type="radio" th:field="*{role}" value="USER" class="w-4 h-4 text-[#1f4bd8]" checked>
-                <span class="text-sm font-medium text-[#0f172a]">Étudiant</span>
-              </label>
-              <label class="flex items-center gap-3 p-3 rounded-lg border border-[#e5e7eb] cursor-pointer hover:bg-blue-50 transition has-[:checked]:border-[#1f4bd8] has-[:checked]:bg-blue-50">
-                <input type="radio" th:field="*{role}" value="POSTER" class="w-4 h-4 text-[#1f4bd8]">
-                <span class="text-sm font-medium text-[#0f172a]">Recruteur / Poster</span>
-              </label>
-            </div>
-          </div>
-
-          <button type="submit" class="w-full py-3 mt-4 rounded-lg text-white font-medium
-                 bg-[#1f4bd8] hover:bg-[#173bb0] transition">
-            Créer mon compte
-          </button>
-
-          <p class="text-center text-sm text-[#64748b] mt-4">
-            Déjà inscrit ?
-            <a th:href="@{/login}" class="text-[#1f4bd8] font-medium">
-              Se connecter
-            </a>
+          <h2 class="fw-bold text-dark">Créer un compte</h2>
+          <p class="text-muted">
+            Remplissez les informations ci-dessous pour nous rejoindre
           </p>
 
-        </form>
-      </div>
-    </div>
+          <form th:action="@{/register}" th:object="${user}" method="post" class="mt-4">
+            
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label text-muted text-sm">Prénom</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i data-lucide="user" style="width: 16px;"></i></span>
+                  <input type="text" th:field="*{firstName}" class="form-control" placeholder="Jean" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label text-muted text-sm">Nom</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i data-lucide="user" style="width: 16px;"></i></span>
+                  <input type="text" th:field="*{lastName}" class="form-control" placeholder="Dupont" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-muted text-sm">Email universitaire</label>
+              <div class="input-group">
+                <span class="input-group-text"><i data-lucide="mail" style="width: 16px;"></i></span>
+                <input type="email" th:field="*{email}" class="form-control" placeholder="jean.dupont@univ.fr" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-muted text-sm">Mot de passe</label>
+              <div class="input-group">
+                <span class="input-group-text"><i data-lucide="lock" style="width: 16px;"></i></span>
+                <input type="password" th:field="*{password}" class="form-control" placeholder="••••••••" required>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label text-muted text-sm">Je suis un...</label>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="role-option w-100">
+                    <input type="radio" th:field="*{role}" value="USER" class="form-check-input mt-0" checked>
+                    <span class="text-dark">Étudiant</span>
+                  </label>
+                </div>
+                <div class="col-md-6">
+                  <label class="role-option w-100">
+                    <input type="radio" th:field="*{role}" value="POSTER" class="form-check-input mt-0">
+                    <span class="text-dark">Recruteur / Poster</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-3 mb-4">
+              Créer mon compte
+            </button>
+
+            <p class="text-center text-muted text-sm">
+              Déjà inscrit ?
+              <a th:href="@{/login}" class="text-primary fw-medium text-decoration-none">
+                Se connecter
+              </a>
+            </p>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <script src="/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
+
 </html>
