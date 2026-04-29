@@ -52,7 +52,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public int calculateCompleteness(User user) {
         Profile profile = user.getProfile();
-        int points = 20; // Base points for having an account
+        int points = 20;
         if (profile == null) return points;
 
         if (isNotBlank(profile.getDescription())) points += 20;
