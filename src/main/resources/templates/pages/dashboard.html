@@ -8,181 +8,265 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <style>
+        .nav-link-custom {
+            color: white !important;
+            opacity: 0.7;
+            transition: opacity 0.2s ease-in-out;
+            padding: 0; /* Removes the "box" feel */
+            text-decoration: none;
+        }
+
+        .nav-link-custom:hover {
+            opacity: 1;
+            background: none !important;
+            box-shadow: none !important;
+        }
+
+        .avatar-box {
+            transition: transform 0.2s;
+        }
+
+        .avatar-box:hover {
+            transform: scale(1.05);
+        }
+
         :root {
             --primary: #163274;
             --secondary: #00677f;
             --surface: #f7f9fb;
         }
-        body { background-color: var(--surface); font-family: 'Inter', system-ui, sans-serif; }
-        .nav-link-custom { padding: 0.5rem; border-radius: 0.5rem; transition: all 0.2s; color: #4b5563; }
-        .nav-link-custom:hover { background-color: #f3f4f6; color: var(--primary); }
-        .card-stats { border: none; border-radius: 1rem; transition: transform 0.2s; }
-        .card-stats:hover { transform: translateY(-4px); }
+
+        body {
+            background-color: var(--surface);
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        .nav-link-custom {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            color: #4b5563;
+        }
+
+        .nav-link-custom:hover {
+            background-color: #f3f4f6;
+            color: var(--primary);
+        }
+
+        .card-stats {
+            border: none;
+            border-radius: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .card-stats:hover {
+            transform: translateY(-4px);
+        }
+
         .avatar-box {
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, #163274 0%, #2a4a8f 100%);
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 600; font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
         }
-        .status-badge { font-size: 0.75rem; padding: 0.35rem 0.75rem; border-radius: 9999px; font-weight: 500; }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top py-3">
-        <div class="container-xl">
-            <a class="navbar-brand fw-bold fs-3 text-primary" th:href="@{/home}">InternConnect</a>
-            
-            <div class="d-flex align-items-center gap-4">
-                <a th:href="@{/home}" class="nav-link-custom" title="Home"><i class="bi bi-house fs-5"></i></a>
-                <a th:href="@{/dashboard}" class="nav-link-custom" title="Dashboard"><i class="bi bi-briefcase fs-5"></i></a>
-                <a th:href="@{/messages}" class="nav-link-custom position-relative" title="Messages">
-                    <i class="bi bi-chat-dots fs-5"></i>
-                </a>
-                <a th:href="@{/notifications}" class="nav-link-custom position-relative" title="Notifications">
-                    <i class="bi bi-bell fs-5"></i>
-                    <span class="position-absolute top-2 start-3 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                </a>
-                <a th:href="@{/profile}" class="text-decoration-none ms-2">
-                    <div class="avatar-box" 
-                         th:text="${user.firstName != null && user.lastName != null} ? 
-                                  ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)} : '??'">
-                        AM
+<nav class="navbar navbar-expand-lg border-bottom sticky-top py-1"
+     style="background: linear-gradient(to right, #142a6e, #1a3f91); border-color: rgba(255,255,255,0.1) !important;">
+    <div class="container-xl">
+        <a class="navbar-brand fw-bold fs-3 text-white" th:href="@{/home}">InternConnect</a>
+
+        <div class="d-flex align-items-center gap-4">
+            <a th:href="@{/home}" class="nav-link-custom" title="Home">
+                <i class="bi bi-house fs-5"></i>
+            </a>
+            <a th:href="@{/dashboard}" class="nav-link-custom" title="Dashboard">
+                <i class="bi bi-briefcase fs-5"></i>
+            </a>
+            <a th:href="@{/messages}" class="nav-link-custom position-relative" title="Messages">
+                <i class="bi bi-chat-dots fs-5"></i>
+            </a>
+            <a th:href="@{/notifications}" class="nav-link-custom position-relative" title="Notifications">
+                <i class="bi bi-bell fs-5"></i>
+                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+                      style="margin-top: 5px; margin-left: -2px;"></span>
+            </a>
+
+            <a th:href="@{/profile}" class="text-decoration-none ms-2">
+                <div class="avatar-box"
+                     style="background: white; color: #142a6e; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem;"
+                     th:text="${user.firstName != null && user.lastName != null} ?
+                              ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)} : '??'">
+                    AM
+                </div>
+            </a>
+
+            <form th:action="@{/logout}" method="post" id="logoutForm" class="d-inline">
+                <button type="submit" class="nav-link-custom border-0 bg-transparent" title="Déconnexion" style="cursor: pointer;">
+                    <i class="bi bi-box-arrow-right fs-5"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="container-xl py-5">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-6 fw-bold mb-2"
+                th:text="'Welcome back, ' + ${user.firstName} + '!'">Welcome back, Alex!</h1>
+            <p class="text-secondary">Here's a summary of your internship applications and saved opportunities.</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card card-stats shadow-sm p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-2 bg-primary bg-opacity-10 rounded-3 text-primary">
+                        <i class="bi bi-file-earmark-text fs-5"></i>
                     </div>
-                </a>
+                </div>
+                <h2 class="fw-bold mb-1" th:text="${stats.totalApplications}">12</h2>
+                <p class="text-muted small mb-0">Total Applications</p>
             </div>
         </div>
-    </nav>
-
-    <main class="container-xl py-5">
-        <div class="row mb-5">
-            <div class="col-12">
-                <h1 class="display-6 fw-bold mb-2" 
-                    th:text="'Welcome back, ' + ${user.firstName} + '!'">Welcome back, Alex!</h1>
-                <p class="text-secondary">Here's a summary of your internship applications and saved opportunities.</p>
+        <div class="col-md-3">
+            <div class="card card-stats shadow-sm p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-2 bg-info bg-opacity-10 rounded-3 text-info">
+                        <i class="bi bi-eye fs-5"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold mb-1" th:text="${stats.inReview}">4</h2>
+                <p class="text-muted small mb-0">Currently In Review</p>
             </div>
         </div>
-
-        <div class="row g-4 mb-5">
-            <div class="col-md-3">
-                <div class="card card-stats shadow-sm p-4 bg-white">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="p-2 bg-primary bg-opacity-10 rounded-3 text-primary">
-                            <i class="bi bi-file-earmark-text fs-5"></i>
-                        </div>
+        <div class="col-md-3">
+            <div class="card card-stats shadow-sm p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-2 bg-success bg-opacity-10 rounded-3 text-success">
+                        <i class="bi bi-calendar-event fs-5"></i>
                     </div>
-                    <h2 class="fw-bold mb-1" th:text="${stats.totalApplications}">12</h2>
-                    <p class="text-muted small mb-0">Total Applications</p>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card card-stats shadow-sm p-4 bg-white">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="p-2 bg-info bg-opacity-10 rounded-3 text-info">
-                            <i class="bi bi-eye fs-5"></i>
-                        </div>
-                    </div>
-                    <h2 class="fw-bold mb-1" th:text="${stats.inReview}">4</h2>
-                    <p class="text-muted small mb-0">Currently In Review</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card card-stats shadow-sm p-4 bg-white">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="p-2 bg-success bg-opacity-10 rounded-3 text-success">
-                            <i class="bi bi-calendar-event fs-5"></i>
-                        </div>
-                    </div>
-                    <h2 class="fw-bold mb-1" th:text="${stats.interviews}">2</h2>
-                    <p class="text-muted small mb-0">Upcoming Interviews</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card card-stats shadow-sm p-4 bg-white">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="p-2 bg-secondary bg-opacity-10 rounded-3 text-secondary">
-                            <i class="bi bi-bookmark fs-5"></i>
-                        </div>
-                    </div>
-                    <h2 class="fw-bold mb-1" th:text="${stats.saved}">8</h2>
-                    <p class="text-muted small mb-0">Saved for Later</p>
-                </div>
+                <h2 class="fw-bold mb-1" th:text="${stats.interviews}">2</h2>
+                <p class="text-muted small mb-0">Upcoming Interviews</p>
             </div>
         </div>
-
-        <div class="row g-4">
-            <div class="col-lg-8">
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                    <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-0">Active Applications</h5>
-                        <a th:href="@{/applications}" class="btn btn-link text-primary text-decoration-none fw-semibold btn-sm">View All</a>
+        <div class="col-md-3">
+            <div class="card card-stats shadow-sm p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-2 bg-secondary bg-opacity-10 rounded-3 text-secondary">
+                        <i class="bi bi-bookmark fs-5"></i>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush">
-                            <div th:each="app : ${applications}" class="list-group-item p-4 border-0 border-bottom border-light hover-bg">
-                                <div class="d-flex gap-4">
-                                    <div class="avatar-box bg-secondary rounded-3" 
-                                         th:text="${#strings.substring(app.internship.company, 0, 2).toUpperCase()}">TC</div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <div>
-                                                <h6 class="fw-bold mb-1" th:text="${app.internship.title}">Software Engineering Intern</h6>
-                                                <div class="d-flex gap-3 text-muted small">
-                                                    <span><i class="bi bi-building me-1"></i> <span th:text="${app.internship.company}">TechCorp</span></span>
-                                                    <span><i class="bi bi-geo-alt me-1"></i> <span th:text="${app.internship.location}">Remote</span></span>
-                                                </div>
+                </div>
+                <h2 class="fw-bold mb-1" th:text="${stats.saved}">8</h2>
+                <p class="text-muted small mb-0">Saved for Later</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Active Applications</h5>
+                    <a th:href="@{/applications}"
+                       class="btn btn-link text-primary text-decoration-none fw-semibold btn-sm">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div th:each="app : ${applications}"
+                             class="list-group-item p-4 border-0 border-bottom border-light hover-bg">
+                            <div class="d-flex gap-4">
+                                <div class="avatar-box bg-secondary rounded-3"
+                                     th:text="${#strings.substring(app.internship.company, 0, 2).toUpperCase()}">TC
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <div>
+                                            <h6 class="fw-bold mb-1" th:text="${app.internship.title}">Software
+                                                Engineering Intern</h6>
+                                            <div class="d-flex gap-3 text-muted small">
+                                                <span><i class="bi bi-building me-1"></i> <span
+                                                        th:text="${app.internship.company}">TechCorp</span></span>
+                                                <span><i class="bi bi-geo-alt me-1"></i> <span
+                                                        th:text="${app.internship.location}">Remote</span></span>
                                             </div>
-                                            <span th:class="'status-badge bg-primary text-white'" 
-                                                  th:text="${app.status}">Under Review</span>
                                         </div>
-                                        <div class="mt-3 d-flex align-items-center gap-4 text-muted" style="font-size: 0.75rem;">
-                                            <span><i class="bi bi-clock me-1"></i> Applied on <span th:text="${#temporals.format(app.submittedAt, 'MMM dd, yyyy')}">April 25</span></span>
-                                        </div>
+                                        <span th:class="'status-badge bg-primary text-white'"
+                                              th:text="${app.status}">Under Review</span>
+                                    </div>
+                                    <div class="mt-3 d-flex align-items-center gap-4 text-muted"
+                                         style="font-size: 0.75rem;">
+                                        <span><i class="bi bi-clock me-1"></i> Applied on <span
+                                                th:text="${#temporals.format(app.submittedAt, 'MMM dd, yyyy')}">April 25</span></span>
                                     </div>
                                 </div>
-                            </div>
-                            <div th:if="${#lists.isEmpty(applications)}" class="p-5 text-center text-muted">
-                                <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
-                                <p>No applications yet. Start exploring internships!</p>
-                                <a th:href="@{/home}" class="btn btn-primary btn-sm px-4">Browse Now</a>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-sm rounded-4 bg-white h-100">
-                    <div class="card-header bg-white border-0 p-4">
-                        <h5 class="fw-bold mb-0">Recently Saved</h5>
-                    </div>
-                    <div class="card-body p-4 pt-0">
-                        <div class="space-y-4">
-                            <div th:each="bookmark : ${bookmarks}" class="mb-4 pb-4 border-bottom border-light last-child-0">
-                                <div class="d-flex align-items-start gap-3">
-                                    <div class="avatar-box rounded-3 bg-light text-primary flex-shrink-0" 
-                                         th:text="${#strings.substring(bookmark.internship.company, 0, 1)}">C</div>
-                                    <div class="flex-grow-1 min-w-0">
-                                        <h6 class="text-truncate fw-bold mb-1" th:text="${bookmark.internship.title}">Backend Developer</h6>
-                                        <p class="text-muted small mb-2" th:text="${bookmark.internship.company}">Cloud Systems</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="text-primary fw-bold small" th:text="${bookmark.internship.salary}">$2500/mo</span>
-                                            <a th:href="@{'/internships/' + ${bookmark.internship.id}}" class="btn btn-outline-primary btn-sm rounded-pill" style="font-size: 0.7rem;">Apply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div th:if="${#lists.isEmpty(bookmarks)}" class="py-4 text-center text-muted small">
-                                <p>Save your favorite internships to track them here.</p>
-                            </div>
+                        <div th:if="${#lists.isEmpty(applications)}" class="p-5 text-center text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+                            <p>No applications yet. Start exploring internships!</p>
+                            <a th:href="@{/home}" class="btn btn-primary btn-sm px-4">Browse Now</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 bg-white h-100">
+                <div class="card-header bg-white border-0 p-4">
+                    <h5 class="fw-bold mb-0">Recently Saved</h5>
+                </div>
+                <div class="card-body p-4 pt-0">
+                    <div class="space-y-4">
+                        <div th:each="bookmark : ${bookmarks}"
+                             class="mb-4 pb-4 border-bottom border-light last-child-0">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="avatar-box rounded-3 bg-light text-primary flex-shrink-0"
+                                     th:text="${#strings.substring(bookmark.internship.company, 0, 1)}">C
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <h6 class="text-truncate fw-bold mb-1" th:text="${bookmark.internship.title}">
+                                        Backend Developer</h6>
+                                    <p class="text-muted small mb-2" th:text="${bookmark.internship.company}">Cloud
+                                        Systems</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-primary fw-bold small"
+                                              th:text="${bookmark.internship.salary}">$2500/mo</span>
+                                        <a th:href="@{'/internships/' + ${bookmark.internship.id}}"
+                                           class="btn btn-outline-primary btn-sm rounded-pill"
+                                           style="font-size: 0.7rem;">Apply</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(bookmarks)}" class="py-4 text-center text-muted small">
+                            <p>Save your favorite internships to track them here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

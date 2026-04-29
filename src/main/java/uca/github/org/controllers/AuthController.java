@@ -43,7 +43,7 @@ public class AuthController {
             model.addAttribute("error", "Session expirée, veuillez vous reconnecter");
         }
 
-        return "auth/login"; // maps to login.html
+        return "auth/login";
     }
     /**
      * Home page (public)

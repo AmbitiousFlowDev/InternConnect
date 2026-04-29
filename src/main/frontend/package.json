@@ -3,20 +3,22 @@
   "version": "1.0.0",
   "description": "Tailwind CSS setup for Spring Boot",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "watch": "vite build --watch"
+    "build": "shx mkdir -p ../resources/static/dist/css ../resources/static/dist/js ../resources/static/dist/fonts && shx cp node_modules/bootstrap/dist/css/bootstrap.min.css ../resources/static/dist/css/ && shx cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js ../resources/static/dist/js/ && shx cp node_modules/bootstrap-icons/font/bootstrap-icons.css ../resources/static/dist/css/ && shx cp node_modules/bootstrap-icons/font/fonts/* ../resources/static/dist/fonts/"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.0",
     "@tailwindcss/postcss": "^4.2.4",
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.12",
+    "shx": "^0.4.0",
     "tailwindcss": "^4.2.4",
     "vite": "^8.0.10"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "lucide": "^1.11.0"
   }
 }

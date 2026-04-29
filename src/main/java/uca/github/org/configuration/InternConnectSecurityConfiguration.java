@@ -23,18 +23,15 @@ public class InternConnectSecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/", "/home", "/register", "/css/**", "/js/**")
+                .requestMatchers("/", "/home", "/register", "/css/**", "/js/**" , "/dist/**")
                 .permitAll()
                 .anyRequest().authenticated())
-                .formLogin(form -> form.loginPage("/login")
-                .defaultSuccessUrl("/dashboard")
-                .permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/")
+                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/dashboard" , true).permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/login?logout")
                 .permitAll())
                 .sessionManagement(session -> session.sessionFixation().migrateSession().maximumSessions(1)
                 .expiredUrl("/login?expired"));
