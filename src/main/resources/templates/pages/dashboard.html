@@ -1,272 +1,407 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Dashboard - InternConnect</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <style>
-        .nav-link-custom {
-            color: white !important;
-            opacity: 0.7;
-            transition: opacity 0.2s ease-in-out;
-            padding: 0; /* Removes the "box" feel */
-            text-decoration: none;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternConnect - Tableau de bord</title>
 
-        .nav-link-custom:hover {
-            opacity: 1;
-            background: none !important;
-            box-shadow: none !important;
-        }
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
-        .avatar-box {
-            transition: transform 0.2s;
-        }
+  <style>
+    :root {
+      --primary-color: #142a6e;
+      --primary-light: #1a3f91;
+      --surface-color: #f7f9fc;
+    }
 
-        .avatar-box:hover {
-            transform: scale(1.05);
-        }
+    body {
+      background-color: var(--surface-color);
+      color: #1e293b;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-        :root {
-            --primary: #163274;
-            --secondary: #00677f;
-            --surface: #f7f9fb;
-        }
+    .navbar-custom {
+      background: linear-gradient(to right, var(--primary-color), var(--primary-light));
+    }
 
-        body {
-            background-color: var(--surface);
-            font-family: 'Inter', system-ui, sans-serif;
-        }
+    .nav-icon-link {
+      color: white;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
 
-        .nav-link-custom {
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-            color: #4b5563;
-        }
+    .nav-icon-link:hover {
+      color: white;
+      opacity: 1;
+    }
 
-        .nav-link-custom:hover {
-            background-color: #f3f4f6;
-            color: var(--primary);
-        }
+    .avatar-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
 
-        .card-stats {
-            border: none;
-            border-radius: 1rem;
-            transition: transform 0.2s;
-        }
+    .avatar-box-light {
+      background: white;
+      color: var(--primary-color);
+    }
 
-        .card-stats:hover {
-            transform: translateY(-4px);
-        }
+    .avatar-square {
+      border-radius: 0.75rem;
+    }
 
-        .avatar-box {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #163274 0%, #2a4a8f 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
+    .card-soft {
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.06);
+    }
 
-        .status-badge {
-            font-size: 0.75rem;
-            padding: 0.35rem 0.75rem;
-            border-radius: 9999px;
-            font-weight: 500;
-        }
-    </style>
+    .card-hover {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.08);
+    }
+
+    .status-badge {
+      border-radius: 999px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .list-hover:hover {
+      background-color: #f8fafc;
+    }
+  </style>
 </head>
+
 <body>
 
-<nav class="navbar navbar-expand-lg border-bottom sticky-top py-1"
-     style="background: linear-gradient(to right, #142a6e, #1a3f91); border-color: rgba(255,255,255,0.1) !important;">
-    <div class="container-xl">
-        <a class="navbar-brand fw-bold fs-3 text-white" th:href="@{/home}">InternConnect</a>
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top py-2">
+  <div class="container-xl">
 
-        <div class="d-flex align-items-center gap-4">
-            <a th:href="@{/home}" class="nav-link-custom" title="Home">
-                <i class="bi bi-house fs-5"></i>
-            </a>
-            <a th:href="@{/dashboard}" class="nav-link-custom" title="Dashboard">
-                <i class="bi bi-briefcase fs-5"></i>
-            </a>
-            <a th:href="@{/messages}" class="nav-link-custom position-relative" title="Messages">
-                <i class="bi bi-chat-dots fs-5"></i>
-            </a>
-            <a th:href="@{/notifications}" class="nav-link-custom position-relative" title="Notifications">
-                <i class="bi bi-bell fs-5"></i>
-                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
-                      style="margin-top: 5px; margin-left: -2px;"></span>
-            </a>
+    <a class="navbar-brand fw-bold fs-3 text-white" th:href="@{/home}">
+      InternConnect
+    </a>
 
-            <a th:href="@{/profile}" class="text-decoration-none ms-2">
-                <div class="avatar-box"
-                     style="background: white; color: #142a6e; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem;"
-                     th:text="${user.firstName != null && user.lastName != null} ?
-                              ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)} : '??'">
-                    AM
-                </div>
-            </a>
+    <div class="d-flex align-items-center gap-3">
 
-            <form th:action="@{/logout}" method="post" id="logoutForm" class="d-inline">
-                <button type="submit" class="nav-link-custom border-0 bg-transparent" title="Déconnexion" style="cursor: pointer;">
-                    <i class="bi bi-box-arrow-right fs-5"></i>
-                </button>
-            </form>
+      <a th:href="@{/profile}" class="text-decoration-none" title="Profil">
+        <div class="avatar-box avatar-box-light"
+             th:text="${user != null && user.firstName != null && user.lastName != null}
+                      ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}
+                      : '??'">
+          AM
         </div>
+      </a>
+
+      <form th:action="@{/logout}" method="post" class="m-0">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit"
+                class="btn btn-link nav-icon-link p-0"
+                title="Déconnexion">
+          <i class="bi bi-box-arrow-right fs-5"></i>
+        </button>
+      </form>
+
     </div>
+  </div>
 </nav>
 
 <main class="container-xl py-5">
-    <div class="row mb-5">
-        <div class="col-12">
-            <h1 class="display-6 fw-bold mb-2"
-                th:text="'Welcome back, ' + ${user.firstName} + '!'">Welcome back, Alex!</h1>
-            <p class="text-secondary">Here's a summary of your internship applications and saved opportunities.</p>
+
+  <!-- HEADER -->
+  <section class="mb-5">
+    <h1 class="display-6 fw-bold mb-2"
+        th:text="${user != null && user.firstName != null}
+                 ? 'Bon retour, ' + ${user.firstName} + ' !'
+                 : 'Bon retour !'">
+      Bon retour, Alex !
+    </h1>
+
+    <p class="text-secondary mb-0">
+      Voici un résumé de vos candidatures et opportunités sauvegardées.
+    </p>
+  </section>
+
+  <!-- STATS -->
+  <section class="row g-4 mb-5">
+
+    <div class="col-md-6 col-xl-3">
+      <div class="card card-soft card-hover p-4">
+        <div class="mb-3 text-primary">
+          <i class="bi bi-file-earmark-text fs-3"></i>
         </div>
+        <h2 class="fw-bold mb-1" th:text="${stats != null ? stats.totalApplications : 0}">12</h2>
+        <p class="text-muted small mb-0">Candidatures totales</p>
+      </div>
     </div>
 
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="card card-stats shadow-sm p-4 bg-white">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="p-2 bg-primary bg-opacity-10 rounded-3 text-primary">
-                        <i class="bi bi-file-earmark-text fs-5"></i>
-                    </div>
-                </div>
-                <h2 class="fw-bold mb-1" th:text="${stats.totalApplications}">12</h2>
-                <p class="text-muted small mb-0">Total Applications</p>
-            </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card card-soft card-hover p-4">
+        <div class="mb-3 text-info">
+          <i class="bi bi-eye fs-3"></i>
         </div>
-        <div class="col-md-3">
-            <div class="card card-stats shadow-sm p-4 bg-white">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="p-2 bg-info bg-opacity-10 rounded-3 text-info">
-                        <i class="bi bi-eye fs-5"></i>
-                    </div>
-                </div>
-                <h2 class="fw-bold mb-1" th:text="${stats.inReview}">4</h2>
-                <p class="text-muted small mb-0">Currently In Review</p>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card card-stats shadow-sm p-4 bg-white">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="p-2 bg-success bg-opacity-10 rounded-3 text-success">
-                        <i class="bi bi-calendar-event fs-5"></i>
-                    </div>
-                </div>
-                <h2 class="fw-bold mb-1" th:text="${stats.interviews}">2</h2>
-                <p class="text-muted small mb-0">Upcoming Interviews</p>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card card-stats shadow-sm p-4 bg-white">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="p-2 bg-secondary bg-opacity-10 rounded-3 text-secondary">
-                        <i class="bi bi-bookmark fs-5"></i>
-                    </div>
-                </div>
-                <h2 class="fw-bold mb-1" th:text="${stats.saved}">8</h2>
-                <p class="text-muted small mb-0">Saved for Later</p>
-            </div>
-        </div>
+        <h2 class="fw-bold mb-1" th:text="${stats != null ? stats.inReview : 0}">4</h2>
+        <p class="text-muted small mb-0">En cours d'examen</p>
+      </div>
     </div>
+
+    <div class="col-md-6 col-xl-3">
+      <div class="card card-soft card-hover p-4">
+        <div class="mb-3 text-success">
+          <i class="bi bi-calendar-event fs-3"></i>
+        </div>
+        <h2 class="fw-bold mb-1" th:text="${stats != null ? stats.interviews : 0}">2</h2>
+        <p class="text-muted small mb-0">Entretiens à venir</p>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+      <div class="card card-soft card-hover p-4">
+        <div class="mb-3 text-secondary">
+          <i class="bi bi-bookmark fs-3"></i>
+        </div>
+        <h2 class="fw-bold mb-1" th:text="${stats != null ? stats.saved : 0}">8</h2>
+        <p class="text-muted small mb-0">Sauvegardés</p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="row g-4">
+
+    <!-- APPLICATIONS -->
+    <div class="col-lg-8">
+      <div class="card card-soft overflow-hidden">
+
+        <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0">Candidatures actives</h5>
+          <a th:href="@{/applications}" class="btn btn-link text-decoration-none fw-semibold btn-sm">
+            Voir tout
+          </a>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+
+            <div th:each="app : ${applications}"
+                 class="list-group-item p-4 border-start-0 border-end-0 list-hover">
+
+              <div class="d-flex gap-3">
+
+                <div class="avatar-box avatar-square"
+                     th:text="${app.internship != null && app.internship.company != null && #strings.length(app.internship.company) >= 2}
+                              ? ${#strings.substring(app.internship.company, 0, 2).toUpperCase()}
+                              : 'IC'">
+                  TC
+                </div>
+
+                <div class="flex-grow-1">
+
+                  <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-2">
+
+                    <div>
+                      <h6 class="fw-bold mb-1"
+                          th:text="${app.internship != null ? app.internship.title : 'Stage'}">
+                        Software Engineering Intern
+                      </h6>
+
+                      <div class="d-flex flex-wrap gap-3 text-muted small">
+                        <span>
+                          <i class="bi bi-building me-1"></i>
+                          <span th:text="${app.internship != null ? app.internship.company : 'Entreprise'}">TechCorp</span>
+                        </span>
+
+                        <span>
+                          <i class="bi bi-geo-alt me-1"></i>
+                          <span th:text="${app.internship != null ? app.internship.location : 'Non spécifié'}">Remote</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <span class="status-badge bg-primary text-white align-self-start"
+                          th:text="${app.status}">
+                      Under Review
+                    </span>
+
+                  </div>
+
+                  <div class="text-muted small">
+                    <i class="bi bi-clock me-1"></i>
+                    Candidature envoyée le
+                    <span th:text="${app.submittedAt != null ? #temporals.format(app.submittedAt, 'dd MMM yyyy') : 'Date inconnue'}">
+                      25 avril 2026
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(applications)}" class="p-5 text-center text-muted">
+              <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+              <p>Aucune candidature pour le moment.</p>
+              <a th:href="@{/home}" class="btn btn-primary btn-sm px-4">
+                Explorer les stages
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOKMARKS -->
+    <div class="col-lg-4">
+      <div class="card card-soft h-100">
+
+        <div class="card-header bg-white border-0 p-4">
+          <h5 class="fw-bold mb-0">Récemment sauvegardés</h5>
+        </div>
+
+        <div class="card-body p-4 pt-0">
+
+          <div th:each="bookmark : ${bookmarks}" class="pb-4 mb-4 border-bottom">
+
+            <div class="d-flex align-items-start gap-3">
+
+              <div class="avatar-box avatar-square bg-light text-primary"
+                   th:text="${bookmark.internship != null && bookmark.internship.company != null && #strings.length(bookmark.internship.company) >= 1}
+                            ? ${#strings.substring(bookmark.internship.company, 0, 1)}
+                            : 'I'">
+                C
+              </div>
+
+              <div class="flex-grow-1 overflow-hidden">
+
+                <h6 class="text-truncate fw-bold mb-1"
+                    th:text="${bookmark.internship != null ? bookmark.internship.title : 'Stage'}">
+                  Backend Developer
+                </h6>
+
+                <p class="text-muted small mb-2"
+                   th:text="${bookmark.internship != null ? bookmark.internship.company : 'Entreprise'}">
+                  Cloud Systems
+                </p>
+
+                <div class="d-flex justify-content-between align-items-center gap-2">
+
+                  <span class="text-primary fw-bold small"
+                        th:text="${bookmark.internship != null && bookmark.internship.salary != null ? bookmark.internship.salary : 'Non spécifié'}">
+                    $2500/mo
+                  </span>
+
+                  <a th:if="${bookmark.internship != null}"
+                     th:href="@{'/internships/' + ${bookmark.internship.id}}"
+                     class="btn btn-outline-primary btn-sm rounded-pill">
+                    Voir
+                  </a>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div th:if="${#lists.isEmpty(bookmarks)}" class="py-4 text-center text-muted small">
+            <p class="mb-0">Sauvegardez vos stages favoris pour les retrouver ici.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="mt-5 border-top bg-white">
+  <div class="container-xl py-5">
 
     <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0">Active Applications</h5>
-                    <a th:href="@{/applications}"
-                       class="btn btn-link text-primary text-decoration-none fw-semibold btn-sm">View All</a>
-                </div>
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush">
-                        <div th:each="app : ${applications}"
-                             class="list-group-item p-4 border-0 border-bottom border-light hover-bg">
-                            <div class="d-flex gap-4">
-                                <div class="avatar-box bg-secondary rounded-3"
-                                     th:text="${#strings.substring(app.internship.company, 0, 2).toUpperCase()}">TC
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-start mb-1">
-                                        <div>
-                                            <h6 class="fw-bold mb-1" th:text="${app.internship.title}">Software
-                                                Engineering Intern</h6>
-                                            <div class="d-flex gap-3 text-muted small">
-                                                <span><i class="bi bi-building me-1"></i> <span
-                                                        th:text="${app.internship.company}">TechCorp</span></span>
-                                                <span><i class="bi bi-geo-alt me-1"></i> <span
-                                                        th:text="${app.internship.location}">Remote</span></span>
-                                            </div>
-                                        </div>
-                                        <span th:class="'status-badge bg-primary text-white'"
-                                              th:text="${app.status}">Under Review</span>
-                                    </div>
-                                    <div class="mt-3 d-flex align-items-center gap-4 text-muted"
-                                         style="font-size: 0.75rem;">
-                                        <span><i class="bi bi-clock me-1"></i> Applied on <span
-                                                th:text="${#temporals.format(app.submittedAt, 'MMM dd, yyyy')}">April 25</span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div th:if="${#lists.isEmpty(applications)}" class="p-5 text-center text-muted">
-                            <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
-                            <p>No applications yet. Start exploring internships!</p>
-                            <a th:href="@{/home}" class="btn btn-primary btn-sm px-4">Browse Now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 bg-white h-100">
-                <div class="card-header bg-white border-0 p-4">
-                    <h5 class="fw-bold mb-0">Recently Saved</h5>
-                </div>
-                <div class="card-body p-4 pt-0">
-                    <div class="space-y-4">
-                        <div th:each="bookmark : ${bookmarks}"
-                             class="mb-4 pb-4 border-bottom border-light last-child-0">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="avatar-box rounded-3 bg-light text-primary flex-shrink-0"
-                                     th:text="${#strings.substring(bookmark.internship.company, 0, 1)}">C
-                                </div>
-                                <div class="flex-grow-1 min-w-0">
-                                    <h6 class="text-truncate fw-bold mb-1" th:text="${bookmark.internship.title}">
-                                        Backend Developer</h6>
-                                    <p class="text-muted small mb-2" th:text="${bookmark.internship.company}">Cloud
-                                        Systems</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-primary fw-bold small"
-                                              th:text="${bookmark.internship.salary}">$2500/mo</span>
-                                        <a th:href="@{'/internships/' + ${bookmark.internship.id}}"
-                                           class="btn btn-outline-primary btn-sm rounded-pill"
-                                           style="font-size: 0.7rem;">Apply</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div th:if="${#lists.isEmpty(bookmarks)}" class="py-4 text-center text-muted small">
-                            <p>Save your favorite internships to track them here.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="col-lg-4 col-md-6">
+        <a class="navbar-brand fw-bold fs-4 text-primary d-block mb-3" th:href="@{/home}">
+          InternConnect
+        </a>
+
+        <p class="text-muted small pe-lg-5">
+          Connecter la prochaine génération de talents avec des opportunités de stage pertinentes.
+        </p>
+
+        <div class="d-flex gap-3 mt-4">
+          <a href="#" class="text-secondary"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="text-secondary"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="text-secondary"><i class="bi bi-github"></i></a>
         </div>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <h6 class="fw-bold mb-3">Plateforme</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><a th:href="@{/home}" class="text-muted text-decoration-none">Stages</a></li>
+          <li class="mb-2"><a th:href="@{/dashboard}" class="text-muted text-decoration-none">Tableau de bord</a></li>
+          <li class="mb-2"><a th:href="@{/profile}" class="text-muted text-decoration-none">Profil</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <h6 class="fw-bold mb-3">Support</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Centre d'aide</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Confidentialité</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Conditions</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-4 col-md-12">
+        <div class="p-4 rounded-4 bg-light">
+          <h6 class="fw-bold mb-2">Statut du système</h6>
+
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="p-1 bg-success rounded-circle"></span>
+            <span class="small text-muted">Tous les systèmes sont opérationnels</span>
+          </div>
+
+          <p class="small text-muted mb-0">
+            Besoin d'aide ? Contactez-nous à
+            <span class="text-primary fw-medium">support@internconnect.univ.fr</span>
+          </p>
+        </div>
+      </div>
+
     </div>
-</main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <hr class="my-5">
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+      <p class="text-muted small mb-0">
+        &copy; 2026 InternConnect. Conçu pour les étudiants.
+      </p>
+
+      <span class="text-muted small">Version 1.0.0</span>
+    </div>
+
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

@@ -1,168 +1,239 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InternConnect - Mon Profil</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f7f9fc; }
-        .bg-header { background: linear-gradient(to right, #142a6e, #1a3f91); color: white; }
-        .feature-icon { background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 8px; }
-        .card { border-radius: 16px; border: 1px solid #e5e7eb; }
-        .form-control:read-only { background-color: #f3f4f6; border-color: transparent; }
-        .btn-primary-custom { background-color: #1f4bd8; border: none; }
-        .profile-avatar { width: 100px; height: 100px; background: #1f4bd8; color: white; font-size: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto 1rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternConnect - Profil</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f7f9fc;
+    }
+
+    .header-gradient {
+      background: linear-gradient(to right, #142a6e, #1a3f91);
+      color: white;
+    }
+
+    .card {
+      border-radius: 1rem;
+      border: none;
+      box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.05);
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #1f4bd8;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 auto 1rem;
+    }
+
+    .form-control:read-only {
+      background-color: #f3f4f6;
+      border: none;
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="bg-header py-2 mb-4">
-    <div class="container">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <div>
-                <h3 class="fw-bold mb-1">Mon Profil</h3>
-                <p class="opacity-75 mb-0">Gérez vos informations personnelles et professionnelles</p>
-            </div>
-            <div class="mt-3 mt-md-0 d-flex gap-2">
-                <a th:href="@{/dashboard}" class="btn btn-outline-light d-flex align-items-center gap-2">
-                    <i data-lucide="arrow-left" style="width: 18px;"></i> Retour
-                </a>
-                <a th:href="@{/profile/export}" class="btn btn-outline-light d-flex align-items-center gap-2">
-                    <i data-lucide="file-text" style="width: 18px;"></i> Exporter CV
-                </a>
-                <button id="editBtn" onclick="toggleEditMode()" class="btn btn-light text-primary d-flex align-items-center gap-2">
-                    <i data-lucide="edit-3" style="width: 18px;"></i> <span id="btnText">Modifier le profil</span>
-                </button>
-            </div>
-        </div>
+<!-- HEADER -->
+<div class="header-gradient py-3 mb-4">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+
+    <div>
+      <h4 class="fw-bold mb-1">Mon Profil</h4>
+      <p class="mb-0 small opacity-75">
+        Gérez vos informations personnelles
+      </p>
     </div>
+
+    <div class="d-flex gap-2">
+
+      <a th:href="@{/dashboard}" class="btn btn-outline-light btn-sm">
+        <i class="bi bi-arrow-left"></i> Retour
+      </a>
+
+      <a th:href="@{/profile/export}" class="btn btn-outline-light btn-sm">
+        <i class="bi bi-file-earmark-text"></i> Exporter CV
+      </a>
+
+      <button id="editBtn" class="btn btn-light text-primary btn-sm">
+        <i class="bi bi-pencil"></i>
+        <span id="btnText">Modifier</span>
+      </button>
+
+    </div>
+  </div>
 </div>
 
 <div class="container pb-5">
-    <div th:if="${saved}" class="alert alert-success d-flex align-items-center gap-2 mb-4" role="alert">
-        <i data-lucide="check-circle" style="width: 20px;"></i>
-        <div>Profil sauvegardé avec succès.</div>
-    </div>
 
-    <div class="container pb-5">
-        <div th:if="${saved}" class="alert alert-success d-flex align-items-center gap-2 mb-4" role="alert">
-            <i data-lucide="check-circle" style="width: 20px;"></i>
-            <div>Profil sauvegardé avec succès.</div>
+  <!-- SUCCESS -->
+  <div th:if="${saved}" class="alert alert-success d-flex align-items-center gap-2">
+    <i class="bi bi-check-circle"></i>
+    <span>Profil sauvegardé avec succès.</span>
+  </div>
+
+  <form id="profileForm" th:action="@{/profile}" method="post" th:object="${form}">
+
+    <div class="row g-4 mb-4">
+
+      <!-- LEFT -->
+      <div class="col-lg-4">
+        <div class="card p-4 text-center h-100">
+
+          <div class="profile-avatar"
+               th:text="${user != null && user.firstName != null && user.lastName != null}
+                        ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}
+                        : '??'">
+            AM
+          </div>
+
+          <h5 class="fw-bold"
+              th:text="${user != null ? user.firstName + ' ' + user.lastName : 'Utilisateur'}">
+            Alex Martin
+          </h5>
+
+          <p class="text-muted small mb-3"
+             th:text="${user != null ? user.role : ''}">
+            USER
+          </p>
+
+          <div class="text-start border-top pt-3 small text-muted">
+
+            <div class="mb-2">
+              <i class="bi bi-envelope me-2"></i>
+              <span th:text="${user != null ? user.email : ''}">email</span>
+            </div>
+
+            <div>
+              <i class="bi bi-calendar me-2"></i>
+              <span th:text="${user != null && user.registrationDate != null}
+                              ? 'Membre depuis ' + ${#temporals.format(user.registrationDate,'MMM yyyy')}
+                              : ''">
+              </span>
+            </div>
+
+          </div>
         </div>
+      </div>
 
-        <form id="profileForm" th:action="@{/profile}" method="post" th:object="${form}">
+      <!-- RIGHT -->
+      <div class="col-lg-8">
+        <div class="card p-4 h-100">
 
-            <div class="row g-4 mb-4">
-                <div class="col-lg-4">
-                    <div class="card p-4 shadow-sm text-center h-100">
-                        <div class="profile-avatar fw-bold">
-                            <span th:text="${user.firstName != null && user.lastName != null} ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)} : '??'">AM</span>
-                        </div>
-                        <h3 class="fw-bold mb-1" th:text="${user.firstName + ' ' + user.lastName}">Alex Martin</h3>
-                        <p class="text-muted small mb-4" th:text="${user.role}">USER</p>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">
+              <i class="bi bi-person me-2 text-primary"></i>
+              Informations personnelles
+            </h5>
 
-                        <div class="text-start border-top pt-3">
-                            <div class="d-flex align-items-center gap-3 mb-2 text-muted small">
-                                <i data-lucide="mail" style="width: 16px;"></i>
-                                <span th:text="${user.email}">email@univ.fr</span>
-                            </div>
-                            <div class="d-flex align-items-center gap-3 text-muted small">
-                                <i data-lucide="calendar" style="width: 16px;"></i>
-                                <span th:text="${user.registrationDate != null} ? 'Membre depuis ' + ${#temporals.format(user.registrationDate, 'MMM yyyy')} : 'Membre'">Jan 2024</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <button type="submit" id="saveBtn" class="btn btn-primary btn-sm d-none">
+              Enregistrer
+            </button>
+          </div>
 
-                <div class="col-lg-8">
-                    <div class="card p-4 shadow-sm h-100">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2">
-                                <i data-lucide="user" class="text-primary"></i> Infos Personnelles
-                            </h4>
-                            <button type="submit" id="saveBtn" class="btn btn-primary-custom text-white px-4 d-none">
-                                Enregistrer
-                            </button>
-                        </div>
+          <div class="row g-3">
 
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label small fw-medium text-muted">Prénom</label>
-                                <input type="text" th:field="*{firstName}" class="form-control view-mode" readonly>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-medium text-muted">Nom</label>
-                                <input type="text" th:field="*{lastName}" class="form-control view-mode" readonly>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label small fw-medium text-muted">Bio</label>
-                                <textarea th:field="*{description}" rows="3" class="form-control view-mode" readonly placeholder="Parlez-nous de vous..."></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-6">
+              <label for="firstName" class="form-label small">Prénom</label>
+              <input id="firstName" th:field="*{firstName}" class="form-control view-mode" readonly>
             </div>
 
-            <div class="row g-4">
-                <div class="col-12">
-                    <div class="card p-4 shadow-sm mb-4">
-                        <h4 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                            <i data-lucide="graduation-cap" class="text-primary"></i> Formation & Compétences
-                        </h4>
-                        <div class="mb-3">
-                            <label class="form-label small fw-medium text-muted">Éducation</label>
-                            <textarea th:field="*{education}" class="form-control view-mode" rows="2" readonly></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-medium text-muted">Compétences (séparées par des virgules)</label>
-                            <input type="text" th:field="*{skills}" class="form-control view-mode" readonly>
-                        </div>
-                    </div>
-
-                    <div class="card p-4 shadow-sm">
-                        <h4 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                            <i data-lucide="briefcase" class="text-primary"></i> Expériences & Préférences
-                        </h4>
-                        <div class="mb-3">
-                            <label class="form-label small fw-medium text-muted">Expérience Professionnelle</label>
-                            <textarea th:field="*{experience}" class="form-control view-mode" rows="4" readonly></textarea>
-                        </div>
-                        <div class="mb-0">
-                            <label class="form-label small fw-medium text-muted">Préférences de stage</label>
-                            <textarea th:field="*{preferences}" class="form-control view-mode" rows="2" readonly></textarea>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-6">
+              <label for="lastName" class="form-label small">Nom</label>
+              <input id="lastName" th:field="*{lastName}" class="form-control view-mode" readonly>
             </div>
-        </form>
+
+            <div class="col-12">
+              <label for="bio" class="form-label small">Bio</label>
+              <textarea id="bio" th:field="*{description}" class="form-control view-mode" rows="3" readonly></textarea>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
     </div>
+
+    <!-- EXTRA -->
+    <div class="card p-4 mb-4">
+
+      <h5 class="fw-bold mb-3">
+        <i class="bi bi-mortarboard me-2 text-primary"></i>
+        Formation & Compétences
+      </h5>
+
+      <div class="mb-3">
+        <label class="form-label small">Éducation</label>
+        <textarea th:field="*{education}" class="form-control view-mode" rows="2" readonly></textarea>
+      </div>
+
+      <div>
+        <label class="form-label small">Compétences</label>
+        <input th:field="*{skills}" class="form-control view-mode" readonly>
+      </div>
+
+    </div>
+
+    <div class="card p-4">
+
+      <h5 class="fw-bold mb-3">
+        <i class="bi bi-briefcase me-2 text-primary"></i>
+        Expériences
+      </h5>
+
+      <div class="mb-3">
+        <label class="form-label small">Expérience</label>
+        <textarea th:field="*{experience}" class="form-control view-mode" rows="3" readonly></textarea>
+      </div>
+
+      <div>
+        <label class="form-label small">Préférences</label>
+        <textarea th:field="*{preferences}" class="form-control view-mode" rows="2" readonly></textarea>
+      </div>
+
+    </div>
+
+  </form>
 </div>
 
 <script>
-    lucide.createIcons();
+  let editing = false;
 
-    function toggleEditMode() {
-        const btn = document.getElementById('editBtn');
-        const btnText = document.getElementById('btnText');
-        const saveBtn = document.getElementById('saveBtn');
-        const inputs = document.querySelectorAll('.view-mode');
+  document.getElementById("editBtn").addEventListener("click", function () {
+    editing = !editing;
 
-        const isEditing = btn.classList.contains('btn-danger');
+    const inputs = document.querySelectorAll(".view-mode");
+    const saveBtn = document.getElementById("saveBtn");
+    const btnText = document.getElementById("btnText");
 
-        if (!isEditing) {
-            btn.classList.replace('btn-light', 'btn-danger');
-            btn.classList.remove('text-primary');
-            btn.classList.add('text-white');
-            btnText.textContent = "Annuler";
-            saveBtn.classList.remove('d-none');
-            inputs.forEach(input => input.removeAttribute('readonly'));
-        } else {
-            window.location.reload();
-        }
+    if (editing) {
+      inputs.forEach(i => i.removeAttribute("readonly"));
+      saveBtn.classList.remove("d-none");
+      btnText.textContent = "Annuler";
+      this.classList.replace("btn-light", "btn-danger");
+      this.classList.replace("text-primary", "text-white");
+    } else {
+      window.location.reload();
     }
+  });
 </script>
+
 </body>
 </html>

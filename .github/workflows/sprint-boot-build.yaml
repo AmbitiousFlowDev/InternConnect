@@ -3,13 +3,12 @@ name: Java 25 CI & Release
 on:
   push:
     tags:
-      - "v*" # Trigger only when you push a tag like v1.0.0
-
+      - "v*"
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Crucial for creating releases
+      contents: write
 
     steps:
     - uses: actions/checkout@v4

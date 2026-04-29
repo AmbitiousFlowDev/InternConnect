@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,12 +16,8 @@ import uca.github.org.records.ProfileDTO;
 import uca.github.org.repositories.UserRepository;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-import org.springframework.web.bind.annotation.RequestParam;
 import uca.github.org.services.ProfileService;
 
 @Controller
@@ -34,16 +29,19 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public String getProfilePage(@AuthenticationPrincipal User user, Model model) {
+
         if (user == null) return "redirect:/login";
 
         User currentUser = userRepository.findById(user.getId()).orElseThrow();
         Profile profile = currentUser.getProfile();
 
         ProfileDTO form = ProfileDTO.builder().firstName(currentUser.getFirstName())
-                .lastName(currentUser.getLastName()).description(profile != null ? profile.getDescription() : "")
-                .education(profile != null ? profile.getEducation() : "").skills(profile != null ? profile.getSkills() : "")
-                .experience(profile != null ? profile.getExperience() : "").preferences(profile != null ? profile.getPreferences() : "")
-                .build();
+            .lastName(currentUser.getLastName()).description(profile != null ? profile.getDescription() : "")
+            .education(profile != null ? profile.getEducation() : "")
+            .skills(profile != null ? profile.getSkills() : "")
+            .experience(profile != null ? profile.getExperience() : "")
+            .preferences(profile != null ? profile.getPreferences() : "")
+            .build();
 
         model.addAttribute("user", currentUser);
         model.addAttribute("form", form);
@@ -52,13 +50,16 @@ public class ProfileController {
         model.addAttribute("profileCompleteness", profileService.calculateCompleteness(currentUser));
 
         return "pages/profile";
+
     }
 
     @PostMapping("/profile")
     public String updateProfile(@AuthenticationPrincipal User user, @ModelAttribute("form") ProfileDTO profileDTO,RedirectAttributes redirectAttributes) {
+
         profileService.updateProfile(user, profileDTO);
         redirectAttributes.addFlashAttribute("saved", true);
         return "redirect:/profile";
+        
     }
 
     @GetMapping("/profile/export")
