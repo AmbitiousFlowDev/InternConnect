@@ -70,4 +70,6 @@ public class Internship {
     @Builder.Default
     private List<Recommendation> recommendations = new ArrayList<>();
 
+    private String salary;
+
 }

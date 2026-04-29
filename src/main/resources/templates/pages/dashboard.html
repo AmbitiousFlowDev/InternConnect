@@ -1,460 +1,188 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Dashboard - InternConnect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-  </head>
-  <body class="bg-[#f7f9fb]">
-  <nav class="sticky top-0 z-50 bg-white border-b border-gray-100">
-    <div class="max-w-[1400px] mx-auto px-6 py-3">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-8">
-          <a th:href="@{/home}" class="text-2xl font-display font-bold" style="color: var(--primary);">InternConnect</a>
-        </div>
-        <div class="flex items-center gap-6">
-          <a th:href="@{/home}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-          </a>
-          <a th:href="@{/dashboard}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Dashboard">
-            <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </a>
-          <a href="messages.html" class="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
-            <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </a>
-          <a href="#" class="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
-            <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span class="absolute top-1 right-1 w-2 h-2 bg-[#d4183d] rounded-full"></span>
-          </a>
-          <a th:href="@{/profile}">
-            <div
-              class="w-8 h-8 rounded-full bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white text-sm font-medium cursor-pointer"
-              th:text="${#strings.substring(user?.firstName ?: 'A',0,1) + #strings.substring(user?.lastName ?: 'M',0,1)}">
-              AM</div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </nav>
-  <div class="max-w-[1400px] mx-auto px-6 py-8">
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-4xl font-display font-bold mb-2" style="letter-spacing: -0.02em;"
-          th:text="'Welcome back, ' + (${user?.firstName} ?: 'Alex') + '!'">Welcome back, Alex!</h1>
-        <p class="text-gray-600">Here's what's happening with your internship search</p>
-      </div>
-    </div>
-    <div class="grid grid-cols-4 gap-4 mb-8">
-      <div class="p-6 bg-white rounded-xl">
-        <div class="flex items-center justify-between mb-3">
-          <div class="p-2 rounded-lg" style="background-color: #16327415;">
-            <svg class="w-5 h-5" style="color: #163274;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-        </div>
-        <div class="text-3xl font-bold mb-1" th:text="${stats?.totalApplications ?: '12'}">12</div>
-        <div class="text-sm text-gray-600">Applications</div>
-      </div>
+    <style>
+        :root {
+            --primary: #163274;
+            --secondary: #00677f;
+            --surface: #f7f9fb;
+        }
+        body { background-color: var(--surface); font-family: 'Inter', system-ui, sans-serif; }
+        .nav-link-custom { padding: 0.5rem; border-radius: 0.5rem; transition: all 0.2s; color: #4b5563; }
+        .nav-link-custom:hover { background-color: #f3f4f6; color: var(--primary); }
+        .card-stats { border: none; border-radius: 1rem; transition: transform 0.2s; }
+        .card-stats:hover { transform: translateY(-4px); }
+        .avatar-box {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #163274 0%, #2a4a8f 100%);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600; font-size: 0.875rem;
+        }
+        .status-badge { font-size: 0.75rem; padding: 0.35rem 0.75rem; border-radius: 9999px; font-weight: 500; }
+    </style>
+</head>
+<body>
 
-      <div class="p-6 bg-white rounded-xl">
-        <div class="flex items-center justify-between mb-3">
-          <div class="p-2 rounded-lg" style="background-color: #00677f15;">
-            <svg class="w-5 h-5" style="color: #00677f;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </div>
-        </div>
-        <div class="text-3xl font-bold mb-1" th:text="${stats?.inReview ?: '4'}">4</div>
-        <div class="text-sm text-gray-600">In Review</div>
-      </div>
-
-      <div class="p-6 bg-white rounded-xl">
-        <div class="flex items-center justify-between mb-3">
-          <div class="p-2 rounded-lg" style="background-color: #2e7d3215;">
-            <svg class="w-5 h-5" style="color: #2e7d32;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-        </div>
-        <div class="text-3xl font-bold mb-1" th:text="${stats?.interviews ?: '2'}">2</div>
-        <div class="text-sm text-gray-600">Interviews</div>
-      </div>
-
-      <div class="p-6 bg-white rounded-xl">
-        <div class="flex items-center justify-between mb-3">
-          <div class="p-2 rounded-lg" style="background-color: #6b727815;">
-            <svg class="w-5 h-5" style="color: #6b7278;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-          </div>
-        </div>
-        <div class="text-3xl font-bold mb-1" th:text="${stats?.saved ?: '8'}">8</div>
-        <div class="text-sm text-gray-600">Saved</div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-3 gap-6">
-      <!-- Left Column - Applications & Events -->
-      <div class="col-span-2 space-y-6">
-        <!-- My Applications -->
-        <div class="p-6 bg-white rounded-xl">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-display font-bold">My Applications</h2>
-            <a href="#" class="text-sm font-medium" style="color: var(--primary);">View All</a>
-          </div>
-
-          <div class="space-y-4">
-            <div th:each="app : ${applications}" class="p-4 rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
-              style="background-color: var(--surface-container-low);">
-              <div class="flex gap-4">
-                <div
-                  class="w-12 h-12 rounded-lg bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white font-bold flex-shrink-0"
-                  th:text="${app?.companyLogo ?: 'TC'}">TC</div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between mb-1">
-                    <div>
-                      <h3 class="font-medium mb-1" th:text="${app?.title ?: 'Software Engineering Intern'}">Software
-                        Engineering Intern</h3>
-                      <div class="flex items-center gap-3 text-sm text-gray-600">
-                        <div class="flex items-center gap-1">
-                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                          </svg>
-                          <span th:text="${app?.company ?: 'TechCorp'}">TechCorp</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          <span th:text="${app?.location ?: 'San Francisco, CA'}">San Francisco, CA</span>
-                        </div>
-                      </div>
+    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top py-3">
+        <div class="container-xl">
+            <a class="navbar-brand fw-bold fs-3 text-primary" th:href="@{/home}">InternConnect</a>
+            
+            <div class="d-flex align-items-center gap-4">
+                <a th:href="@{/home}" class="nav-link-custom" title="Home"><i class="bi bi-house fs-5"></i></a>
+                <a th:href="@{/dashboard}" class="nav-link-custom" title="Dashboard"><i class="bi bi-briefcase fs-5"></i></a>
+                <a th:href="@{/messages}" class="nav-link-custom position-relative" title="Messages">
+                    <i class="bi bi-chat-dots fs-5"></i>
+                </a>
+                <a th:href="@{/notifications}" class="nav-link-custom position-relative" title="Notifications">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-2 start-3 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                </a>
+                <a th:href="@{/profile}" class="text-decoration-none ms-2">
+                    <div class="avatar-box" 
+                         th:text="${user.firstName != null && user.lastName != null} ? 
+                                  ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)} : '??'">
+                        AM
                     </div>
-                    <div class="flex flex-col items-end gap-2">
-                      <span class="px-3 py-1 rounded-full text-xs font-medium text-white"
-                        th:style="'background-color: ' + (${app?.statusColor} ?: '#00677f')"
-                        th:text="${app?.status ?: 'Under Review'}">Under Review</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-4 mt-3 text-xs text-gray-600">
-                    <div class="flex items-center gap-1">
-                      <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span th:text="'Applied ' + (${app?.appliedDate} ?: '2 days ago')">Applied 2 days ago</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                      <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span th:text="${app?.deadline ?: '5 days left'}">5 days left</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                </a>
             </div>
+        </div>
+    </nav>
 
-            <!-- Static Fallback Applications -->
-            <div class="p-4 rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
-              style="background-color: var(--surface-container-low);">
-              <div class="flex gap-4">
-                <div
-                  class="w-12 h-12 rounded-lg bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white font-bold flex-shrink-0">
-                  DW</div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between mb-1">
-                    <div>
-                      <h3 class="font-medium mb-1">Data Science Intern</h3>
-                      <div class="flex items-center gap-3 text-sm text-gray-600">
-                        <div class="flex items-center gap-1">
-                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                          </svg>
-                          <span>DataWorks Ltd</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          <span>Boston, MA</span>
-                        </div>
-                      </div>
-                    </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-medium text-white bg-[#2e7d32]">Interview
-                      Scheduled</span>
-                  </div>
-                  <div class="flex items-center gap-4 mt-3 text-xs text-gray-600">
-                    <span>Applied 5 days ago</span>
-                    <span>Interview: Apr 30, 2PM</span>
-                  </div>
-                </div>
-              </div>
+    <main class="container-xl py-5">
+        <div class="row mb-5">
+            <div class="col-12">
+                <h1 class="display-6 fw-bold mb-2" 
+                    th:text="'Welcome back, ' + ${user.firstName} + '!'">Welcome back, Alex!</h1>
+                <p class="text-secondary">Here's a summary of your internship applications and saved opportunities.</p>
             </div>
-
-            <div class="p-4 rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
-              style="background-color: var(--surface-container-low);">
-              <div class="flex gap-4">
-                <div
-                  class="w-12 h-12 rounded-lg bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white font-bold flex-shrink-0">
-                  DS</div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between mb-1">
-                    <div>
-                      <h3 class="font-medium mb-1">UX Design Intern</h3>
-                      <div class="flex items-center gap-3 text-sm text-gray-600">
-                        <div class="flex items-center gap-1">
-                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                          </svg>
-                          <span>DesignStudio</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          <span>New York, NY</span>
-                        </div>
-                      </div>
-                    </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-medium text-white bg-[#6b7278]">Submitted</span>
-                  </div>
-                  <div class="flex items-center gap-4 mt-3 text-xs text-gray-600">
-                    <span>Applied 1 day ago</span>
-                    <span>10 days left</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <!-- Upcoming Events -->
-        <div class="p-6 bg-white rounded-xl">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-display font-bold">Upcoming Events</h2>
-          </div>
-
-          <div class="space-y-3">
-            <div th:each="event : ${upcomingEvents}"
-              class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-              <div class="p-2 rounded-lg"
-                th:style="'background-color: ' + (${event?.type} == 'interview' ? '#2e7d3215' : (${event?.type} == 'deadline' ? '#d4183d15' : '#00677f15'))">
-                <svg class="w-5 h-5"
-                  th:style="'color: ' + (${event?.type} == 'interview' ? '#2e7d32' : (${event?.type} == 'deadline' ? '#d4183d' : '#00677f'))"
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-medium text-sm mb-1" th:text="${event?.title ?: 'Interview with DataWorks Ltd'}">
-                  Interview with DataWorks Ltd</h4>
-                <p class="text-xs text-gray-600">
-                  <span th:text="${event?.date ?: 'Apr 30, 2026'}">Apr 30, 2026</span> • <span
-                    th:text="${event?.time ?: '2:00 PM'}">2:00 PM</span>
-                </p>
-              </div>
-            </div>
-
-            <!-- Static Fallback Events -->
-            <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-              <div class="p-2 rounded-lg" style="background-color: #d4183d15;">
-                <svg class="w-5 h-5" style="color: #d4183d;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-medium text-sm mb-1">Application Deadline - Cloud Systems</h4>
-                <p class="text-xs text-gray-600">May 3, 2026 • 11:59 PM</p>
-              </div>
-            </div>
-
-            <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-              <div class="p-2 rounded-lg" style="background-color: #00677f15;">
-                <svg class="w-5 h-5" style="color: #00677f;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-medium text-sm mb-1">Career Fair - Tech Summit 2026</h4>
-                <p class="text-xs text-gray-600">May 5, 2026 • 10:00 AM</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column - Saved & Recommendations -->
-      <div class="space-y-6">
-        <!-- Saved Offers -->
-        <div class="p-6 bg-white rounded-xl">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-display font-bold">Saved Offers</h2>
-            <a href="#" class="text-sm font-medium" style="color: var(--primary);">See All</a>
-          </div>
-
-          <div class="space-y-4">
-            <div th:each="offer : ${savedOffers}"
-              class="p-4 rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
-              style="background-color: var(--surface-container-low);">
-              <div class="flex items-start gap-3 mb-3">
-                <div
-                  class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-                  th:text="${offer?.logo ?: 'CS'}">CS</div>
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-medium text-sm mb-1" th:text="${offer?.title ?: 'Backend Developer Intern'}">Backend
-                    Developer Intern</h3>
-                  <p class="text-xs mb-1 text-gray-600" th:text="${offer?.company ?: 'Cloud Systems Inc'}">Cloud Systems
-                    Inc</p>
-                  <div class="flex items-center gap-2 text-xs text-gray-600">
-                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span th:text="${offer?.location ?: 'Seattle, WA'}">Seattle, WA</span>
-                  </div>
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card card-stats shadow-sm p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="p-2 bg-primary bg-opacity-10 rounded-3 text-primary">
+                            <i class="bi bi-file-earmark-text fs-5"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1" th:text="${stats.totalApplications}">12</h2>
+                    <p class="text-muted small mb-0">Total Applications</p>
                 </div>
-              </div>
-              <div class="flex items-center justify-between text-xs text-gray-600">
-                <span class="font-medium" style="color: var(--secondary);"
-                  th:text="${offer?.salary ?: '$2500/month'}">$2500/month</span>
-                <span th:text="${offer?.posted ?: '3h ago'}">3h ago</span>
-              </div>
             </div>
-
-            <!-- Static Fallback Saved Offers -->
-            <div class="p-4 rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
-              style="background-color: var(--surface-container-low);">
-              <div class="flex items-start gap-3 mb-3">
-                <div
-                  class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#163274] to-[#2a4a8f] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                  AI</div>
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-medium text-sm mb-1">Machine Learning Intern</h3>
-                  <p class="text-xs mb-1 text-gray-600">AI Research Corp</p>
-                  <div class="flex items-center gap-2 text-xs text-gray-600">
-                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span>Remote</span>
-                  </div>
+            <div class="col-md-3">
+                <div class="card card-stats shadow-sm p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="p-2 bg-info bg-opacity-10 rounded-3 text-info">
+                            <i class="bi bi-eye fs-5"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1" th:text="${stats.inReview}">4</h2>
+                    <p class="text-muted small mb-0">Currently In Review</p>
                 </div>
-              </div>
-              <div class="flex items-center justify-between text-xs text-gray-600">
-                <span class="font-medium" style="color: var(--secondary);">$3000/month</span>
-                <span>1d ago</span>
-              </div>
             </div>
-          </div>
+            <div class="col-md-3">
+                <div class="card card-stats shadow-sm p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="p-2 bg-success bg-opacity-10 rounded-3 text-success">
+                            <i class="bi bi-calendar-event fs-5"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1" th:text="${stats.interviews}">2</h2>
+                    <p class="text-muted small mb-0">Upcoming Interviews</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-stats shadow-sm p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="p-2 bg-secondary bg-opacity-10 rounded-3 text-secondary">
+                            <i class="bi bi-bookmark fs-5"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1" th:text="${stats.saved}">8</h2>
+                    <p class="text-muted small mb-0">Saved for Later</p>
+                </div>
+            </div>
         </div>
 
-        <!-- AI Recommendations -->
-        <div class="p-6 bg-white rounded-xl">
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-2">
-              <svg class="w-5 h-5" style="color: var(--secondary);" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-              <h2 class="text-xl font-display font-bold">Recommended</h2>
-            </div>
-          </div>
-
-          <div class="space-y-4">
-            <div th:each="rec : ${recommendations}"
-              class="p-4 rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
-              style="background-color: var(--surface-container-low);">
-              <div class="flex items-start gap-3 mb-3">
-                <div
-                  class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00677f] to-[#163274] flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-                  th:text="${rec?.logo ?: 'WS'}">WS</div>
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-medium text-sm mb-1" th:text="${rec?.title ?: 'Frontend Developer Intern'}">Frontend
-                    Developer Intern</h3>
-                  <p class="text-xs mb-2 text-gray-600">
-                    <span th:text="${rec?.company ?: 'WebTech Solutions'}">WebTech Solutions</span> • <span
-                      th:text="${rec?.location ?: 'Chicago, IL'}">Chicago, IL</span>
-                  </p>
-                  <div class="flex items-center gap-1">
-                    <svg class="w-3 h-3" style="color: #2e7d32;" fill="#2e7d32" viewBox="0 0 24 24">
-                      <path
-                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                    <span class="text-xs font-medium" style="color: #2e7d32;"
-                      th:text="(${rec?.match} ?: '95') + '% Match'">95% Match</span>
-                  </div>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">Active Applications</h5>
+                        <a th:href="@{/applications}" class="btn btn-link text-primary text-decoration-none fw-semibold btn-sm">View All</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <div th:each="app : ${applications}" class="list-group-item p-4 border-0 border-bottom border-light hover-bg">
+                                <div class="d-flex gap-4">
+                                    <div class="avatar-box bg-secondary rounded-3" 
+                                         th:text="${#strings.substring(app.internship.company, 0, 2).toUpperCase()}">TC</div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div>
+                                                <h6 class="fw-bold mb-1" th:text="${app.internship.title}">Software Engineering Intern</h6>
+                                                <div class="d-flex gap-3 text-muted small">
+                                                    <span><i class="bi bi-building me-1"></i> <span th:text="${app.internship.company}">TechCorp</span></span>
+                                                    <span><i class="bi bi-geo-alt me-1"></i> <span th:text="${app.internship.location}">Remote</span></span>
+                                                </div>
+                                            </div>
+                                            <span th:class="'status-badge bg-primary text-white'" 
+                                                  th:text="${app.status}">Under Review</span>
+                                        </div>
+                                        <div class="mt-3 d-flex align-items-center gap-4 text-muted" style="font-size: 0.75rem;">
+                                            <span><i class="bi bi-clock me-1"></i> Applied on <span th:text="${#temporals.format(app.submittedAt, 'MMM dd, yyyy')}">April 25</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.isEmpty(applications)}" class="p-5 text-center text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+                                <p>No applications yet. Start exploring internships!</p>
+                                <a th:href="@{/home}" class="btn btn-primary btn-sm px-4">Browse Now</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
 
-            <!-- Static Fallback Recommendations -->
-            <div class="p-4 rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
-              style="background-color: var(--surface-container-low);">
-              <div class="flex items-start gap-3 mb-3">
-                <div
-                  class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00677f] to-[#163274] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                  IC</div>
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-medium text-sm mb-1">DevOps Intern</h3>
-                  <p class="text-xs mb-2 text-gray-600">Infrastructure Co • Denver, CO</p>
-                  <div class="flex items-center gap-1">
-                    <svg class="w-3 h-3" style="color: #2e7d32;" fill="#2e7d32" viewBox="0 0 24 24">
-                      <path
-                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                    <span class="text-xs font-medium" style="color: #2e7d32;">88% Match</span>
-                  </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 bg-white h-100">
+                    <div class="card-header bg-white border-0 p-4">
+                        <h5 class="fw-bold mb-0">Recently Saved</h5>
+                    </div>
+                    <div class="card-body p-4 pt-0">
+                        <div class="space-y-4">
+                            <div th:each="bookmark : ${bookmarks}" class="mb-4 pb-4 border-bottom border-light last-child-0">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="avatar-box rounded-3 bg-light text-primary flex-shrink-0" 
+                                         th:text="${#strings.substring(bookmark.internship.company, 0, 1)}">C</div>
+                                    <div class="flex-grow-1 min-w-0">
+                                        <h6 class="text-truncate fw-bold mb-1" th:text="${bookmark.internship.title}">Backend Developer</h6>
+                                        <p class="text-muted small mb-2" th:text="${bookmark.internship.company}">Cloud Systems</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-primary fw-bold small" th:text="${bookmark.internship.salary}">$2500/mo</span>
+                                            <a th:href="@{'/internships/' + ${bookmark.internship.id}}" class="btn btn-outline-primary btn-sm rounded-pill" style="font-size: 0.7rem;">Apply</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.isEmpty(bookmarks)}" class="py-4 text-center text-muted small">
+                                <p>Save your favorite internships to track them here.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
