@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternConnect - Connexion</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Optional Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .left-panel {
+      background: linear-gradient(to bottom, #142a6e, #17357f, #1a3f91);
+      color: white;
+      height: 100vh;
+      padding: 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .feature-icon {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+
+    .right-panel {
+      background-color: #f7f9fc;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+    }
+
+    .login-card {
+      max-width: 420px;
+      width: 100%;
+      border-radius: 16px;
+    }
+
+    .form-control {
+      background-color: #eef2f7;
+      border: none;
+      padding: 12px 14px;
+    }
+
+    .form-control:focus {
+      border: 1px solid #1f4bd8;
+      box-shadow: 0 0 0 0.15rem rgba(31, 75, 216, 0.2);
+    }
+
+    .btn-primary {
+      background-color: #1f4bd8;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #173bb0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- LEFT PANEL -->
+      <div class="col-md-5 left-panel">
+
+        <!-- Brand -->
+        <div>
+          <h1 class="display-4 fw-bold">InternConnect</h1>
+          <p class="mt-3 text-white-50">
+            Plateforme de partage d'opportunités de stages
+          </p>
+        </div>
+
+        <!-- Content -->
+        <div>
+
+          <div class="mb-5">
+            <h2 class="fw-bold">
+              Rejoignez la prochaine génération de talents
+            </h2>
+            <p class="text-white-50 mt-3">
+              Centralisez les offres de stages issues de réseaux étudiants et
+              explorez des opportunités pertinentes en un seul endroit.
+            </p>
+          </div>
+
+          <!-- Features -->
+          <div class="row g-3 text-sm">
+
+            <div class="col-6 d-flex align-items-center">
+              <div class="feature-icon">🎓</div>
+              <span>Opportunités exclusives</span>
+            </div>
+
+            <div class="col-6 d-flex align-items-center">
+              <div class="feature-icon">👥</div>
+              <span>Réseau étudiant</span>
+            </div>
+
+            <div class="col-6 d-flex align-items-center">
+              <div class="feature-icon">🔍</div>
+              <span>Recherche avancée</span>
+            </div>
+
+            <div class="col-6 d-flex align-items-center">
+              <div class="feature-icon">📈</div>
+              <span>Recommandations IA</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="col-md-7 right-panel">
+
+        <div class="card shadow-sm login-card p-4">
+
+          <h2 class="fw-bold">Connexion</h2>
+          <p class="text-muted">
+            Accédez à votre espace personnel
+          </p>
+
+          <form th:action="@{/login}" method="post" class="mt-4">
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+              <label class="form-label">Email universitaire</label>
+              <input type="email" name="username"
+                     class="form-control"
+                     placeholder="prenom.nom@university.edu" required>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="mb-3">
+              <label class="form-label">Mot de passe</label>
+              <input type="password" name="password"
+                     class="form-control"
+                     placeholder="••••••••" required>
+            </div>
+
+            <!-- OPTIONS -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="remember">
+                <label class="form-check-label" for="remember">
+                  Se souvenir de moi
+                </label>
+              </div>
+
+              <a href="#" class="text-primary text-decoration-none">
+                Mot de passe oublié ?
+              </a>
+
+            </div>
+
+            <!-- ERROR -->
+            <div th:if="${param.error}" class="alert alert-danger py-2">
+              Identifiants invalides
+            </div>
+
+            <!-- BUTTON -->
+            <button type="submit" class="btn btn-primary w-100 py-2">
+              Se connecter
+            </button>
+
+            <!-- REGISTER -->
+            <p class="text-center text-muted mt-3">
+              Pas encore de compte ?
+              <a th:href="@{/register}" class="text-primary fw-medium">
+                S'inscrire
+              </a>
+            </p>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
