@@ -1,11 +1,6 @@
 package uca.github.org.records;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.*;
-
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -33,7 +28,6 @@ public class ProfileDTO {
 
     private String currentPassword;
 
-    @Size(min = 8, message = "Le nouveau mot de passe doit contenir au moins 8 caractères")
     private String newPassword;
 
     private String confirmPassword;

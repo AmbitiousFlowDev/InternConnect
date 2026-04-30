@@ -28,8 +28,8 @@ public class User implements UserDetails {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, length = 100)
     private String lastName;
@@ -54,7 +54,7 @@ public class User implements UserDetails {
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Profile profile;
 
     @OneToMany(mappedBy = "poster", fetch = FetchType.LAZY)

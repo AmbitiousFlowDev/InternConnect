@@ -2,7 +2,7 @@ package uca.github.org.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,8 +17,8 @@ import lombok.*;
 public class Recommendation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

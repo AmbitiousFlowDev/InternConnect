@@ -1,7 +1,5 @@
 package uca.github.org.models;
 
-import java.util.UUID;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,21 +13,28 @@ import lombok.*;
 public class Profile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String skills;
-    private String experience;
+    @Column(columnDefinition = "TEXT")
     private String education;
+
+    @Column(columnDefinition = "TEXT")
+    private String skills;
+
+    @Column(columnDefinition = "TEXT")
+    private String experience;
+
+    @Column(columnDefinition = "TEXT")
     private String preferences;
 
+    @Column(columnDefinition = "TEXT")
     private String coverLetter;
-    private String resumeFile;
 }

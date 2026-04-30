@@ -1,39 +1,170 @@
-@import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
-
-@source "../resources/templates/**/*.html";
-@source "./**/*.js";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 :root {
-  --font-sans: 'Poppins', sans-serif;
-  --font-display: 'Playfair Display', serif;
-  /* Primary (left panel gradient base) */
-  --primary-900: #142a6e;
-  --primary-800: #17357f;
-  --primary-700: #1a3f91;
+  --bs-font-sans-serif: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  /* Accent / CTA */
-  --primary: #1f4bd8;
-  --primary-hover: #173bb0;
+  --bs-primary: #0d6efd;
+  --bs-primary-rgb: 13, 110, 253;
 
-  /* Backgrounds */
-  --surface: #f7f9fc;
-  --surface-card: #ffffff;
-  --surface-soft: #eef2f7;
-
-  /* Text */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-
-  /* Borders */
-  --border: #e5e7eb;
+  --app-bg: #f8f9fa;
+  --app-border: #dee2e6;
 }
 
+/* Base */
 body {
-  font-family: var(--font-sans);
+  font-family: var(--bs-font-sans-serif);
+  background-color: var(--app-bg);
+  color: var(--bs-dark);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-.font-display {
-  font-family: var(--font-display);
+/* Login page */
+.left-panel {
+  background: linear-gradient(135deg, var(--bs-primary), #084298);
+  color: #fff;
+  min-height: 100vh;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.right-panel {
+  background-color: var(--bs-light);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.feature-icon {
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--bs-border-radius-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+}
+
+.login-card {
+  max-width: 430px;
+  width: 100%;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-xl);
+}
+
+.input-group-text,
+.form-control {
+  background-color: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+}
+
+.form-control:focus {
+  border-color: rgba(var(--bs-primary-rgb), 0.45);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.15);
+}
+
+/* Navbar */
+.navbar-custom {
+  background-color: var(--bs-white);
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.navbar-custom .navbar-brand {
+  color: var(--bs-primary) !important;
+}
+
+.nav-icon-link {
+  color: var(--bs-primary);
+  opacity: 0.9;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.nav-icon-link:hover {
+  color: var(--bs-primary);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* Avatar */
+.avatar-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(var(--bs-primary-rgb), 0.1);
+  color: var(--bs-primary);
+  border: 1px solid rgba(var(--bs-primary-rgb), 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.avatar-box-light {
+  background: rgba(var(--bs-primary-rgb), 0.08);
+  color: var(--bs-primary);
+}
+
+.avatar-square {
+  border-radius: var(--bs-border-radius-lg);
+}
+
+/* Cards */
+.card-soft {
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-xl);
+  background-color: var(--bs-white);
+  box-shadow: 0 0.25rem 1rem rgba(33, 37, 41, 0.04);
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.75rem 1.5rem rgba(33, 37, 41, 0.08);
+}
+
+/* Badges / lists */
+.status-badge {
+  border-radius: var(--bs-border-radius-pill);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.list-hover {
+  transition: background-color 0.2s ease;
+}
+
+.list-hover:hover {
+  background-color: var(--bs-light);
+}
+
+/* Dashboard spacing */
+main.container-xl {
+  max-width: 1320px;
+}
+
+.display-6 {
+  letter-spacing: -0.03em;
+}
+
+.card h2,
+.card h5,
+.card h6 {
+  letter-spacing: -0.02em;
+}
+
+/* Footer */
+footer {
+  background-color: var(--bs-white);
 }

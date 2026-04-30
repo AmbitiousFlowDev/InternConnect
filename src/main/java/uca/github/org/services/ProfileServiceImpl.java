@@ -1,4 +1,4 @@
-package uca.github.org.services.impl;
+package uca.github.org.services;
 
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uca.github.org.models.Profile;
 import uca.github.org.models.User;
 import uca.github.org.records.ProfileDTO;
+import uca.github.org.repositories.ProfileRepository;
 import uca.github.org.repositories.UserRepository;
-import uca.github.org.services.ProfileService;
 
 import java.awt.*;
 import java.io.IOException;
@@ -25,13 +25,16 @@ import java.io.IOException;
 public class ProfileServiceImpl implements ProfileService {
 
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
     public ProfileDTO buildProfileForm(User user) {
         User currentUser = getCurrentUser(user);
-        Profile profile = currentUser.getProfile();
+
+        Profile profile = profileRepository.findByUserId(currentUser.getId())
+                .orElse(null);
 
         return ProfileDTO.builder()
                 .firstName(currentUser.getFirstName())
@@ -58,15 +61,12 @@ public class ProfileServiceImpl implements ProfileService {
 
         updatePasswordIfRequested(currentUser, profileDTO);
 
-        Profile profile = currentUser.getProfile();
-
-        if (profile == null) {
-            profile = Profile.builder()
-                    .user(currentUser)
-                    .build();
-
-            currentUser.setProfile(profile);
-        }
+        Profile profile = profileRepository.findByUserId(currentUser.getId())
+                .orElseGet(() -> {
+                    Profile newProfile = new Profile();
+                    newProfile.setUser(currentUser);
+                    return newProfile;
+                });
 
         profile.setDescription(clean(profileDTO.getDescription()));
         profile.setEducation(clean(profileDTO.getEducation()));
@@ -75,11 +75,16 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setPreferences(clean(profileDTO.getPreferences()));
 
         userRepository.save(currentUser);
+        profileRepository.save(profile);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int calculateCompleteness(User user) {
-        Profile profile = user.getProfile();
+        User currentUser = getCurrentUser(user);
+
+        Profile profile = profileRepository.findByUserId(currentUser.getId())
+                .orElse(null);
 
         int points = 20;
 
@@ -87,16 +92,20 @@ public class ProfileServiceImpl implements ProfileService {
             return points;
         }
 
-        if (isNotBlank(profile.getDescription())) points += 20;
-        if (isNotBlank(profile.getEducation())) points += 20;
-        if (isNotBlank(profile.getSkills())) points += 20;
-        if (isNotBlank(profile.getExperience())) points += 20;
+        if (isNotBlank(profile.getDescription()))
+            points += 20;
+        if (isNotBlank(profile.getEducation()))
+            points += 20;
+        if (isNotBlank(profile.getSkills()))
+            points += 20;
+        if (isNotBlank(profile.getExperience()))
+            points += 20;
 
         return Math.min(points, 100);
     }
 
     private void validateProfileUpdate(User currentUser, ProfileDTO profileDTO) {
-        String email = clean(profileDTO.getEmail());
+        String email = clean(profileDTO.getEmail()).toLowerCase();
 
         if (!currentUser.getEmail().equalsIgnoreCase(email)) {
             boolean emailAlreadyUsed = userRepository.existsByEmail(email);
@@ -106,18 +115,32 @@ public class ProfileServiceImpl implements ProfileService {
             }
         }
 
-        if (isNotBlank(profileDTO.getNewPassword())) {
-            if (!isNotBlank(profileDTO.getCurrentPassword())) {
-                throw new IllegalArgumentException("Le mot de passe actuel est obligatoire.");
-            }
+        boolean wantsToChangePassword = isNotBlank(profileDTO.getNewPassword())
+                || isNotBlank(profileDTO.getConfirmPassword())
+                || isNotBlank(profileDTO.getCurrentPassword());
 
-            if (!passwordEncoder.matches(profileDTO.getCurrentPassword(), currentUser.getPassword())) {
-                throw new IllegalArgumentException("Le mot de passe actuel est incorrect.");
-            }
+        if (!wantsToChangePassword) {
+            return;
+        }
 
-            if (!profileDTO.getNewPassword().equals(profileDTO.getConfirmPassword())) {
-                throw new IllegalArgumentException("Les nouveaux mots de passe ne correspondent pas.");
-            }
+        if (!isNotBlank(profileDTO.getCurrentPassword())) {
+            throw new IllegalArgumentException("Le mot de passe actuel est obligatoire.");
+        }
+
+        if (!passwordEncoder.matches(profileDTO.getCurrentPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("Le mot de passe actuel est incorrect.");
+        }
+
+        if (!isNotBlank(profileDTO.getNewPassword())) {
+            throw new IllegalArgumentException("Le nouveau mot de passe est obligatoire.");
+        }
+
+        if (profileDTO.getNewPassword().length() < 8) {
+            throw new IllegalArgumentException("Le nouveau mot de passe doit contenir au moins 8 caractères.");
+        }
+
+        if (!profileDTO.getNewPassword().equals(profileDTO.getConfirmPassword())) {
+            throw new IllegalArgumentException("Les nouveaux mots de passe ne correspondent pas.");
         }
     }
 
@@ -147,13 +170,18 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void exportToPdf(User user, HttpServletResponse response) throws IOException {
+        User currentUser = getCurrentUser(user);
+
+        Profile profile = profileRepository.findByUserId(currentUser.getId())
+                .orElse(null);
+
         response.setContentType("application/pdf");
         response.setHeader(
                 "Content-Disposition",
-                "attachment; filename=\"cv-" + safeFileName(user.getFirstName()) + "-"
-                        + safeFileName(user.getLastName()) + ".pdf\""
-        );
+                "attachment; filename=\"cv-" + safeFileName(currentUser.getFirstName()) + "-"
+                        + safeFileName(currentUser.getLastName()) + ".pdf\"");
 
         Document document = new Document(PageSize.A4, 50, 50, 45, 45);
 
@@ -170,9 +198,7 @@ public class ProfileServiceImpl implements ProfileService {
             Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13, primaryColor);
             Font bodyFont = FontFactory.getFont(FontFactory.HELVETICA, 10.5f, Color.DARK_GRAY);
 
-            addHeader(document, user, nameFont, subtitleFont, lineColor);
-
-            Profile profile = user.getProfile();
+            addHeader(document, currentUser, nameFont, subtitleFont, lineColor);
 
             if (profile != null) {
                 addPdfSection(document, "PROFIL", profile.getDescription(), sectionFont, bodyFont, lineColor);
@@ -211,8 +237,7 @@ public class ProfileServiceImpl implements ProfileService {
             String content,
             Font titleFont,
             Font bodyFont,
-            Color lineColor
-    ) throws DocumentException {
+            Color lineColor) throws DocumentException {
 
         if (!isNotBlank(content)) {
             return;

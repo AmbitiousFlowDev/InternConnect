@@ -2,6 +2,9 @@ package uca.github.org.services;
 
 import uca.github.org.models.User;
 
+/**
+ * Service interface for handling user authentication and registration.
+ */
 public interface AuthService {
     /**
      * Registers a new user into the system.

@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import uca.github.org.models.User;
 import uca.github.org.repositories.UserRepository;
-import uca.github.org.services.impl.AuthServiceImpl;
+import uca.github.org.services.AuthServiceImpl;
 
 /**
  * Unit and Integration tests for {@link AuthServiceImpl}.

@@ -1,7 +1,7 @@
 package uca.github.org.models;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,8 +16,8 @@ import lombok.*;
 public class Notification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,8 +30,9 @@ public class Notification {
 
     private LocalDateTime createdAt;
 
+    @Column(name = "is_read")
     @Builder.Default
-    private Boolean read = false;
+    private Boolean isRead = false;
 
     @PrePersist
     public void prePersist() {

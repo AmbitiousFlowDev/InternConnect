@@ -8,141 +8,148 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>InternConnect - Profil</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-
-  <style>
-    body {
-      background-color: #f7f9fc;
-    }
-
-    .header-gradient {
-      background: linear-gradient(to right, #142a6e, #1a3f91);
-      color: white;
-    }
-
-    .card {
-      border-radius: 1rem;
-      border: none;
-      box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.05);
-    }
-
-    .profile-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: #1f4bd8;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      font-weight: 700;
-      margin: 0 auto 1rem;
-    }
-
-    .form-control:read-only {
-      background-color: #f3f4f6;
-      border: none;
-    }
-  </style>
+  <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+  <script th:src="@{/assets/js/main.js}" defer></script>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header-gradient py-3 mb-4">
-  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+<header class="bg-white border-bottom sticky-top">
+  <nav class="navbar navbar-expand-lg py-3">
+    <div class="container-xl">
 
-    <div>
-      <h4 class="fw-bold mb-1">Mon Profil</h4>
-      <p class="mb-0 small opacity-75">
-        Gérez vos informations personnelles
-      </p>
-    </div>
-
-    <div class="d-flex gap-2">
-
-      <a th:href="@{/dashboard}" class="btn btn-outline-light btn-sm">
-        <i class="bi bi-arrow-left"></i> Retour
+      <a class="navbar-brand fw-bold fs-4 text-primary" th:href="@{/home}">
+        InternConnect
       </a>
 
-      <a th:href="@{/profile/export}" class="btn btn-outline-light btn-sm">
-        <i class="bi bi-file-earmark-text"></i> Exporter CV
-      </a>
+      <div class="d-flex align-items-center gap-2">
 
-      <button id="editBtn" class="btn btn-light text-primary btn-sm">
-        <i class="bi bi-pencil"></i>
-        <span id="btnText">Modifier</span>
-      </button>
+        <a th:href="@{/dashboard}" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-arrow-left me-1"></i>
+          Retour
+        </a>
 
+        <a th:href="@{/profile/export}" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-file-earmark-text me-1"></i>
+          Exporter CV
+        </a>
+
+        <button type="button" id="editBtn" class="btn btn-primary btn-sm">
+          <i class="bi bi-pencil me-1"></i>
+          <span id="btnText">Modifier</span>
+        </button>
+
+      </div>
     </div>
-  </div>
-</div>
+  </nav>
+</header>
 
-<div class="container pb-5">
+<main class="container-xl py-5">
 
-  <!-- SUCCESS -->
+  <section class="mb-4">
+    <h1 class="display-6 fw-bold mb-2">Mon Profil</h1>
+    <p class="text-secondary mb-0">Gérez vos informations personnelles et votre CV étudiant.</p>
+  </section>
+
   <div th:if="${saved}" class="alert alert-success d-flex align-items-center gap-2">
     <i class="bi bi-check-circle"></i>
     <span>Profil sauvegardé avec succès.</span>
   </div>
 
+  <div th:if="${error}" class="alert alert-danger d-flex align-items-center gap-2">
+    <i class="bi bi-exclamation-triangle"></i>
+    <span th:text="${error}">Erreur</span>
+  </div>
+
   <form id="profileForm" th:action="@{/profile}" method="post" th:object="${form}">
+
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+    <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
+      <strong>Veuillez corriger les erreurs suivantes :</strong>
+      <ul class="mb-0 mt-2">
+        <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+      </ul>
+    </div>
 
     <div class="row g-4 mb-4">
 
-      <!-- LEFT -->
-      <div class="col-lg-4">
-        <div class="card p-4 text-center h-100">
+      <aside class="col-lg-4">
+        <div class="card card-soft p-4 text-center h-100">
 
-          <div class="profile-avatar"
+          <div class="profile-avatar mb-3"
                th:text="${user != null && user.firstName != null && user.lastName != null}
                         ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}
                         : '??'">
-            AM
+            JD
           </div>
 
-          <h5 class="fw-bold"
+          <h5 class="fw-bold mb-1"
               th:text="${user != null ? user.firstName + ' ' + user.lastName : 'Utilisateur'}">
-            Alex Martin
+            Jane Doe
           </h5>
 
-          <p class="text-muted small mb-3"
+          <p class="text-muted small mb-4"
              th:text="${user != null ? user.role : ''}">
             USER
           </p>
 
-          <div class="text-start border-top pt-3 small text-muted">
+          <div class="border-top pt-3 text-start small">
 
-            <div class="mb-2">
-              <i class="bi bi-envelope me-2"></i>
-              <span th:text="${user != null ? user.email : ''}">email</span>
+            <div class="d-flex align-items-center gap-2 mb-2 text-muted">
+              <i class="bi bi-envelope text-primary"></i>
+              <span th:text="${user != null ? user.email : ''}">email@example.com</span>
             </div>
 
-            <div>
-              <i class="bi bi-calendar me-2"></i>
-              <span th:text="${user != null && user.registrationDate != null}
-                              ? 'Membre depuis ' + ${#temporals.format(user.registrationDate,'MMM yyyy')}
-                              : ''">
+            <div class="d-flex align-items-center gap-2 mb-2 text-muted">
+              <i class="bi bi-file-earmark-text text-primary"></i>
+              <span>
+                <span th:text="${applicationCount != null ? applicationCount : 0}">0</span>
+                candidatures
               </span>
             </div>
 
+            <div class="d-flex align-items-center gap-2 mb-2 text-muted">
+              <i class="bi bi-bookmark text-primary"></i>
+              <span>
+                <span th:text="${savedCount != null ? savedCount : 0}">0</span>
+                stages sauvegardés
+              </span>
+            </div>
+
+            <div class="mt-4">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Profil complété</span>
+                <strong th:text="${profileCompleteness != null ? profileCompleteness + '%' : '0%'}">0%</strong>
+              </div>
+
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar"
+                     role="progressbar"
+                     th:style="'width:' + (${profileCompleteness != null ? profileCompleteness : 0}) + '%'"
+                     th:attr="aria-valuenow=${profileCompleteness != null ? profileCompleteness : 0}"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+
           </div>
+
         </div>
-      </div>
+      </aside>
 
-      <!-- RIGHT -->
-      <div class="col-lg-8">
-        <div class="card p-4 h-100">
+      <section class="col-lg-8">
+        <div class="card card-soft p-4 h-100">
 
-          <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="fw-bold mb-0">
               <i class="bi bi-person me-2 text-primary"></i>
               Informations personnelles
             </h5>
 
-            <button type="submit" id="saveBtn" class="btn btn-primary btn-sm d-none">
+            <button type="submit" id="saveBtn" class="btn btn-success btn-sm d-none">
+              <i class="bi bi-check-lg me-1"></i>
               Enregistrer
             </button>
           </div>
@@ -150,89 +157,269 @@
           <div class="row g-3">
 
             <div class="col-md-6">
-              <label for="firstName" class="form-label small">Prénom</label>
-              <input id="firstName" th:field="*{firstName}" class="form-control view-mode" readonly>
+              <label for="firstName" class="form-label small fw-medium">Prénom</label>
+              <input id="firstName"
+                     th:field="*{firstName}"
+                     class="form-control view-mode"
+                     th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
+                     readonly>
+              <div class="invalid-feedback" th:errors="*{firstName}"></div>
             </div>
 
             <div class="col-md-6">
-              <label for="lastName" class="form-label small">Nom</label>
-              <input id="lastName" th:field="*{lastName}" class="form-control view-mode" readonly>
+              <label for="lastName" class="form-label small fw-medium">Nom</label>
+              <input id="lastName"
+                     th:field="*{lastName}"
+                     class="form-control view-mode"
+                     th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
+                     readonly>
+              <div class="invalid-feedback" th:errors="*{lastName}"></div>
             </div>
 
             <div class="col-12">
-              <label for="bio" class="form-label small">Bio</label>
-              <textarea id="bio" th:field="*{description}" class="form-control view-mode" rows="3" readonly></textarea>
+              <label for="email" class="form-label small fw-medium">Email</label>
+              <input id="email"
+                     type="email"
+                     th:field="*{email}"
+                     class="form-control view-mode"
+                     th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                     readonly>
+              <div class="invalid-feedback" th:errors="*{email}"></div>
+            </div>
+
+            <div class="col-12">
+              <label for="description" class="form-label small fw-medium">Bio</label>
+              <textarea id="description"
+                        th:field="*{description}"
+                        class="form-control view-mode"
+                        rows="4"
+                        placeholder="Présentez brièvement votre profil, vos objectifs et vos intérêts."
+                        readonly></textarea>
             </div>
 
           </div>
+        </div>
+      </section>
 
+    </div>
+
+    <section class="card card-soft p-4 mb-4">
+      <h5 class="fw-bold mb-4">
+        <i class="bi bi-mortarboard me-2 text-primary"></i>
+        Formation & Compétences
+      </h5>
+
+      <div class="row g-3">
+
+        <div class="col-12">
+          <label for="education" class="form-label small fw-medium">Éducation</label>
+          <textarea id="education"
+                    th:field="*{education}"
+                    class="form-control view-mode"
+                    rows="3"
+                    placeholder="Exemple : Licence Informatique, Université..."
+                    readonly></textarea>
+        </div>
+
+        <div class="col-12">
+          <label for="skills" class="form-label small fw-medium">Compétences</label>
+          <textarea id="skills"
+                    th:field="*{skills}"
+                    class="form-control view-mode"
+                    rows="3"
+                    placeholder="Exemple : Java, Spring Boot, SQL, Git, Docker..."
+                    readonly></textarea>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="card card-soft p-4 mb-4">
+      <h5 class="fw-bold mb-4">
+        <i class="bi bi-briefcase me-2 text-primary"></i>
+        Expériences & Préférences
+      </h5>
+
+      <div class="row g-3">
+
+        <div class="col-12">
+          <label for="experience" class="form-label small fw-medium">Expérience</label>
+          <textarea id="experience"
+                    th:field="*{experience}"
+                    class="form-control view-mode"
+                    rows="4"
+                    placeholder="Décrivez vos projets, stages, expériences associatives ou freelances."
+                    readonly></textarea>
+        </div>
+
+        <div class="col-12">
+          <label for="preferences" class="form-label small fw-medium">Préférences</label>
+          <textarea id="preferences"
+                    th:field="*{preferences}"
+                    class="form-control view-mode"
+                    rows="3"
+                    placeholder="Exemple : stage backend, remote, Casablanca, Java/Spring..."
+                    readonly></textarea>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="card card-soft p-4 mb-4">
+      <h5 class="fw-bold mb-4">
+        <i class="bi bi-shield-lock me-2 text-primary"></i>
+        Sécurité
+      </h5>
+
+      <div class="row g-3">
+
+        <div class="col-md-4">
+          <label for="currentPassword" class="form-label small fw-medium">Mot de passe actuel</label>
+          <input id="currentPassword"
+                 type="password"
+                 th:field="*{currentPassword}"
+                 class="form-control view-mode"
+                 autocomplete="current-password"
+                 readonly>
+        </div>
+
+        <div class="col-md-4">
+          <label for="newPassword" class="form-label small fw-medium">Nouveau mot de passe</label>
+          <input id="newPassword"
+                 type="password"
+                 th:field="*{newPassword}"
+                 class="form-control view-mode"
+                 th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid'"
+                 autocomplete="new-password"
+                 readonly>
+          <div class="invalid-feedback" th:errors="*{newPassword}"></div>
+        </div>
+
+        <div class="col-md-4">
+          <label for="confirmPassword" class="form-label small fw-medium">Confirmer le mot de passe</label>
+          <input id="confirmPassword"
+                 type="password"
+                 th:field="*{confirmPassword}"
+                 class="form-control view-mode"
+                 autocomplete="new-password"
+                 readonly>
+        </div>
+
+      </div>
+
+      <p class="small text-muted mt-3 mb-0">
+        Laissez ces champs vides si vous ne souhaitez pas modifier votre mot de passe.
+      </p>
+    </section>
+
+  </form>
+
+</main>
+
+<footer class="border-top bg-white mt-5">
+  <div class="container-xl py-5">
+
+    <div class="row g-4">
+
+      <div class="col-lg-4 col-md-6">
+        <a class="navbar-brand fw-bold fs-4 text-primary d-block mb-3" th:href="@{/home}">
+          InternConnect
+        </a>
+
+        <p class="text-muted small pe-lg-5">
+          Connecter la prochaine génération de talents avec des opportunités de stage pertinentes.
+        </p>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <h6 class="fw-bold mb-3">Plateforme</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2">
+            <a th:href="@{/home}" class="text-muted text-decoration-none">Stages</a>
+          </li>
+          <li class="mb-2">
+            <a th:href="@{/dashboard}" class="text-muted text-decoration-none">Tableau de bord</a>
+          </li>
+          <li class="mb-2">
+            <a th:href="@{/profile}" class="text-muted text-decoration-none">Profil</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <h6 class="fw-bold mb-3">Support</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Centre d'aide</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Confidentialité</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Conditions</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-4 col-md-12">
+        <div class="p-4 rounded-4 bg-light">
+          <h6 class="fw-bold mb-2">Statut du système</h6>
+
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="p-1 bg-success rounded-circle"></span>
+            <span class="small text-muted">Tous les systèmes sont opérationnels</span>
+          </div>
+
+          <p class="small text-muted mb-0">
+            Besoin d'aide ? Contactez-nous à
+            <span class="text-primary fw-medium">support@internconnect.univ.fr</span>
+          </p>
         </div>
       </div>
 
     </div>
 
-    <!-- EXTRA -->
-    <div class="card p-4 mb-4">
+    <hr class="my-5">
 
-      <h5 class="fw-bold mb-3">
-        <i class="bi bi-mortarboard me-2 text-primary"></i>
-        Formation & Compétences
-      </h5>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+      <p class="text-muted small mb-0">
+        &copy; 2026 InternConnect. Conçu pour les étudiants.
+      </p>
 
-      <div class="mb-3">
-        <label class="form-label small">Éducation</label>
-        <textarea th:field="*{education}" class="form-control view-mode" rows="2" readonly></textarea>
-      </div>
-
-      <div>
-        <label class="form-label small">Compétences</label>
-        <input th:field="*{skills}" class="form-control view-mode" readonly>
-      </div>
-
+      <span class="text-muted small">Version 1.0.0</span>
     </div>
 
-    <div class="card p-4">
-
-      <h5 class="fw-bold mb-3">
-        <i class="bi bi-briefcase me-2 text-primary"></i>
-        Expériences
-      </h5>
-
-      <div class="mb-3">
-        <label class="form-label small">Expérience</label>
-        <textarea th:field="*{experience}" class="form-control view-mode" rows="3" readonly></textarea>
-      </div>
-
-      <div>
-        <label class="form-label small">Préférences</label>
-        <textarea th:field="*{preferences}" class="form-control view-mode" rows="2" readonly></textarea>
-      </div>
-
-    </div>
-
-  </form>
-</div>
+  </div>
+</footer>
 
 <script>
+  const editBtn = document.getElementById("editBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const btnText = document.getElementById("btnText");
+  const fields = document.querySelectorAll(".view-mode");
+
   let editing = false;
 
-  document.getElementById("editBtn").addEventListener("click", function () {
-    editing = !editing;
+  function enableEditMode() {
+    editing = true;
 
-    const inputs = document.querySelectorAll(".view-mode");
-    const saveBtn = document.getElementById("saveBtn");
-    const btnText = document.getElementById("btnText");
+    fields.forEach((field) => {
+      field.removeAttribute("readonly");
+    });
 
-    if (editing) {
-      inputs.forEach(i => i.removeAttribute("readonly"));
-      saveBtn.classList.remove("d-none");
-      btnText.textContent = "Annuler";
-      this.classList.replace("btn-light", "btn-danger");
-      this.classList.replace("text-primary", "text-white");
-    } else {
-      window.location.reload();
+    saveBtn.classList.remove("d-none");
+
+    btnText.textContent = "Annuler";
+    editBtn.classList.remove("btn-primary");
+    editBtn.classList.add("btn-outline-danger");
+  }
+
+  editBtn.addEventListener("click", function () {
+    if (!editing) {
+      enableEditMode();
+      return;
     }
+
+    window.location.href = "/profile";
   });
+
+  if (document.querySelector(".is-invalid") || document.querySelector(".alert-danger")) {
+    enableEditMode();
+  }
 </script>
 
 </body>

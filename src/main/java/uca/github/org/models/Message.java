@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "messages")
@@ -16,8 +15,8 @@ import java.util.UUID;
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
@@ -36,8 +35,9 @@ public class Message {
 
     private LocalDateTime sentAt;
 
+    @Column(name = "is_read")
     @Builder.Default
-    private Boolean read = false;
+    private Boolean isRead = false;
 
     @PrePersist
     public void prePersist() {

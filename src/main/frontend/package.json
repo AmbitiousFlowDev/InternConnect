@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Tailwind CSS setup for Spring Boot",
   "scripts": {
-    "build": "shx mkdir -p ../resources/static/dist/css ../resources/static/dist/js ../resources/static/dist/fonts && shx cp node_modules/bootstrap/dist/css/bootstrap.min.css ../resources/static/dist/css/ && shx cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js ../resources/static/dist/js/ && shx cp node_modules/bootstrap-icons/font/bootstrap-icons.css ../resources/static/dist/css/ && shx cp node_modules/bootstrap-icons/font/fonts/* ../resources/static/dist/fonts/"
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "watch": "vite build --watch"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.0",

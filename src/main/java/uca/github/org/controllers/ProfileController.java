@@ -43,11 +43,11 @@ public class ProfileController {
     @PostMapping("/profile")
     public String updateProfile(
             @AuthenticationPrincipal User user,
-            @Valid @ModelAttribute("form") ProfileDTO profileDTO,
+            @Valid @ModelAttribute("form")
+            ProfileDTO profileDTO,
             BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes
-    ) {
+            Model model, RedirectAttributes redirectAttributes) {
+
         if (user == null) {
             return "redirect:/login";
         }
@@ -74,17 +74,14 @@ public class ProfileController {
     }
 
     @GetMapping("/profile/export")
-    public void exportToPDF(
-            HttpServletResponse response,
-            @AuthenticationPrincipal User user
-    ) throws IOException {
+    public void exportToPDF(HttpServletResponse response,@AuthenticationPrincipal User user) throws IOException {
+
         if (user == null) {
             response.sendRedirect("/login");
             return;
         }
 
         User currentUser = userRepository.findById(user.getId()).orElseThrow();
-
         response.setContentType("application/pdf");
 
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
@@ -92,18 +89,13 @@ public class ProfileController {
         String filename = "CV_" + lastName + "_" + timestamp + ".pdf";
 
         response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-
         profileService.exportToPdf(currentUser, response);
+        
     }
 
     private void addProfileStats(Model model, User user) {
-        model.addAttribute("applicationCount",
-                user.getApplications() != null ? user.getApplications().size() : 0);
-
-        model.addAttribute("savedCount",
-                user.getBookmarks() != null ? user.getBookmarks().size() : 0);
-
-        model.addAttribute("profileCompleteness",
-                profileService.calculateCompleteness(user));
+        model.addAttribute("applicationCount",user.getApplications() != null ? user.getApplications().size() : 0);
+        model.addAttribute("savedCount",user.getBookmarks() != null ? user.getBookmarks().size() : 0);
+        model.addAttribute("profileCompleteness",profileService.calculateCompleteness(user));
     }
 }
