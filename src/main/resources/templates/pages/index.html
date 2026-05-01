@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternConnect - Presentation</title>
+
+  <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+  <script th:src="@{/assets/js/main.js}" defer></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top py-2">
+  <div class="container-xl">
+    <a class="navbar-brand fw-bold fs-3" th:href="@{/}">
+      InternConnect
+    </a>
+
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#publicNavbar"
+            aria-controls="publicNavbar"
+            aria-expanded="false"
+            aria-label="Basculer la navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="publicNavbar">
+      <ul class="navbar-nav ms-lg-4 me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" th:href="@{/}">
+            <i class="bi bi-compass me-1"></i>
+            Presentation
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/home}">
+            <i class="bi bi-house-door me-1"></i>
+            Accueil
+          </a>
+        </li>
+      </ul>
+
+      <div class="d-flex align-items-center gap-2">
+        <a th:href="@{/login}" class="btn btn-light btn-sm rounded-pill">
+          Connexion
+        </a>
+        <a th:href="@{/register}" class="btn btn-outline-light btn-sm rounded-pill">
+          Inscription
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="bg-light border-bottom">
+    <div class="container-xl py-5">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+          <span class="badge text-bg-primary mb-3">InternConnect</span>
+
+          <h1 class="display-5 fw-bold mb-3">
+            Connecter les etudiants aux meilleures opportunites de stage.
+          </h1>
+
+          <p class="lead text-secondary mb-4">
+            Explorez les offres disponibles, preparez votre profil et retrouvez votre espace candidat apres connexion.
+          </p>
+
+          <div class="d-flex flex-column flex-sm-row gap-3">
+            <a th:href="@{/home}" class="btn btn-primary rounded-pill px-4">
+              Voir les stages
+            </a>
+            <a th:href="@{/login}" class="btn btn-outline-primary rounded-pill px-4">
+              Se connecter
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card card-soft p-4">
+            <h2 class="h5 fw-bold mb-3">Navigation publique</h2>
+            <ul class="list-unstyled mb-0">
+              <li class="d-flex align-items-start gap-3 mb-3">
+                <i class="bi bi-check-circle-fill text-success mt-1"></i>
+                <span>Les visiteurs peuvent consulter la presentation publique.</span>
+              </li>
+              <li class="d-flex align-items-start gap-3 mb-3">
+                <i class="bi bi-check-circle-fill text-success mt-1"></i>
+                <span>La page d'accueil reste accessible avant authentification.</span>
+              </li>
+              <li class="d-flex align-items-start gap-3">
+                <i class="bi bi-lock-fill text-primary mt-1"></i>
+                <span>Les pages candidat, profil et tableau de bord restent reservees aux utilisateurs connectes.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-xl py-5">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <h2 class="h5 fw-bold">Explorer</h2>
+        <p class="text-secondary mb-0">Consultez les opportunites visibles publiquement depuis l'accueil.</p>
+      </div>
+      <div class="col-md-4">
+        <h2 class="h5 fw-bold">Postuler</h2>
+        <p class="text-secondary mb-0">Connectez-vous pour acceder aux details complets et sauvegarder des offres.</p>
+      </div>
+      <div class="col-md-4">
+        <h2 class="h5 fw-bold">Suivre</h2>
+        <p class="text-secondary mb-0">Retrouvez vos candidatures et votre profil depuis votre espace prive.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

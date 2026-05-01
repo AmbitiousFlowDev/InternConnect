@@ -50,7 +50,7 @@ public class AuthController {
      * Handles GET requests to "/home" and displays the home page. This page
      * is accessible to all users, regardless of their authentication status.
      */
-    @GetMapping("/home")
+    @GetMapping({"/home", "/home.html"})
     public String home() {
         return "pages/home";
     }
