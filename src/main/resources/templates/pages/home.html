@@ -361,12 +361,10 @@
           </div>
 
           <div class="progress" style="height: 8px;">
-            <div class="progress-bar"
-                 role="progressbar"
-                 th:style="'width:' + (${profileCompleteness != null ? profileCompleteness : 0}) + '%'"
-                 th:attr="aria-valuenow=${profileCompleteness != null ? profileCompleteness : 0}"
-                 aria-valuemin="0"
-                 aria-valuemax="100">
+            <div class="progress-bar" role="progressbar"
+                th:style="'width:' + (${profileCompleteness != null ? profileCompleteness : 0}) + '%'"
+                th:attr="aria-valuenow=${profileCompleteness != null ? profileCompleteness : 0}" aria-valuemin="0"
+                aria-valuemax="100">
             </div>
           </div>
         </div>
