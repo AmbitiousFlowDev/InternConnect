@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uca.github.org.configuration.InternConnectSecurityConfiguration;
 import uca.github.org.controllers.HomeController;
 import uca.github.org.models.Internship;
+import uca.github.org.records.HomeStats;
 import uca.github.org.services.HomeService;
 
 @SpringBootTest(
@@ -71,10 +72,17 @@ class HomepageDisplayTest {
                 .build();
 
         when(homeService.getLatestInternships()).thenReturn(List.of(backendInternship, dataInternship));
+        when(homeService.getPlatformStats()).thenReturn(new HomeStats(42, 128, 314));
 
         mockMvc.perform(get("/home"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pages/home"))
+                .andExpect(content().string(containsString("Stages publies")))
+                .andExpect(content().string(containsString("42")))
+                .andExpect(content().string(containsString("Utilisateurs")))
+                .andExpect(content().string(containsString("128")))
+                .andExpect(content().string(containsString("Candidatures soumises")))
+                .andExpect(content().string(containsString("314")))
                 .andExpect(content().string(containsString("Backend Developer Intern")))
                 .andExpect(content().string(containsString("TechNova Solutions")))
                 .andExpect(content().string(containsString("Data Analyst Intern")))

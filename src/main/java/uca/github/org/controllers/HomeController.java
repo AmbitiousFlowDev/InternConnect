@@ -16,6 +16,7 @@ public class HomeController {
     @GetMapping({ "/home", "/home.html" })
     public String home(Model model) {
         model.addAttribute("internships", homeService.getLatestInternships());
+        model.addAttribute("stats", homeService.getPlatformStats());
         return "pages/home";
     }
 }
