@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="container mt-4">
+
+        <!-- Search Form -->
+        <form th:action="@{/offers/search}" method="get">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="keyword" class="form-control"
+                           placeholder="Mot-clé..." th:value="${keyword}"/>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="location" class="form-control"
+                           placeholder="Ville..."/>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="sector" class="form-control"
+                           placeholder="Secteur..."/>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="duration" class="form-control"
+                           placeholder="Durée..."/>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        🔍 Rechercher
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Results -->
+        <div class="mt-4">
+            <div th:if="${results == null or results.isEmpty()}">
+                <div class="alert alert-info text-center">
+                    Aucun stage trouvé. Essayez d'autres critères.
+                </div>
+            </div>
+
+            <div th:each="offer : ${results}" class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${offer.title}"></h5>
+                    <p class="card-text">
+                        🏢 <span th:text="${offer.company}"></span> |
+                        📍 <span th:text="${offer.location}"></span> |
+                        ⏱️ <span th:text="${offer.duration}"></span>
+                    </p>
+                    <p class="card-text" th:text="${offer.description}"></p>
+                    <a th:href="@{/offers/{id}(id=${offer.id})}"
+                       class="btn btn-outline-primary btn-sm">
+                        Voir l'offre
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+</body>
+</html>
