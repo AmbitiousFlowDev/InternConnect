@@ -168,3 +168,31 @@ main.container-xl {
 footer {
   background-color: var(--bs-white);
 }
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  margin-top: -36px;
+  border: 4px solid var(--bs-white);
+  border-radius: 50%;
+  background: var(--bs-primary);
+  color: var(--bs-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+
+.sticky-sidebar {
+  position: sticky;
+  top: 90px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.list-group-item-action {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}

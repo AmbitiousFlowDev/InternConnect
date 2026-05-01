@@ -1,228 +1,507 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InternConnect - Accueil</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <style>
-        :root {
-            --ic-primary: #163274;
-            --ic-secondary: #00677f;
-            --ic-bg: #f3f2ef;
-        }
-        body { background-color: var(--ic-bg); font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        
-        .navbar { background-color: #fff; border-bottom: 1px solid #e0e0e0; padding: 0.5rem 0; }
-        .nav-link { color: #666; font-size: 0.75rem; font-weight: 500; text-align: center; padding: 0.5rem 1rem !important; transition: 0.2s; }
-        .nav-link i { font-size: 1.4rem; display: block; margin-bottom: -2px; }
-        .nav-link:hover, .nav-link.active { color: var(--ic-primary); }
-        .nav-link.active { border-bottom: 2px solid var(--ic-primary); }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternConnect - Accueil</title>
 
-        .card { border: none; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); margin-bottom: 1rem; }
-        .profile-cover { height: 60px; background: linear-gradient(to right, var(--ic-primary), var(--ic-secondary)); border-radius: 10px 10px 0 0; }
-        .profile-avatar { width: 72px; height: 72px; margin-top: -36px; border: 4px solid #fff; border-radius: 50%; background-color: var(--ic-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem; }
-        
-        .search-input { background-color: #edf2f7; border: none; border-radius: 5px; padding-left: 2.5rem; font-size: 0.9rem; }
-        .search-container i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; }
-
-        .btn-post { border-radius: 20px; font-weight: 600; padding: 0.5rem 1.5rem; }
-        .post-action-btn { color: #666; font-weight: 600; font-size: 0.9rem; padding: 0.8rem; border-radius: 4px; transition: 0.2s; text-decoration: none; display: flex; align-items: center; gap: 8px; }
-        .post-action-btn:hover { background-color: #f3f2ef; color: #666; }
-        
-        .internship-highlight { border: 2px solid var(--ic-primary); }
-        .badge-offer { background-color: #e7f6f2; color: #00677f; font-weight: bold; border-radius: 4px; }
-        
-        .sticky-sidebar { position: sticky; top: 80px; }
-    </style>
+  <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+  <script th:src="@{/assets/js/main.js}" defer></script>
 </head>
+
 <body>
 
-    <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" th:href="@{/}" style="color: var(--ic-primary); font-size: 1.6rem;">InternConnect</a>
-            
-            <div class="search-container position-relative d-none d-md-block ms-3">
-                <i class="bi bi-search"></i>
-                <input type="text" class="form-control search-input" placeholder="Recherche" style="width: 300px;">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top py-2">
+  <div class="container-xl">
+
+    <a class="navbar-brand fw-bold fs-3" th:href="@{/home}">
+      InternConnect
+    </a>
+
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Basculer la navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+
+      <ul class="navbar-nav ms-lg-4 me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link active" th:href="@{/home}">
+            <i class="bi bi-house-door me-1"></i>
+            Accueil
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/dashboard}">
+            <i class="bi bi-speedometer2 me-1"></i>
+            Tableau de bord
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/internships}">
+            <i class="bi bi-briefcase me-1"></i>
+            Stages
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/applications}">
+            <i class="bi bi-file-earmark-text me-1"></i>
+            Candidatures
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/bookmarks}">
+            <i class="bi bi-bookmark me-1"></i>
+            Sauvegardés
+          </a>
+        </li>
+
+      </ul>
+
+      <div class="d-flex align-items-center gap-2">
+
+        <a th:href="@{/profile}"
+           class="btn btn-light btn-sm rounded-pill d-flex align-items-center gap-2"
+           title="Profil">
+          <span class="avatar-box avatar-box-light"
+                th:text="${user != null && user.firstName != null && user.lastName != null}
+                         ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}
+                         : '??'">
+            JD
+          </span>
+          <span class="fw-semibold"
+                th:text="${user != null && user.firstName != null && user.lastName != null}
+                         ? ${user.firstName + ' ' + user.lastName}
+                         : 'Profil'">
+            Jane Doe
+          </span>
+        </a>
+
+        <form th:action="@{/logout}" method="post" class="m-0">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+          <button type="submit"
+                  class="btn btn-outline-light btn-sm rounded-pill">
+            <i class="bi bi-box-arrow-right me-1"></i>
+            Déconnexion
+          </button>
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<main class="container-xl py-5">
+
+  <!-- HEADER -->
+  <section class="mb-5">
+    <div class="row align-items-center g-4">
+
+      <div class="col-lg-8">
+        <h1 class="display-6 fw-bold mb-2">
+          Trouvez votre prochain stage
+        </h1>
+
+        <p class="text-secondary mb-0">
+          Découvrez les dernières opportunités publiées par les recruteurs et sauvegardez les offres qui correspondent à votre profil.
+        </p>
+      </div>
+
+      <div class="col-lg-4 d-flex justify-content-lg-end">
+        <a th:href="@{/dashboard}" class="btn btn-outline-primary rounded-pill px-4">
+          <i class="bi bi-speedometer2 me-1"></i>
+          Mon tableau de bord
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SEARCH -->
+  <section class="card card-soft p-4 mb-5">
+    <form th:action="@{/home}" method="get" class="row g-3 align-items-end">
+
+      <div class="col-lg-6">
+        <label for="keyword" class="form-label small fw-medium">
+          Recherche
+        </label>
+
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-search"></i>
+          </span>
+          <input id="keyword"
+                 name="q"
+                 type="search"
+                 class="form-control"
+                 placeholder="Titre, entreprise, compétence..."
+                 th:value="${keyword}">
+        </div>
+      </div>
+
+      <div class="col-lg-3">
+        <label for="sector" class="form-label small fw-medium">
+          Secteur
+        </label>
+
+        <select id="sector" name="sector" class="form-select">
+          <option value="">Tous les secteurs</option>
+          <option value="Software Development">Développement</option>
+          <option value="Data Analytics">Data Analytics</option>
+          <option value="Cloud & DevOps">Cloud & DevOps</option>
+          <option value="Frontend Development">Frontend</option>
+          <option value="Cybersecurity">Cybersécurité</option>
+        </select>
+      </div>
+
+      <div class="col-lg-3 d-grid">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-funnel me-1"></i>
+          Filtrer
+        </button>
+      </div>
+
+    </form>
+  </section>
+
+  <div class="row g-4">
+
+    <!-- MAIN INTERNSHIPS -->
+    <section class="col-lg-8">
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 fw-bold mb-0">Stages disponibles</h2>
+
+        <a th:href="@{/internships}" class="btn btn-link text-decoration-none fw-semibold btn-sm">
+          Voir tout
+        </a>
+      </div>
+
+      <div th:if="${internships != null && !#lists.isEmpty(internships)}">
+
+        <article th:each="internship : ${internships}" class="card card-soft card-hover mb-4">
+
+          <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+
+              <div class="d-flex gap-3">
+
+                <div class="avatar-box avatar-square"
+                     th:text="${internship.company != null && #strings.length(internship.company) >= 2}
+                              ? ${#strings.substring(internship.company,0,2).toUpperCase()}
+                              : 'IC'">
+                  IC
+                </div>
+
+                <div>
+                  <h3 class="h5 fw-bold mb-1">
+                    <a th:href="@{'/internships/' + ${internship.id}}"
+                       class="text-dark text-decoration-none"
+                       th:text="${internship.title != null ? internship.title : 'Stage'}">
+                      Backend Developer Intern
+                    </a>
+                  </h3>
+
+                  <p class="text-muted mb-0">
+                    <span th:text="${internship.company != null ? internship.company : 'Entreprise'}">
+                      TechNova Solutions
+                    </span>
+
+                    <span th:if="${internship.location != null}">
+                      ·
+                      <span th:text="${internship.location}">Casablanca</span>
+                    </span>
+                  </p>
+                </div>
+
+              </div>
+
+              <span class="badge text-bg-success"
+                    th:text="${internship.status != null ? internship.status : 'ACTIVE'}">
+                ACTIVE
+              </span>
+
             </div>
 
-            <ul class="navbar-nav ms-auto flex-row gap-2">
-                <li class="nav-item">
-                    <a class="nav-link active" th:href="@{/home}">
-                        <i class="bi bi-house-door-fill"></i> Accueil
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/dashboard}">
-                        <i class="bi bi-briefcase-fill"></i> Stages
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-people-fill"></i> Réseau
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative" href="#">
-                        <i class="bi bi-bell-fill"></i> Notifs
-                        <span class="position-absolute top-1 start-75 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                    </a>
-                </li>
-                <li class="nav-item border-start ms-2 ps-2">
-                    <a class="nav-link d-flex flex-column align-items-center" th:href="@{/profile}">
-                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" 
-                             style="width: 24px; height: 24px; font-size: 0.7rem;"
-                             th:text="${user != null ? #strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1) : 'AM'}">AM</div>
-                        <span>Moi <i class="bi bi-caret-down-fill d-inline" style="font-size: 0.6rem;"></i></span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+            <p class="text-muted small mb-3"
+               th:text="${internship.description != null ? internship.description : 'Description non disponible.'}">
+              Description du stage.
+            </p>
 
-    <div class="container mt-4">
-        <div class="row g-4">
-            
-            <aside class="col-lg-3 d-none d-lg-block">
-                <div class="card text-center overflow-hidden">
-                    <div class="profile-cover"></div>
-                    <div class="card-body pt-0">
-                        <div class="d-flex justify-content-center">
-                            <div class="profile-avatar" th:text="${user != null ? #strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1) : 'AM'}">AM</div>
-                        </div>
-                        <h5 class="card-title mt-3 fw-bold mb-0" th:text="${user?.firstName + ' ' + user?.lastName ?: 'Alex Martin'}">Alex Martin</h5>
-                        <p class="card-text text-muted small border-bottom pb-3">Étudiant en Master Informatique</p>
-                        
-                        <div class="d-flex justify-content-between text-start my-3 px-2">
-                            <span class="text-muted small fw-bold">Vues du profil</span>
-                            <span class="text-primary small fw-bold" th:text="${profileViews ?: '45'}">45</span>
-                        </div>
-                        <div class="d-flex justify-content-between text-start mb-3 px-2">
-                            <span class="text-muted small fw-bold">Relations</span>
-                            <span class="text-primary small fw-bold" th:text="${connections ?: '128'}">128</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-white border-top py-3 text-start">
-                        <a href="#" class="text-decoration-none text-dark small fw-bold">
-                            <i class="bi bi-bookmark-fill me-2"></i>Mes éléments
-                        </a>
-                    </div>
-                </div>
-            </aside>
+            <div class="d-flex flex-wrap gap-2 mb-3">
 
-            <main class="col-lg-6 col-md-12">
-                <div class="card p-3 mb-3">
-                    <div class="d-flex gap-2 align-items-center mb-3">
-                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center flex-shrink-0" 
-                             style="width: 48px; height: 48px; font-weight: bold;"
-                             th:text="${user != null ? #strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1) : 'AM'}">AM</div>
-                        <button class="btn btn-outline-secondary w-100 text-start rounded-pill text-muted py-2 px-4 fw-medium" style="background-color: transparent;">
-                            Commencer un post...
-                        </button>
-                    </div>
-                    <div class="d-flex justify-content-between px-2">
-                        <button class="btn btn-link text-decoration-none text-muted d-flex align-items-center gap-2 small fw-bold">
-                            <i class="bi bi-image text-primary"></i> Photo
-                        </button>
-                        <button class="btn btn-link text-decoration-none text-muted d-flex align-items-center gap-2 small fw-bold">
-                            <i class="bi bi-calendar-event text-warning"></i> Événement
-                        </button>
-                        <button class="btn btn-link text-decoration-none text-muted d-flex align-items-center gap-2 small fw-bold">
-                            <i class="bi bi-journal-text text-success"></i> Article
-                        </button>
-                    </div>
-                </div>
+              <span class="badge text-bg-light border">
+                <i class="bi bi-building me-1"></i>
+                <span th:text="${internship.sector != null ? internship.sector : 'Secteur'}">
+                  Software Development
+                </span>
+              </span>
 
-                <div th:each="post : ${feedPosts}" class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <div class="d-flex gap-2">
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" 
-                                     style="width: 48px; height: 48px; font-weight: bold;"
-                                     th:text="${#strings.substring(post.author.firstName ?: 'S',0,1) + #strings.substring(post.author.lastName ?: 'J',0,1)}">SJ</div>
-                                <div>
-                                    <h6 class="mb-0 fw-bold" th:text="${post.author.firstName + ' ' + post.author.lastName ?: 'Sarah Johnson'}">Sarah Johnson</h6>
-                                    <p class="text-muted small mb-0" th:text="${post.author.headline ?: 'Étudiante @ Tech School'}">Étudiante @ Tech School</p>
-                                    <p class="text-muted small" th:text="${post.timeAgo ?: '2 h'}">2 h • <i class="bi bi-globe"></i></p>
-                                </div>
-                            </div>
-                            <button class="btn btn-link text-dark"><i class="bi bi-three-dots"></i></button>
-                        </div>
-                        <p class="card-text small" th:utext="${post.content}">
-                            J'ai le plaisir de partager mon nouveau stage chez TechCorp ! 🚀
-                        </p>
-                    </div>
-                    <div class="card-footer bg-white d-flex justify-content-around py-1 border-top-0">
-                        <a href="#" class="post-action-btn"><i class="bi bi-hand-thumbs-up"></i> J'aime</a>
-                        <a href="#" class="post-action-btn"><i class="bi bi-chat-text"></i> Commenter</a>
-                        <a href="#" class="post-action-btn"><i class="bi bi-share"></i> Partager</a>
-                        <a href="#" class="post-action-btn"><i class="bi bi-send"></i> Envoyer</a>
-                    </div>
-                </div>
+              <span class="badge text-bg-light border">
+                <i class="bi bi-clock me-1"></i>
+                <span th:text="${internship.duration != null ? internship.duration : 'Durée'}">
+                  3 months
+                </span>
+              </span>
 
-                <div class="card internship-highlight mb-3 shadow">
-                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center pt-3 px-4">
-                        <span class="badge badge-offer px-3 py-2"><i class="bi bi-patch-check-fill me-1"></i> OFFRE VÉRIFIÉE</span>
-                        <i class="bi bi-bookmark text-muted"></i>
-                    </div>
-                    <div class="card-body px-4 pb-4">
-                        <h4 class="fw-bold" style="color: var(--ic-primary);">🚀 Stage Full-Stack Spring / React</h4>
-                        <p class="fw-bold mb-1">TechCorp Ltd <span class="text-muted fw-normal ms-2">New York, USA (Remote possible)</span></p>
-                        
-                        <div class="my-3 d-flex gap-3 text-muted small">
-                            <span><i class="bi bi-clock me-1"></i> 6 Mois</span>
-                            <span class="fw-bold text-success"><i class="bi bi-cash-stack me-1"></i> 2500 USD / mois</span>
-                        </div>
-                        
-                        <button class="btn btn-primary w-100 btn-post mt-2 shadow-sm">
-                            <i class="bi bi-send-fill me-2"></i> Postuler maintenant
-                        </button>
-                    </div>
-                </div>
-            </main>
+              <span class="badge text-bg-light border">
+                <i class="bi bi-cash-stack me-1"></i>
+                <span th:text="${internship.salary != null ? internship.salary : 'Rémunération'}">
+                  3000 MAD/month
+                </span>
+              </span>
 
-            <aside class="col-lg-3">
-                <div class="sticky-sidebar">
-                    <div class="card p-3">
-                        <h6 class="fw-bold mb-3">Tendances pour vous</h6>
-                        <div class="mb-3">
-                            <p class="mb-0 small fw-bold">#PFE2026</p>
-                            <span class="text-muted extra-small" style="font-size: 0.7rem;">1,234 posts</span>
-                        </div>
-                        <div class="mb-3">
-                            <p class="mb-0 small fw-bold">#SpringBoot</p>
-                            <span class="text-muted extra-small" style="font-size: 0.7rem;">856 posts</span>
-                        </div>
-                        <a href="#" class="text-decoration-none small fw-bold text-muted">Voir plus <i class="bi bi-arrow-right"></i></a>
-                    </div>
+            </div>
 
-                    <div class="card p-3">
-                        <h6 class="fw-bold mb-3">Recommandations</h6>
-                        <div class="d-flex gap-2 align-items-center mb-3">
-                            <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">JD</div>
-                            <div class="flex-grow-1">
-                                <p class="mb-0 small fw-bold">John Doe</p>
-                                <p class="text-muted extra-small mb-0" style="font-size: 0.7rem;">Recruteur @ Google</p>
-                            </div>
-                            <button class="btn btn-sm btn-outline-primary rounded-pill px-3">Suivre</button>
-                        </div>
-                    </div>
+            <div th:if="${internship.requiredSkills != null}" class="small text-muted mb-3">
+              <i class="bi bi-tools me-1"></i>
+              <span th:text="${internship.requiredSkills}">
+                Java, Spring Boot, MySQL
+              </span>
+            </div>
 
-                    <footer class="text-center mt-3">
-                        <p class="text-muted" style="font-size: 0.7rem;">
-                            InternConnect © 2026 | <a href="#" class="text-muted">Confidentialité</a> | <a href="#" class="text-muted">Aide</a>
-                        </p>
-                    </footer>
-                </div>
-            </aside>
+            <div class="d-flex flex-column flex-md-row gap-2">
+
+              <a th:href="@{'/internships/' + ${internship.id}}"
+                 class="btn btn-primary btn-sm rounded-pill px-4">
+                Voir l'offre
+              </a>
+
+              <form th:action="@{'/bookmarks/' + ${internship.id}}" method="post" class="m-0">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                  <i class="bi bi-bookmark me-1"></i>
+                  Sauvegarder
+                </button>
+              </form>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      </div>
+
+      <div th:if="${internships == null || #lists.isEmpty(internships)}"
+           class="card card-soft p-5 text-center">
+
+        <i class="bi bi-inbox fs-1 text-muted opacity-50 mb-3"></i>
+
+        <h3 class="h5 fw-bold">Aucun stage disponible</h3>
+
+        <p class="text-muted mb-3">
+          Les nouvelles opportunités apparaîtront ici dès leur publication.
+        </p>
+
+        <a th:href="@{/dashboard}" class="btn btn-primary btn-sm px-4">
+          Aller au tableau de bord
+        </a>
+
+      </div>
+
+    </section>
+
+    <!-- SIDEBAR -->
+    <aside class="col-lg-4">
+
+      <section class="card card-soft p-4 mb-4">
+        <h5 class="fw-bold mb-3">
+          <i class="bi bi-person-circle me-2 text-primary"></i>
+          Votre profil
+        </h5>
+
+        <div class="d-flex align-items-center gap-3 mb-3">
+
+          <div class="avatar-box avatar-box-lg"
+               th:text="${user != null && user.firstName != null && user.lastName != null}
+                        ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}
+                        : '??'">
+            JD
+          </div>
+
+          <div>
+            <h6 class="fw-bold mb-1"
+                th:text="${user != null && user.firstName != null && user.lastName != null}
+                         ? ${user.firstName + ' ' + user.lastName}
+                         : 'Utilisateur'">
+              Jane Doe
+            </h6>
+
+            <p class="text-muted small mb-0"
+               th:text="${user != null && user.role != null ? user.role : 'USER'}">
+              USER
+            </p>
+          </div>
 
         </div>
+
+        <div class="small mb-3">
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted">Profil complété</span>
+            <strong th:text="${profileCompleteness != null ? profileCompleteness + '%' : '0%'}">0%</strong>
+          </div>
+
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar"
+                 role="progressbar"
+                 th:style="'width:' + (${profileCompleteness != null ? profileCompleteness : 0}) + '%'"
+                 th:attr="aria-valuenow=${profileCompleteness != null ? profileCompleteness : 0}"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+            </div>
+          </div>
+        </div>
+
+        <a th:href="@{/profile}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+          Compléter mon profil
+        </a>
+      </section>
+
+      <section class="card card-soft p-4 mb-4">
+        <h5 class="fw-bold mb-3">Résumé</h5>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted small">Candidatures</span>
+          <strong class="text-primary" th:text="${applicationCount != null ? applicationCount : 0}">0</strong>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-muted small">Stages sauvegardés</span>
+          <strong class="text-primary" th:text="${savedCount != null ? savedCount : 0}">0</strong>
+        </div>
+      </section>
+
+      <section class="card card-soft p-4 mb-4">
+        <h5 class="fw-bold mb-3">Tendances</h5>
+
+        <div class="mb-3">
+          <p class="mb-0 small fw-bold">#PFE2026</p>
+          <span class="text-muted small">Opportunités de fin d'études</span>
+        </div>
+
+        <div class="mb-3">
+          <p class="mb-0 small fw-bold">#SpringBoot</p>
+          <span class="text-muted small">Stages backend Java</span>
+        </div>
+
+        <div>
+          <p class="mb-0 small fw-bold">#RemoteInternship</p>
+          <span class="text-muted small">Stages à distance</span>
+        </div>
+      </section>
+
+      <section class="card card-soft p-4" sec:authorize="hasRole('POSTER')">
+        <h5 class="fw-bold mb-3">Pour les recruteurs</h5>
+
+        <p class="text-muted small mb-3">
+          Publiez une offre de stage et suivez les candidatures depuis votre tableau de bord.
+        </p>
+
+        <a th:href="@{/internships/new}" class="btn btn-primary btn-sm rounded-pill w-100">
+          Publier une offre
+        </a>
+      </section>
+
+    </aside>
+
+  </div>
+
+</main>
+
+<footer class="mt-5 border-top bg-white">
+  <div class="container-xl py-5">
+
+    <div class="row g-4">
+
+      <div class="col-lg-4 col-md-6">
+        <a class="navbar-brand fw-bold fs-4 text-primary d-block mb-3" th:href="@{/home}">
+          InternConnect
+        </a>
+
+        <p class="text-muted small pe-lg-5">
+          Connecter la prochaine génération de talents avec des opportunités de stage pertinentes.
+        </p>
+
+        <div class="d-flex gap-3 mt-4">
+          <a href="#" class="text-secondary"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="text-secondary"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="text-secondary"><i class="bi bi-github"></i></a>
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <h6 class="fw-bold mb-3">Plateforme</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2">
+            <a th:href="@{/home}" class="text-muted text-decoration-none">Stages</a>
+          </li>
+          <li class="mb-2">
+            <a th:href="@{/dashboard}" class="text-muted text-decoration-none">Tableau de bord</a>
+          </li>
+          <li class="mb-2">
+            <a th:href="@{/profile}" class="text-muted text-decoration-none">Profil</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <h6 class="fw-bold mb-3">Support</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Centre d'aide</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Confidentialité</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Conditions</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-4 col-md-12">
+        <div class="p-4 rounded-4 bg-light">
+          <h6 class="fw-bold mb-2">Statut du système</h6>
+
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="p-1 bg-success rounded-circle"></span>
+            <span class="small text-muted">Tous les systèmes sont opérationnels</span>
+          </div>
+
+          <p class="small text-muted mb-0">
+            Besoin d'aide ? Contactez-nous à
+            <span class="text-primary fw-medium">support@internconnect.univ.fr</span>
+          </p>
+        </div>
+      </div>
+
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <hr class="my-5">
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+      <p class="text-muted small mb-0">
+        &copy; 2026 InternConnect. Conçu pour les étudiants.
+      </p>
+
+      <span class="text-muted small">Version 1.0.0</span>
+    </div>
+
+  </div>
+</footer>
+
 </body>
 </html>
