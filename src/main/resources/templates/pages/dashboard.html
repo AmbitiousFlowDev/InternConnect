@@ -102,6 +102,9 @@
 </nav>
 
   <main class="container-xl py-5">
+    <div th:if="${errorMessage}" class="alert alert-danger">
+      <span th:text="${errorMessage}"></span>
+    </div>
 
     <!-- HEADER -->
     <section class="mb-5">
