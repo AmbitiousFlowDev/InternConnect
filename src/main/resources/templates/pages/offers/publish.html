@@ -1,11 +1,134 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Publier une offre</title>
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+    <script th:src="@{/assets/js/main.js}" defer></script>
 </head>
-<body>
-    <h1>Publier une offre</h1>
-    <p>Formulaire à créer dans la prochaine étape.</p>
+
+<body class="bg-light">
+
+<div class="container-fluid">
+    <div class="row min-vh-100">
+
+        <!-- Sidebar gauche -->
+        <aside class="col-md-4 col-lg-3 bg-primary text-white p-5">
+            <a th:href="@{/dashboard}" class="text-white text-decoration-none">
+                ← Retour au tableau de bord
+            </a>
+
+            <h1 class="mt-5 fw-bold">Publier une offre</h1>
+            <p class="fs-5 mt-3">
+                Partagez une opportunité avec la communauté étudiante
+            </p>
+
+            <div class="mt-5">
+                <p><strong>Étape 1</strong><br>Informations générales</p>
+                <p class="opacity-75"><strong>Étape 2</strong><br>Compétences requises</p>
+                <p class="opacity-75"><strong>Étape 3</strong><br>Détails & Publication</p>
+            </div>
+        </aside>
+
+        <!-- Formulaire -->
+        <main class="col-md-8 col-lg-9 p-5">
+            <h2 class="fw-bold">Informations générales</h2>
+            <p class="text-muted">Décrivez les détails principaux de l'offre</p>
+
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body p-4">
+
+                    <form>
+
+                        <div class="mb-3">
+                            <label class="form-label">Titre du stage *</label>
+                            <input type="text" class="form-control"
+                                   placeholder="Ex : Développeur Back-end Java Spring Boot">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nom de l'entreprise *</label>
+                                <input type="text" class="form-control"
+                                       placeholder="Ex : Global Telecom">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Secteur *</label>
+                                <select class="form-select">
+                                    <option>Informatique</option>
+                                    <option>Marketing</option>
+                                    <option>Finance</option>
+                                    <option>Ressources humaines</option>
+                                    <option>Data</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Localisation *</label>
+                                <input type="text" class="form-control"
+                                       placeholder="Ex : Casablanca, Maroc">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Type de lieu</label>
+                                <select class="form-select">
+                                    <option>Sur site</option>
+                                    <option>Hybride</option>
+                                    <option>À distance</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Durée</label>
+                                <input type="text" class="form-control"
+                                       placeholder="3 mois">
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Type de stage</label>
+                                <select class="form-select">
+                                    <option>PFE</option>
+                                    <option>Stage d'observation</option>
+                                    <option>Stage technique</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Rémunération</label>
+                                <input type="text" class="form-control"
+                                       placeholder="2000 MAD">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description courte</label>
+                            <textarea class="form-control" rows="4"
+                                      placeholder="Décrivez brièvement l'offre en 2-3 phrases..."></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-outline-secondary" disabled>
+                                ← Précédent
+                            </button>
+
+                            <button type="button" class="btn btn-primary">
+                                Suivant →
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+
 </body>
 </html>
