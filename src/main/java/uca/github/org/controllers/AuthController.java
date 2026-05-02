@@ -46,15 +46,6 @@ public class AuthController {
         return "auth/login";
     }
     /**
-     * Home page (public)
-     * Handles GET requests to "/home" and displays the home page. This page
-     * is accessible to all users, regardless of their authentication status.
-     */
-    @GetMapping("/home")
-    public String home() {
-        return "pages/home";
-    }
-    /**
      * Registration page (public)
      * Handles GET requests to "/register" and displays the registration form.
      * This page is accessible to all users, regardless of their authentication
