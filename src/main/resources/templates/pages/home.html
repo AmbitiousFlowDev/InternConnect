@@ -84,19 +84,16 @@
         </div>
 
         <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-2">
+          
         <a th:href="@{/profile}"
            class="btn btn-light btn-sm rounded-pill d-flex align-items-center gap-2"
            title="Profil">
           <span class="avatar-box avatar-box-light"
-                th:text="${user != null && user.firstName != null && user.lastName != null}
-                         ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}
-                         : '??'">
+                th:text="${userInitials != null ? userInitials : 'U'}">
             JD
           </span>
-          <span class="fw-semibold"
-                th:text="${user != null && user.firstName != null && user.lastName != null}
-                         ? ${user.firstName + ' ' + user.lastName}
-                         : 'Profil'">
+          <span class="d-none d-md-inline fw-semibold"
+                th:text="${userDisplayName != null ? userDisplayName : 'Profil'}">
             Jane Doe
           </span>
         </a>
@@ -407,17 +404,13 @@
         <div class="d-flex align-items-center gap-3 mb-3">
 
           <div class="avatar-box avatar-box-lg"
-               th:text="${user != null && user.firstName != null && user.lastName != null}
-                        ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}
-                        : '??'">
+               th:text="${userInitials != null ? userInitials : 'U'}">
             JD
           </div>
 
           <div>
             <h6 class="fw-bold mb-1"
-                th:text="${user != null && user.firstName != null && user.lastName != null}
-                         ? ${user.firstName + ' ' + user.lastName}
-                         : 'Utilisateur'">
+                th:text="${userDisplayName != null ? userDisplayName : 'Utilisateur'}">
               Jane Doe
             </h6>
 
