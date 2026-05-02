@@ -45,20 +45,22 @@
 
                         <div class="mb-3">
                             <label class="form-label">Titre du stage *</label>
-                            <input type="text" class="form-control" th:field="*{title}"
+                            <input type="text" class="form-control" th:field="*{title}" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"
                                    placeholder="Ex : Développeur Back-end Java Spring Boot">
+                            <div class="invalid-feedback" th:errors="*{title}"></div>       
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nom de l'entreprise *</label>
-                                <input type="text" class="form-control" th:field="*{company}"
+                                <input type="text" class="form-control" th:field="*{company}" th:classappend="${#fields.hasErrors('company')} ? 'is-invalid'"
                                        placeholder="Ex : Global Telecom">
+                                <div class="invalid-feedback" th:errors="*{company}"></div>       
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Secteur *</label>
-                                <select class="form-select" th:field="*{sector}">
+                                <select class="form-select" th:field="*{sector}" th:classappend="${#fields.hasErrors('sector')} ? 'is-invalid'"> 
                                     <option value="">Choisir un secteur</option>
                                     <option value="Informatique">Informatique</option>
                                     <option value="Marketing">Marketing</option>
@@ -66,6 +68,7 @@
                                     <option value="Ressources humaines">Ressources humaines</option>
                                     <option value="Data">Data</option>
                                 </select>
+                                <div class="invalid-feedback" th:errors="*{sector}"></div> 
 
                             </div>
                         </div>
@@ -73,8 +76,9 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Localisation *</label>
-                                <input type="text" class="form-control" th:field="*{location}"
+                                <input type="text" class="form-control" th:field="*{location}" th:classappend="${#fields.hasErrors('location')} ? 'is-invalid'"
                                        placeholder="Ex : Casablanca, Maroc">
+                                <div class="invalid-feedback" th:errors="*{location}"></div>        
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -89,9 +93,10 @@
 
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label class="form-label">Durée</label>
-                                <input type="text" class="form-control" th:field="*{duration}"
+                                <label class="form-label">Durée *</label>
+                                <input type="text" class="form-control" th:field="*{duration}" th:classappend="${#fields.hasErrors('duration')} ? 'is-invalid'"
                                        placeholder="3 mois">
+                                <div class="invalid-feedback" th:errors="*{duration}"></div>        
                             </div>
 
                             <div class="col-md-4 mb-3">
@@ -111,9 +116,10 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Description courte</label>
-                            <textarea class="form-control" rows="4" th:field="*{description}"
+                            <label class="form-label">Description courte *</label>
+                            <textarea class="form-control" rows="4" th:field="*{description}" th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"
                                       placeholder="Décrivez brièvement l'offre en 2-3 phrases..."></textarea>
+                            <div class="invalid-feedback" th:errors="*{description}"></div>          
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">
