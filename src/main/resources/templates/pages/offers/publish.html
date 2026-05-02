@@ -38,37 +38,42 @@
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-body p-4">
 
-                    <form>
+                    <form th:action="@{/offers/publish}" method="post" th:object="${offerPublicationForm}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        
+                        
 
                         <div class="mb-3">
                             <label class="form-label">Titre du stage *</label>
-                            <input type="text" class="form-control"
+                            <input type="text" class="form-control" th:field="*{title}"
                                    placeholder="Ex : Développeur Back-end Java Spring Boot">
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nom de l'entreprise *</label>
-                                <input type="text" class="form-control"
+                                <input type="text" class="form-control" th:field="*{company}"
                                        placeholder="Ex : Global Telecom">
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Secteur *</label>
-                                <select class="form-select">
-                                    <option>Informatique</option>
-                                    <option>Marketing</option>
-                                    <option>Finance</option>
-                                    <option>Ressources humaines</option>
-                                    <option>Data</option>
+                                <select class="form-select" th:field="*{sector}">
+                                    <option value="">Choisir un secteur</option>
+                                    <option value="Informatique">Informatique</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Ressources humaines">Ressources humaines</option>
+                                    <option value="Data">Data</option>
                                 </select>
+
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Localisation *</label>
-                                <input type="text" class="form-control"
+                                <input type="text" class="form-control" th:field="*{location}"
                                        placeholder="Ex : Casablanca, Maroc">
                             </div>
 
@@ -85,7 +90,7 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Durée</label>
-                                <input type="text" class="form-control"
+                                <input type="text" class="form-control" th:field="*{duration}"
                                        placeholder="3 mois">
                             </div>
 
@@ -100,14 +105,14 @@
 
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Rémunération</label>
-                                <input type="text" class="form-control"
+                                <input type="text" class="form-control" th:field="*{salary}"
                                        placeholder="2000 MAD">
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Description courte</label>
-                            <textarea class="form-control" rows="4"
+                            <textarea class="form-control" rows="4" th:field="*{description}"
                                       placeholder="Décrivez brièvement l'offre en 2-3 phrases..."></textarea>
                         </div>
 
@@ -116,8 +121,8 @@
                                 ← Précédent
                             </button>
 
-                            <button type="button" class="btn btn-primary">
-                                Suivant →
+                            <button type="submit" class="btn btn-primary">
+                                    Publier l'offre
                             </button>
                         </div>
 
