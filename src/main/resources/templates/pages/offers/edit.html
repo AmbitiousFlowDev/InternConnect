@@ -73,6 +73,11 @@
 
         <!-- Formulaire -->
         <main class="col-md-8 col-lg-9 p-5">
+        
+             <div th:if="${errorMessage}" class="alert alert-danger">
+                  <span th:text="${errorMessage}"></span>
+             </div>
+             
             <div th:if="${successMessage}" class="alert alert-success">
                 <span th:text="${successMessage}"></span>
             </div>

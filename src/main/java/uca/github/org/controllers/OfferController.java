@@ -1,12 +1,13 @@
 package uca.github.org.controllers;
+
 import uca.github.org.forms.OfferPublicationForm;
 import uca.github.org.models.User;
 import uca.github.org.services.OfferService;
 import uca.github.org.forms.OfferEditForm;
 import uca.github.org.models.Internship;
+import uca.github.org.repositories.InternshipRepository;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import uca.github.org.repositories.InternshipRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +16,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.dao.DataAccessException;
 
 import lombok.RequiredArgsConstructor;
 
 import jakarta.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+
+
+
 
 
 @Controller
@@ -180,10 +185,23 @@ public class OfferController {
             return "pages/offers/edit";
         }
 
-        offerService.updateOffer(offerEditForm, currentUser);
+        try {
+            offerService.updateOffer(offerEditForm, currentUser);
 
-        redirectAttributes.addFlashAttribute("successMessage", "L'offre a bien été modifiée.");
-        return "redirect:/offers/my";
+            redirectAttributes.addFlashAttribute("successMessage", "L'offre a bien été modifiée.");
+            return "redirect:/offers/my";
+
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("user", currentUser);
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "pages/offers/edit";
+
+        } catch (DataAccessException ex) {
+            model.addAttribute("user", currentUser);
+            model.addAttribute("errorMessage", "Impossible de modifier l'offre pour le moment.");
+            return "pages/offers/edit";
+        }
+
 
     }
 
