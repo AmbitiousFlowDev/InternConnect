@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mes offres</title>
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+    <script th:src="@{/assets/js/main.js}" defer></script>
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/dashboard}">InternConnect</a>
+
+        <div class="ms-auto">
+            <a th:href="@{/offers/publish}" class="btn btn-light btn-sm">
+                Ajouter offre
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">Mes offres</h1>
+            <p class="text-muted">Gérez les offres de stage que vous avez publiées.</p>
+        </div>
+
+        <a th:href="@{/offers/publish}" class="btn btn-primary">
+            Publier une nouvelle offre
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+
+            <div th:if="${#lists.isEmpty(offers)}" class="text-center text-muted py-5">
+                Aucune offre publiée pour le moment.
+            </div>
+
+            <div class="list-group" th:if="${!#lists.isEmpty(offers)}">
+                <div class="list-group-item" th:each="offer : ${offers}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="fw-bold mb-1" th:text="${offer.title}">Titre offre</h5>
+                            <p class="text-muted mb-1">
+                                <span th:text="${offer.company}">Entreprise</span>
+                                ·
+                                <span th:text="${offer.location}">Localisation</span>
+                            </p>
+                            <small class="text-muted">
+                                Statut :
+                                <span th:text="${offer.status}">ACTIVE</span>
+                            </small>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/offers/edit/{id}(id=${offer.id})}" class="btn btn-outline-primary btn-sm">
+                                Modifier
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>
