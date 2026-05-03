@@ -7,7 +7,8 @@
     <script th:src="@{/assets/js/main.js}" defer></script>
     
     <style>
-        .sidebar-step {
+    
+     .sidebar-step {
             transition: color 0.2s ease, opacity 0.2s ease;
         }
 
@@ -30,6 +31,7 @@
          color: rgba(255, 255, 255, 0.55);
          opacity: 1;
         }
+    
     </style>
     
 </head>
@@ -307,74 +309,6 @@
 
     </div>
 </div>
-
-<script>
-let currentStep = document.querySelector(".is-invalid")?.closest(".form-step")?.id === "step2"
-    ? 2
-    : document.querySelector(".is-invalid")?.closest(".form-step")?.id === "step3"
-        ? 3
-        : 1;
-
-    const step1 = document.getElementById("step1");
-    const step2 = document.getElementById("step2");
-    const step3 = document.getElementById("step3");
-
-    const sidebarStep1 = document.getElementById("sidebarStep1");
-    const sidebarStep2 = document.getElementById("sidebarStep2");
-    const sidebarStep3 = document.getElementById("sidebarStep3");
-
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const submitBtn = document.getElementById("submitBtn");
-
-    function updateSidebar(step) {
-        sidebarStep1.classList.remove("active-step", "inactive-step");
-        sidebarStep2.classList.remove("active-step", "inactive-step");
-        sidebarStep3.classList.remove("active-step", "inactive-step");
-
-        sidebarStep1.classList.add(step === 1 ? "active-step" : "inactive-step");
-        sidebarStep2.classList.add(step === 2 ? "active-step" : "inactive-step");
-        sidebarStep3.classList.add(step === 3 ? "active-step" : "inactive-step");
-    }
-
-    function showStep(step) {
-        step1.classList.add("d-none");
-        step2.classList.add("d-none");
-        step3.classList.add("d-none");
-
-        if (step === 1) step1.classList.remove("d-none");
-        if (step === 2) step2.classList.remove("d-none");
-        if (step === 3) step3.classList.remove("d-none");
-
-        prevBtn.disabled = step === 1;
-
-        if (step === 3) {
-            nextBtn.classList.add("d-none");
-            submitBtn.classList.remove("d-none");
-        } else {
-            nextBtn.classList.remove("d-none");
-            submitBtn.classList.add("d-none");
-        }
-
-        updateSidebar(step);
-    }
-
-    nextBtn.addEventListener("click", function () {
-        if (currentStep < 3) {
-            currentStep++;
-            showStep(currentStep);
-        }
-    });
-
-    prevBtn.addEventListener("click", function () {
-        if (currentStep > 1) {
-            currentStep--;
-            showStep(currentStep);
-        }
-    });
-
-    showStep(currentStep);
-</script>
 
 
 
