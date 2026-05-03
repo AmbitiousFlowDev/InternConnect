@@ -53,6 +53,13 @@
             Stages
           </a>
         </li>
+        
+        <li class="nav-item" sec:authorize="hasAnyRole('POSTER','ADMIN')">
+          <a class="nav-link" th:href="@{/offers/publish}">
+            <i class="bi bi-plus-circle me-1"></i>
+            Ajouter offre
+          </a>
+        </li>
 
         <li class="nav-item">
           <a class="nav-link" th:href="@{/applications}">
@@ -102,6 +109,9 @@
 </nav>
 
   <main class="container-xl py-5">
+    <div th:if="${errorMessage}" class="alert alert-danger">
+      <span th:text="${errorMessage}"></span>
+    </div>
 
     <!-- HEADER -->
     <section class="mb-5">
