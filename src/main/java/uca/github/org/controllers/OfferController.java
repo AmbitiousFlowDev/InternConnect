@@ -17,6 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.dao.DataAccessException;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -204,6 +206,21 @@ public class OfferController {
         
 
     }
+    
+    @PostMapping("/offers/delete")
+    public String deleteOffer(
+            @RequestParam Long id,
+            @AuthenticationPrincipal User currentUser,
+            RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", "Endpoint de suppression prêt.");
+        return "redirect:/offers/my";
+    }
+
 
 
 }
