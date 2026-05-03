@@ -1,6 +1,8 @@
 package uca.github.org.services;
 
 import java.time.LocalDate;
+import uca.github.org.forms.OfferEditForm;
+
 
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,7 @@ import uca.github.org.forms.OfferPublicationForm;
 import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 import uca.github.org.repositories.InternshipRepository;
+
 
 
 
@@ -45,4 +48,39 @@ public class OfferServiceImpl implements OfferService {
 
         return internshipRepository.save(internship);
     }
+    
+    @Override
+    public Internship updateOffer(OfferEditForm form, User currentUser) {
+        Internship offer = internshipRepository.findById(form.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
+
+        if (!offer.getPoster().getId().equals(currentUser.getId())
+                && currentUser.getRole() != User.Role.ADMIN) {
+            throw new IllegalArgumentException("Vous n'avez pas le droit de modifier cette offre.");
+        }
+
+        offer.setTitle(form.getTitle());
+        offer.setCompany(form.getCompany());
+        offer.setSector(form.getSector());
+        offer.setLocation(form.getLocation());
+        offer.setDuration(form.getDuration());
+        offer.setSalary(form.getSalary());
+        offer.setDescription(form.getDescription());
+
+        offer.setRequiredSkills(form.getRequiredSkills());
+        offer.setEducationLevel(form.getEducationLevel());
+        offer.setSoftSkills(form.getSoftSkills());
+        offer.setDesiredProfile(form.getDesiredProfile());
+        offer.setLanguages(form.getLanguages());
+
+        offer.setRequestedDocuments(form.getRequestedDocuments());
+        offer.setContactEmail(form.getContactEmail());
+
+        if (form.getExpiresAt() != null && !form.getExpiresAt().isBlank()) {
+            offer.setExpiresAt(LocalDate.parse(form.getExpiresAt()));
+        }
+
+        return internshipRepository.save(offer);
+    }
+
 }

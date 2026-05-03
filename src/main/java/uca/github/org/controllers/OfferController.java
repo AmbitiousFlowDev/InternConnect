@@ -180,8 +180,11 @@ public class OfferController {
             return "pages/offers/edit";
         }
 
-        redirectAttributes.addFlashAttribute("successMessage", "Endpoint de modification prêt.");
+        offerService.updateOffer(offerEditForm, currentUser);
+
+        redirectAttributes.addFlashAttribute("successMessage", "L'offre a bien été modifiée.");
         return "redirect:/offers/my";
+
     }
 
 
