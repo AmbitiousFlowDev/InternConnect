@@ -161,5 +161,28 @@ public class OfferController {
         redirectAttributes.addFlashAttribute("successMessage", "Votre offre a bien été publiée.");
         return "redirect:/offers/publish";
     }
+    
+    
+    @PostMapping("/offers/update")
+    public String updateOffer(
+            @Valid @ModelAttribute("offerEditForm") OfferEditForm offerEditForm,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal User currentUser,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", currentUser);
+            return "pages/offers/edit";
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", "Endpoint de modification prêt.");
+        return "redirect:/offers/my";
+    }
+
 
 }
