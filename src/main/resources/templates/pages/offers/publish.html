@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <title>Publier une offre</title>
     <link rel="stylesheet" th:href="@{/assets/css/main.css}">
-    <script th:src="@{/assets/js/main.js}" defer></script>
+    <script th:src="@{/assets/js/main.js}" defer></script> 
     
     <style>
     
-     .sidebar-step {
-            transition: color 0.2s ease, opacity 0.2s ease;
+        .list-group-item-action {
+           transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .sidebar-step {
+           transition: color 0.2s ease, opacity 0.2s ease;
         }
 
         .sidebar-step strong {
@@ -31,9 +35,8 @@
          color: rgba(255, 255, 255, 0.55);
          opacity: 1;
         }
-    
+        
     </style>
-    
 </head>
 
 <body class="bg-light">
