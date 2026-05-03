@@ -201,7 +201,7 @@ public class OfferController {
             model.addAttribute("errorMessage", "Impossible de modifier l'offre pour le moment.");
             return "pages/offers/edit";
         }
-
+        
 
     }
 
