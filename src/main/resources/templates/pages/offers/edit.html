@@ -2,7 +2,7 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Publier une offre</title>
+    <title>Modifier une offre</title>
     <link rel="stylesheet" th:href="@{/assets/css/main.css}">
     <script th:src="@{/assets/js/main.js}" defer></script>
     
@@ -47,7 +47,7 @@
                 ← Retour au tableau de bord
             </a>
 
-            <h1 class="mt-5 fw-bold">Publier une offre</h1>
+            <h1 class="mt-5 fw-bold">Modifier une offre</h1>
             <p class="fs-5 mt-3">
                 Partagez une opportunité avec la communauté étudiante
             </p>
@@ -84,8 +84,10 @@
              <div class="card border-0 shadow-sm mt-4">
                 <div class="card-body p-4">
 
-                    <form th:action="@{/offers/publish}" method="post" th:object="${offerPublicationForm}">
+                    <form th:action="@{/offers/update}" method="post" th:object="${offerEditForm}">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        
+                        <input type="hidden" th:field="*{id}">
                         
                         
                       <div id="step1" class="form-step">
@@ -297,7 +299,7 @@
                             </button>       
 
                             <button type="submit" id="submitBtn" class="btn btn-success d-none">
-                                    Publier l'offre
+                                    Enregistrer les modifications
                             </button>
                         </div>
 
@@ -380,7 +382,9 @@ prevBtn.addEventListener("click", function () {
 showStep(currentStep);
 </script>
 
-
-
 </body>
 </html>
+
+
+
+

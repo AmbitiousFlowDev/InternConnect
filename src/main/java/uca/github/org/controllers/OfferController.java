@@ -1,4 +1,9 @@
 package uca.github.org.controllers;
+import uca.github.org.forms.OfferPublicationForm;
+import uca.github.org.models.User;
+import uca.github.org.services.OfferService;
+import uca.github.org.forms.OfferEditForm;
+import uca.github.org.models.Internship;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import uca.github.org.repositories.InternshipRepository;
@@ -9,12 +14,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import lombok.RequiredArgsConstructor;
-import uca.github.org.forms.OfferPublicationForm;
-import uca.github.org.models.User;
-import uca.github.org.services.OfferService;
+
 import jakarta.validation.Valid;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -66,6 +73,65 @@ public class OfferController {
 
         return "pages/offers/my-offers";
     }
+    
+    
+    @GetMapping("/offers/edit/{id}")
+    public String showEditForm(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User currentUser,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        Optional<Internship> optionalOffer = internshipRepository.findById(id);
+
+        if (optionalOffer.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Offre introuvable.");
+            return "redirect:/offers/my";
+        }
+
+        Internship offer = optionalOffer.get();
+
+        if (!offer.getPoster().getId().equals(currentUser.getId())
+                && currentUser.getRole() != User.Role.ADMIN) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Vous n'avez pas le droit de modifier cette offre.");
+            return "redirect:/offers/my";
+        }
+
+        OfferEditForm form = new OfferEditForm();
+        form.setId(offer.getId());
+        form.setTitle(offer.getTitle());
+        form.setCompany(offer.getCompany());
+        form.setSector(offer.getSector());
+        form.setLocation(offer.getLocation());
+        form.setDuration(offer.getDuration());
+        form.setSalary(offer.getSalary());
+        form.setDescription(offer.getDescription());
+
+        form.setRequiredSkills(offer.getRequiredSkills());
+        form.setEducationLevel(offer.getEducationLevel());
+        form.setSoftSkills(offer.getSoftSkills());
+        form.setDesiredProfile(offer.getDesiredProfile());
+        form.setLanguages(offer.getLanguages());
+
+        form.setRequestedDocuments(offer.getRequestedDocuments());
+
+        if (offer.getExpiresAt() != null) {
+            form.setExpiresAt(offer.getExpiresAt().format(DateTimeFormatter.ISO_DATE));
+        }
+
+        form.setContactEmail(offer.getContactEmail());
+        form.setTermsAccepted(true);
+
+        model.addAttribute("user", currentUser);
+        model.addAttribute("offerEditForm", form);
+
+        return "pages/offers/edit";
+    }
+
 
 
     @PostMapping("/offers/publish")
