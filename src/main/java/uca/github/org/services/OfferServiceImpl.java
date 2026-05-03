@@ -10,6 +10,8 @@ import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 import uca.github.org.repositories.InternshipRepository;
 
+
+
 @Service
 @RequiredArgsConstructor
 public class OfferServiceImpl implements OfferService {
@@ -29,6 +31,16 @@ public class OfferServiceImpl implements OfferService {
                 .description(form.getDescription())
                 .status(Internship.InternshipStatus.ACTIVE)
                 .publishedAt(LocalDate.now())
+                .requiredSkills(form.getRequiredSkills())
+                .educationLevel(form.getEducationLevel())
+                .softSkills(form.getSoftSkills())
+                .desiredProfile(form.getDesiredProfile())
+                .languages(form.getLanguages())
+                .requestedDocuments(form.getRequestedDocuments())
+                .contactEmail(form.getContactEmail())
+                .expiresAt(form.getExpiresAt() != null && !form.getExpiresAt().isBlank()
+                ? LocalDate.parse(form.getExpiresAt())
+                : null)
                 .build();
 
         return internshipRepository.save(internship);

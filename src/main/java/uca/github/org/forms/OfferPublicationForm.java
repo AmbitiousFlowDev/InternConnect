@@ -2,6 +2,9 @@ package uca.github.org.forms;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Email;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,4 +33,33 @@ public class OfferPublicationForm {
     @NotBlank(message = "La description est obligatoire.")
     @Size(min = 20, message = "La description doit contenir au moins 20 caractères.")
     private String description;
+    
+    @NotBlank(message = "Les compétences techniques sont obligatoires.")
+    private String requiredSkills;
+
+    @NotBlank(message = "Le niveau d'études requis est obligatoire.")
+    private String educationLevel;
+
+    private String softSkills;
+
+    @NotBlank(message = "Le profil recherché est obligatoire.")
+    private String desiredProfile;
+
+    private String languages;
+    
+    @NotBlank(message = "Les documents demandés sont obligatoires.")
+    private String requestedDocuments;
+
+    @NotBlank(message = "La date d'expiration est obligatoire.")
+    private String expiresAt;
+
+    @NotBlank(message = "L'email de contact est obligatoire.")
+    @Email(message = "L'email de contact doit être valide.")
+    private String contactEmail;
+
+    @AssertTrue(message = "Vous devez confirmer l'exactitude des informations.")
+    private boolean termsAccepted;
+
+
+
 }

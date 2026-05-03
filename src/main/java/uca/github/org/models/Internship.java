@@ -45,6 +45,16 @@ public class Internship {
 
     @Column(columnDefinition = "TEXT")
     private String requiredSkills;
+    
+    private String educationLevel;
+
+    @Column(columnDefinition = "TEXT")
+    private String softSkills;
+
+    @Column(columnDefinition = "TEXT")
+    private String desiredProfile;
+
+    private String languages;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -70,5 +80,10 @@ public class Internship {
     private List<Recommendation> recommendations = new ArrayList<>();
 
     private String salary;
+    
+    private String requestedDocuments;
+
+    private String contactEmail;
+
 
 }
