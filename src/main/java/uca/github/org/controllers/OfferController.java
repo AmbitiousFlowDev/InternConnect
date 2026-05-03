@@ -1,5 +1,12 @@
 package uca.github.org.controllers;
 
+import uca.github.org.forms.OfferPublicationForm;
+import uca.github.org.models.User;
+import uca.github.org.services.OfferService;
+import uca.github.org.forms.OfferEditForm;
+import uca.github.org.models.Internship;
+import uca.github.org.repositories.InternshipRepository;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,18 +15,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.dao.DataAccessException;
 
 import lombok.RequiredArgsConstructor;
-import uca.github.org.forms.OfferPublicationForm;
-import uca.github.org.models.User;
-import uca.github.org.services.OfferService;
+
 import jakarta.validation.Valid;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
+
+
+
 
 @Controller
 @RequiredArgsConstructor
 public class OfferController {
 
     private final OfferService offerService;
+    
+    private final InternshipRepository internshipRepository;
+
 
     @GetMapping("/offers/publish")
     public String showPublishForm(
@@ -41,6 +57,87 @@ public class OfferController {
 
         return "pages/offers/publish";
     }
+    
+    @GetMapping("/offers/my")
+    public String myOffers(
+            @AuthenticationPrincipal User currentUser,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        if (currentUser.getRole() != User.Role.POSTER && currentUser.getRole() != User.Role.ADMIN) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Seuls les posteurs peuvent gérer leurs offres.");
+            return "redirect:/dashboard";
+        }
+
+        model.addAttribute("user", currentUser);
+        model.addAttribute("offers", internshipRepository.findByPosterOrderByPublishedAtDescIdDesc(currentUser));
+
+        return "pages/offers/my-offers";
+    }
+    
+    
+    @GetMapping("/offers/edit/{id}")
+    public String showEditForm(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User currentUser,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        Optional<Internship> optionalOffer = internshipRepository.findById(id);
+
+        if (optionalOffer.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Offre introuvable.");
+            return "redirect:/offers/my";
+        }
+
+        Internship offer = optionalOffer.get();
+
+        if (!offer.getPoster().getId().equals(currentUser.getId())
+                && currentUser.getRole() != User.Role.ADMIN) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Vous n'avez pas le droit de modifier cette offre.");
+            return "redirect:/offers/my";
+        }
+
+        OfferEditForm form = new OfferEditForm();
+        form.setId(offer.getId());
+        form.setTitle(offer.getTitle());
+        form.setCompany(offer.getCompany());
+        form.setSector(offer.getSector());
+        form.setLocation(offer.getLocation());
+        form.setDuration(offer.getDuration());
+        form.setSalary(offer.getSalary());
+        form.setDescription(offer.getDescription());
+
+        form.setRequiredSkills(offer.getRequiredSkills());
+        form.setEducationLevel(offer.getEducationLevel());
+        form.setSoftSkills(offer.getSoftSkills());
+        form.setDesiredProfile(offer.getDesiredProfile());
+        form.setLanguages(offer.getLanguages());
+
+        form.setRequestedDocuments(offer.getRequestedDocuments());
+
+        if (offer.getExpiresAt() != null) {
+            form.setExpiresAt(offer.getExpiresAt().format(DateTimeFormatter.ISO_DATE));
+        }
+
+        form.setContactEmail(offer.getContactEmail());
+        form.setTermsAccepted(true);
+
+        model.addAttribute("user", currentUser);
+        model.addAttribute("offerEditForm", form);
+
+        return "pages/offers/edit";
+    }
+
+
 
     @PostMapping("/offers/publish")
     public String publishOffer(
@@ -69,5 +166,44 @@ public class OfferController {
         redirectAttributes.addFlashAttribute("successMessage", "Votre offre a bien été publiée.");
         return "redirect:/offers/publish";
     }
+    
+    
+    @PostMapping("/offers/update")
+    public String updateOffer(
+            @Valid @ModelAttribute("offerEditForm") OfferEditForm offerEditForm,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal User currentUser,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", currentUser);
+            return "pages/offers/edit";
+        }
+
+        try {
+            offerService.updateOffer(offerEditForm, currentUser);
+
+            redirectAttributes.addFlashAttribute("successMessage", "L'offre a bien été modifiée.");
+            return "redirect:/offers/my";
+
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("user", currentUser);
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "pages/offers/edit";
+
+        } catch (DataAccessException ex) {
+            model.addAttribute("user", currentUser);
+            model.addAttribute("errorMessage", "Impossible de modifier l'offre pour le moment.");
+            return "pages/offers/edit";
+        }
+        
+
+    }
+
 
 }

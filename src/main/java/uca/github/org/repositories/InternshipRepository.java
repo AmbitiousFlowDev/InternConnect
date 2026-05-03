@@ -6,8 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import uca.github.org.models.Internship;
+import uca.github.org.models.User;
 
 @Repository
 public interface InternshipRepository extends JpaRepository<Internship, Long> {
     List<Internship> findByStatusOrderByPublishedAtDescIdDesc(Internship.InternshipStatus status);
+
+    List<Internship> findByPosterOrderByPublishedAtDescIdDesc(User poster);
 }
