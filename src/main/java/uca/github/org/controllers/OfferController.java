@@ -76,7 +76,10 @@ public class OfferController {
         }
 
         model.addAttribute("user", currentUser);
-        model.addAttribute("offers", internshipRepository.findByPosterOrderByPublishedAtDescIdDesc(currentUser));
+        model.addAttribute("offers", internshipRepository.findByPosterAndStatusNotOrderByPublishedAtDescIdDesc(
+                currentUser,
+                Internship.InternshipStatus.ARCHIVED
+        ));
 
         return "pages/offers/my-offers";
     }

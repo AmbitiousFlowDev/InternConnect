@@ -12,5 +12,9 @@ import uca.github.org.models.User;
 public interface InternshipRepository extends JpaRepository<Internship, Long> {
     List<Internship> findByStatusOrderByPublishedAtDescIdDesc(Internship.InternshipStatus status);
 
-    List<Internship> findByPosterOrderByPublishedAtDescIdDesc(User poster);
+    List<Internship> findByPosterAndStatusNotOrderByPublishedAtDescIdDesc(
+            User poster,
+            Internship.InternshipStatus status
+    );
+
 }
