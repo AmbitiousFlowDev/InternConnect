@@ -117,6 +117,15 @@
 
 <main class="container-xl py-5">
 
+<div th:if="${successMessage}" class="alert alert-success">
+  <span th:text="${successMessage}"></span>
+</div>
+
+<div th:if="${errorMessage}" class="alert alert-danger">
+  <span th:text="${errorMessage}"></span>
+</div>
+
+
   <!-- HEADER -->
   <section class="mb-5">
     <div class="row align-items-center g-4">

@@ -108,6 +108,25 @@ public class OfferServiceImpl implements OfferService {
     public List<Bookmark> getSavedOffers(User currentUser) {
         return bookmarkRepository.findByUserOrderByAddedAtDesc(currentUser);
     }
+    
+    @Override
+    public Bookmark saveOffer(Long offerId, User currentUser) {
+        Internship offer = internshipRepository.findById(offerId)
+                .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
+
+        if (offer.getStatus() != Internship.InternshipStatus.ACTIVE) {
+            throw new IllegalArgumentException("Cette offre n'est plus disponible.");
+        }
+
+        return bookmarkRepository.findByUserAndInternship(currentUser, offer)
+                .orElseGet(() -> bookmarkRepository.save(
+                        Bookmark.builder()
+                                .user(currentUser)
+                                .internship(offer)
+                                .build()
+                ));
+    }
+
 
 
 }

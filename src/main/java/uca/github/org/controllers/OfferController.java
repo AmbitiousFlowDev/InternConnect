@@ -247,6 +247,30 @@ public class OfferController {
 
         return "redirect:/offers/my";
     }
+    
+    
+    @PostMapping("/offers/save")
+    public String saveOffer(
+            @RequestParam Long id,
+            @AuthenticationPrincipal User currentUser,
+            RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            offerService.saveOffer(id, currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Offre sauvegardée.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Impossible de sauvegarder l'offre pour le moment.");
+        }
+
+        return "redirect:/home";
+    }
+
 
 
 
