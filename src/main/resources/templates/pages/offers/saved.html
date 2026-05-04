@@ -120,6 +120,27 @@
                             04/05/2026
                         </span>
                     </small>
+                    
+                    <div class="mt-3 d-flex gap-2">
+                         <a th:if="${bookmark.internship != null}"
+                            th:href="@{'/internships/' + ${bookmark.internship.id}}"
+                            class="btn btn-outline-primary btn-sm">
+                              Voir l'offre
+                         </a>
+
+                         <form th:if="${bookmark.internship != null}"
+                               th:action="@{/offers/unsave}"
+                               method="post"
+                               class="m-0">
+                           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                           <input type="hidden" name="id" th:value="${bookmark.internship.id}">
+
+                          <button type="submit" class="btn btn-outline-danger btn-sm">
+                             Retirer
+                          </button>
+                        </form>
+                    </div>
+                    
 
                 </div>
             </div>

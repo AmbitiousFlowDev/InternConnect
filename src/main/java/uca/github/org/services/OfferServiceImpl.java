@@ -126,6 +126,18 @@ public class OfferServiceImpl implements OfferService {
                                 .build()
                 ));
     }
+    
+    @Override
+    public void removeSavedOffer(Long offerId, User currentUser) {
+        Internship offer = internshipRepository.findById(offerId)
+                .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
+
+        Bookmark bookmark = bookmarkRepository.findByUserAndInternship(currentUser, offer)
+                .orElseThrow(() -> new IllegalArgumentException("Cette offre n'est pas sauvegardée."));
+
+        bookmarkRepository.delete(bookmark);
+    }
+
 
 
 

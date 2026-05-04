@@ -18,6 +18,9 @@ public interface OfferService {
     List<Bookmark> getSavedOffers(User currentUser);
     
     Bookmark saveOffer(Long offerId, User currentUser);
+    
+    void removeSavedOffer(Long offerId, User currentUser);
+
 
 
 

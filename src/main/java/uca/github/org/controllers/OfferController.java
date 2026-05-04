@@ -270,6 +270,30 @@ public class OfferController {
 
         return "redirect:/home";
     }
+    
+    
+    @PostMapping("/offers/unsave")
+    public String removeSavedOffer(
+            @RequestParam Long id,
+            @AuthenticationPrincipal User currentUser,
+            RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            offerService.removeSavedOffer(id, currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Offre retirée des sauvegardes.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Impossible de retirer l'offre pour le moment.");
+        }
+
+        return "redirect:/bookmarks";
+    }
+
 
 
 
