@@ -141,6 +141,22 @@ public class OfferController {
 
         return "pages/offers/edit";
     }
+    
+    @GetMapping("/bookmarks")
+    public String savedOffers(
+            @AuthenticationPrincipal User currentUser,
+            Model model) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", currentUser);
+        model.addAttribute("bookmarks", offerService.getSavedOffers(currentUser));
+
+        return "pages/offers/saved";
+    }
+
 
 
 

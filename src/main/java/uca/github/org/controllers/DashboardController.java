@@ -40,7 +40,7 @@ public class DashboardController {
         
         long totalApps = applicationRepository.countByApplicant(currentUser);
         long inReview = applicationRepository.countByApplicantAndStatus(currentUser, Application.ApplicationStatus.UNDER_REVIEW);
-        long savedCount = recommendationRepository.countByUser(currentUser);
+        long savedCount = bookmarkRepository.countByUser(currentUser);
         
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalApplications", totalApps);
@@ -50,7 +50,7 @@ public class DashboardController {
         model.addAttribute("stats", stats);
 
         model.addAttribute("applications", applicationRepository.findByApplicantOrderBySubmittedAtDesc(currentUser));
-        model.addAttribute("bookmarks", bookmarkRepository.findByUser(currentUser));
+        model.addAttribute("bookmarks", bookmarkRepository.findByUserOrderByAddedAtDesc(currentUser));
         model.addAttribute("recommendations", recommendationRepository.findByUserOrderByScoreDesc(currentUser));
 
         return "pages/dashboard";

@@ -4,6 +4,9 @@ import uca.github.org.forms.OfferEditForm;
 import uca.github.org.forms.OfferPublicationForm;
 import uca.github.org.models.Internship;
 import uca.github.org.models.User;
+import uca.github.org.models.Bookmark;
+
+import java.util.List;
 
 public interface OfferService {
     Internship publishOffer(OfferPublicationForm form, User poster);
@@ -11,5 +14,8 @@ public interface OfferService {
     Internship updateOffer(OfferEditForm form, User currentUser);
     
     void deleteOffer(Long id, User currentUser);
+    
+    List<Bookmark> getSavedOffers(User currentUser);
+
 
 }

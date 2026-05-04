@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Offres sauvegardées</title>
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+    <script th:src="@{/assets/js/main.js}" defer></script>
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top py-2">
+  <div class="container-xl">
+
+    <a class="navbar-brand fw-bold fs-3" th:href="@{/home}">
+      InternConnect
+    </a>
+
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Basculer la navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+
+      <ul class="navbar-nav ms-lg-4 me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/home}">
+            <i class="bi bi-house-door me-1"></i>
+            Accueil
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link active" th:href="@{/dashboard}">
+            <i class="bi bi-speedometer2 me-1"></i>
+            Tableau de bord
+          </a>
+        </li>
+       </ul>
+       <div class="d-flex align-items-center gap-3">
+
+        <a th:href="@{/profile}"
+           class="btn btn-light btn-sm rounded-pill d-flex align-items-center gap-2"
+           title="Profil">
+
+          <span class="avatar-box avatar-box-light" th:text="${user != null && user.firstName != null && user.lastName != null}
+                ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)} : '??'">
+            AM
+          </span>
+
+          <span class="d-none d-md-inline fw-semibold" th:text="${user != null && user.firstName != null ? user.firstName + ' ' + user.lastName : 'Utilisateur'}"></span>
+        </a>
+
+        <form th:action="@{/logout}" method="post" class="m-0">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+          <button type="submit"
+                  class="btn btn-outline-light btn-sm rounded-pill"
+                  title="Déconnexion">
+            <i class="bi bi-box-arrow-right me-1"></i>
+            <span class="d-none d-md-inline">Déconnexion</span>
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-5">
+
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <div class="mb-4">
+        <h1 class="fw-bold">Offres sauvegardées</h1>
+        <p class="text-muted">Retrouvez ici les offres que vous souhaitez consulter plus tard.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+
+            <div th:if="${#lists.isEmpty(bookmarks)}" class="text-center text-muted py-5">
+                Aucune offre sauvegardée pour le moment.
+            </div>
+
+            <div class="list-group" th:if="${!#lists.isEmpty(bookmarks)}">
+                <div class="list-group-item" th:each="bookmark : ${bookmarks}">
+
+                    <h5 class="fw-bold mb-1"
+                        th:text="${bookmark.internship != null ? bookmark.internship.title : 'Offre'}">
+                        Titre offre
+                    </h5>
+
+                    <p class="text-muted mb-1">
+                        <span th:text="${bookmark.internship != null ? bookmark.internship.company : 'Entreprise'}">
+                            Entreprise
+                        </span>
+                        ·
+                        <span th:text="${bookmark.internship != null ? bookmark.internship.location : 'Localisation'}">
+                            Localisation
+                        </span>
+                    </p>
+
+                    <small class="text-muted">
+                        Sauvegardée le
+                        <span th:text="${bookmark.addedAt != null ? #temporals.format(bookmark.addedAt, 'dd/MM/yyyy') : 'date inconnue'}">
+                            04/05/2026
+                        </span>
+                    </small>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>
