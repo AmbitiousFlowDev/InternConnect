@@ -12,7 +12,7 @@ import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 import uca.github.org.repositories.InternshipRepository;
 
-
+import java.util.List;
 
 
 @Service
@@ -81,6 +81,16 @@ public class OfferServiceImpl implements OfferService {
         }
 
         return internshipRepository.save(offer);
+    }
+    @Override
+    public List<Internship> searchOffers(
+            String keyword,
+            String location,
+            String sector,
+            String duration,
+            String company) {
+        return internshipRepository.searchOffers(
+                keyword, location, sector, duration, company);
     }
 
 }

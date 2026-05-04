@@ -24,7 +24,8 @@ import jakarta.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-
+import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
 
 
 
@@ -204,6 +205,27 @@ public class OfferController {
         
 
     }
+    @GetMapping("/offers/search")
+    public String searchOffers(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String sector,
+            @RequestParam(required = false) String duration,
+            @RequestParam(required = false) String company,
+            @AuthenticationPrincipal User currentUser,
+            Model model) {
 
+        var results = offerService.searchOffers(keyword, location, sector, duration, company);
+
+        model.addAttribute("results", results);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("location", location);
+        model.addAttribute("sector", sector);
+        model.addAttribute("duration", duration);
+        model.addAttribute("company", company);
+        model.addAttribute("user", currentUser);
+
+        return "pages/offers/search";
+    }
 
 }
