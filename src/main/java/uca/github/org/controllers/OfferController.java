@@ -220,9 +220,18 @@ public class OfferController {
             return "redirect:/login";
         }
 
-        redirectAttributes.addFlashAttribute("successMessage", "Endpoint de suppression prêt.");
+        try {
+            offerService.deleteOffer(id, currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "L'offre a bien été supprimée.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Impossible de supprimer l'offre pour le moment.");
+        }
+
         return "redirect:/offers/my";
     }
+
 
 
 

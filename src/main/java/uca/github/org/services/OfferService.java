@@ -9,4 +9,7 @@ public interface OfferService {
     Internship publishOffer(OfferPublicationForm form, User poster);
 
     Internship updateOffer(OfferEditForm form, User currentUser);
+    
+    void deleteOffer(Long id, User currentUser);
+
 }
