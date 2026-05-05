@@ -14,4 +14,19 @@ public interface InternshipRepository extends JpaRepository<Internship, Long> {
     List<Internship> findByStatusOrderByPublishedAtDescIdDesc(Internship.InternshipStatus status);
 
     List<Internship> findByPosterOrderByPublishedAtDescIdDesc(User poster);
+    @Query("SELECT i FROM Internship i WHERE " +
+            "i.status = 'ACTIVE' AND " +
+            "(:keyword IS NULL OR LOWER(i.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(i.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
+            "(:location IS NULL OR LOWER(i.location) LIKE LOWER(CONCAT('%', :location, '%'))) AND " +
+            "(:sector IS NULL OR LOWER(i.sector) LIKE LOWER(CONCAT('%', :sector, '%'))) AND " +
+            "(:duration IS NULL OR LOWER(i.duration) LIKE LOWER(CONCAT('%', :duration, '%'))) AND " +
+            "(:company IS NULL OR LOWER(i.company) LIKE LOWER(CONCAT('%', :company, '%')))")
+    List<Internship> searchOffers(
+            @Param("keyword") String keyword,
+            @Param("location") String location,
+            @Param("sector") String sector,
+            @Param("duration") String duration,
+            @Param("company") String company
+    );
 }
