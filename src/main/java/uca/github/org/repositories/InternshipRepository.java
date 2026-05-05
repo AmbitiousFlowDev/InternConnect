@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import uca.github.org.models.Internship;
 import uca.github.org.models.User;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 @Repository
