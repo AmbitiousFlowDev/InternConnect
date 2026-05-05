@@ -42,13 +42,13 @@ public class OfferServiceImpl implements OfferService {
                 .requestedDocuments(form.getRequestedDocuments())
                 .contactEmail(form.getContactEmail())
                 .expiresAt(form.getExpiresAt() != null && !form.getExpiresAt().isBlank()
-                ? LocalDate.parse(form.getExpiresAt())
-                : null)
+                        ? LocalDate.parse(form.getExpiresAt())
+                        : null)
                 .build();
 
         return internshipRepository.save(internship);
     }
-    
+
     @Override
     public Internship updateOffer(OfferEditForm form, User currentUser) {
         Internship offer = internshipRepository.findById(form.getId())
