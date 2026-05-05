@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Recherche de stages</title>
+</head>
+<body>
+
+<div>
+    <h2>Rechercher un stage</h2>
+
+    <form th:action="@{/offers/search}" method="get">
+        <input type="text" name="keyword" placeholder="Mot-clé..."
+               th:value="${keyword}"/>
+        <input type="text" name="location" placeholder="Ville..."
+               th:value="${location}"/>
+        <input type="text" name="sector" placeholder="Secteur..."
+               th:value="${sector}"/>
+        <input type="text" name="duration" placeholder="Durée..."
+               th:value="${duration}"/>
+        <input type="text" name="company" placeholder="Entreprise..."
+               th:value="${company}"/>
+        <button type="submit">🔍 Rechercher</button>
+    </form>
+
+    <div th:if="${results != null and results.isEmpty()}">
+        <p>Aucun stage trouvé. Essayez d'autres critères.</p>
+    </div>
+
+    <div th:each="offer : ${results}">
+        <h4 th:text="${offer.title}"></h4>
+        <p th:text="${offer.company}"></p>
+        <p th:text="${offer.location}"></p>
+        <p th:text="${offer.duration}"></p>
+    </div>
+</div>
+
+</body>
