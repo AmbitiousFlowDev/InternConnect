@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mes Candidatures</title>
+</head>
+<body>
+
+<h2>Mes Candidatures</h2>
+
+<!-- Filtres par statut -->
+<div>
+    <a th:href="@{/applications/status}">Toutes</a>
+    <span th:each="s : ${statuses}">
+        <a th:href="@{/applications/status(status=${s})}"
+           th:text="${s}"></a>
+    </span>
+</div>
+
+<!-- Message si vide -->
+<div th:if="${applications == null or applications.isEmpty()}">
+    <p>Aucune candidature trouvée.</p>
+</div>
+
+<!-- Liste des candidatures -->
+<div th:each="app : ${applications}">
+    <h4 th:text="${app.internship.title}"></h4>
+    <p th:text="${app.internship.company}"></p>
+    <p>Statut : <strong th:text="${app.status}"></strong></p>
+    <p>Soumis le :
+        <span th:text="${#temporals.format(app.submittedAt, 'dd/MM/yyyy HH:mm')}">
+        </span>
+    </p>
+    <hr/>
+</div>
+
+</body>
+</html>
