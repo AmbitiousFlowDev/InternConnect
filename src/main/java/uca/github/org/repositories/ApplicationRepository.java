@@ -10,5 +10,5 @@ import uca.github.org.models.User;
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
     long countByApplicant(User applicant);
     long countByApplicantAndStatus(User applicant, Application.ApplicationStatus status);
-    List<Application> findByApplicantOrderBySubmittedAtDesc(User applicant);
+    List<Application> findByApplicantOrderBySubmittedAtDesc(User applicant,   Application.ApplicationStatus status);
 }
