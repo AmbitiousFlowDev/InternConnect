@@ -44,5 +44,8 @@ public class Application {
     @PrePersist
     public void prePersist() {
         this.submittedAt = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = ApplicationStatus.SUBMITTED;
+        }
     }
 }
