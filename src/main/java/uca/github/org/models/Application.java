@@ -48,4 +48,5 @@ public class Application {
             this.status = ApplicationStatus.SUBMITTED;
         }
     }
+
 }
