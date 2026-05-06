@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import uca.github.org.models.Application;
 import uca.github.org.models.User;
 import uca.github.org.services.ApplicationService;
@@ -24,19 +22,17 @@ public class ApplicationController {
             @AuthenticationPrincipal User currentUser,
             Model model) {
 
-        if (currentUser == null) {
-            return "redirect:/login";
-        }
+        if (currentUser == null) return "redirect:/login";
 
         if (status != null && !status.isBlank()) {
             try {
                 Application.ApplicationStatus appStatus =
                         Application.ApplicationStatus.valueOf(status.toUpperCase());
                 model.addAttribute("applications",
-                        applicationService.getUserApplicationsByStatus(
-                                currentUser, appStatus));
+                        applicationService.getUserApplicationsByStatus(currentUser, appStatus));
                 model.addAttribute("selectedStatus", status.toUpperCase());
             } catch (IllegalArgumentException e) {
+                // Statut invalide → on retourne tout
                 model.addAttribute("applications",
                         applicationService.getUserApplications(currentUser));
             }

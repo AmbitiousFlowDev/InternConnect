@@ -1,21 +1,20 @@
 package uca.github.org;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import uca.github.org.models.Application;
 import uca.github.org.models.User;
 import uca.github.org.repositories.ApplicationRepository;
 import uca.github.org.services.ApplicationServiceImpl;
-import java.util.* ;
+
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class ApplicationServiceTest {
 
     @Mock
@@ -24,31 +23,63 @@ class ApplicationServiceTest {
     @InjectMocks
     private ApplicationServiceImpl applicationService;
 
-    @Test
-    void getUserApplications_returnsListForUser() {
-        User user = new User();
-        when(applicationRepository.findByApplicantOrderBySubmittedAtDesc(user,Application.ApplicationStatus.SUBMITTED))
-                .thenReturn(List.of());
+    private User mockUser;
 
-        List<Application> result = applicationService.getUserApplications(user);
-
-        assertNotNull(result);
-        verify(applicationRepository).findByApplicantOrderBySubmittedAtDesc(user,Application.ApplicationStatus.SUBMITTED);
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockUser = new User();
     }
 
     @Test
-    void getUserApplicationsByStatus_returnsFilteredList() {
-        User user = new User();
+    void getUserApplications_shouldReturnAllApplicationsForUser() {
+        // Given
+        Application app1 = new Application();
+        Application app2 = new Application();
+        when(applicationRepository.findByApplicantOrderBySubmittedAtDesc(mockUser))
+                .thenReturn(List.of(app1, app2));
+
+        // When
+        List<Application> result = applicationService.getUserApplications(mockUser);
+
+        // Then
+        assertThat(result).hasSize(2);
+        verify(applicationRepository, times(1))
+                .findByApplicantOrderBySubmittedAtDesc(mockUser);
+    }
+
+    @Test
+    void getUserApplicationsByStatus_shouldReturnFilteredApplications() {
+        // Given
+        Application pendingApp = new Application();
+        pendingApp.setStatus(Application.ApplicationStatus.PENDING);
+
         when(applicationRepository.findByApplicantAndStatusOrderBySubmittedAtDesc(
-                user, Application.ApplicationStatus.SUBMITTED))
+                mockUser, Application.ApplicationStatus.PENDING))
+                .thenReturn(List.of(pendingApp));
+
+        // When
+        List<Application> result = applicationService.getUserApplicationsByStatus(
+                mockUser, Application.ApplicationStatus.PENDING);
+
+        // Then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getStatus())
+                .isEqualTo(Application.ApplicationStatus.PENDING);
+    }
+
+    @Test
+    void getUserApplicationsByStatus_shouldReturnEmptyWhenNoMatch() {
+        // Given
+        when(applicationRepository.findByApplicantAndStatusOrderBySubmittedAtDesc(
+                mockUser, Application.ApplicationStatus.ACCEPTED))
                 .thenReturn(List.of());
 
+        // When
         List<Application> result = applicationService.getUserApplicationsByStatus(
-                user, Application.ApplicationStatus.SUBMITTED);
+                mockUser, Application.ApplicationStatus.ACCEPTED);
 
-        assertNotNull(result);
-        verify(applicationRepository)
-                .findByApplicantAndStatusOrderBySubmittedAtDesc(
-                        user, Application.ApplicationStatus.SUBMITTED);
+        // Then
+        assertThat(result).isEmpty();
     }
 }

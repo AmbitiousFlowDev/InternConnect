@@ -1,37 +1,83 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Mes Candidatures</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Candidatures - InternConnect</title>
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}">
 </head>
 <body>
 
-<h2>Mes Candidatures</h2>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top py-2">
+    <div class="container-xl">
+        <a class="navbar-brand fw-bold fs-3" th:href="@{/home}">InternConnect</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-lg-4 me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/home}">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/dashboard}">Tableau de bord</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/applications/status}">Candidatures</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-<!-- Filtres par statut -->
-<div>
-    <a th:href="@{/applications/status}">Toutes</a>
-    <span th:each="s : ${statuses}">
-        <a th:href="@{/applications/status(status=${s})}"
-           th:text="${s}"></a>
-    </span>
-</div>
+<main class="container-xl py-5">
 
-<!-- Message si vide -->
-<div th:if="${applications == null or applications.isEmpty()}">
-    <p>Aucune candidature trouvée.</p>
-</div>
+    <h2 class="mb-4 fw-bold">📋 Mes Candidatures</h2>
 
-<!-- Liste des candidatures -->
-<div th:each="app : ${applications}">
-    <h4 th:text="${app.internship.title}"></h4>
-    <p th:text="${app.internship.company}"></p>
-    <p>Statut : <strong th:text="${app.status}"></strong></p>
-    <p>Soumis le :
-        <span th:text="${#temporals.format(app.submittedAt, 'dd/MM/yyyy HH:mm')}">
-        </span>
-    </p>
-    <hr/>
-</div>
+    <!-- Filtres par statut -->
+    <div class="mb-4 d-flex gap-2 flex-wrap">
+        <a th:href="@{/applications/status}"
+           th:classappend="${selectedStatus == null} ? 'btn-primary' : 'btn-outline-primary'"
+           class="btn btn-sm rounded-pill">Toutes</a>
+
+        <a th:each="s : ${statuses}"
+           th:href="@{/applications/status(status=${s})}"
+           th:text="${s}"
+           th:classappend="${selectedStatus == s.name()} ? 'btn-primary' : 'btn-outline-secondary'"
+           class="btn btn-sm rounded-pill">
+        </a>
+    </div>
+
+    <!-- Aucune candidature -->
+    <div th:if="${applications == null or applications.isEmpty()}"
+         class="card p-5 text-center text-muted">
+        <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+        <p>Aucune candidature trouvée pour ce filtre.</p>
+        <a th:href="@{/home}" class="btn btn-primary btn-sm px-4">Explorer les stages</a>
+    </div>
+
+    <!-- Liste des candidatures -->
+    <div th:each="app : ${applications}" class="card mb-3 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title fw-bold" th:text="${app.internship.title}">Titre</h5>
+            <p class="text-muted mb-1" th:text="${app.internship.company}">Entreprise</p>
+            <p class="mb-1">
+                📍 <span th:text="${app.internship.location}">Ville</span>
+            </p>
+            <p class="mb-1">
+                Statut :
+                <strong th:text="${app.status}"
+                        th:classappend="${app.status.name() == 'ACCEPTED'} ? 'text-success' :
+                                       (${app.status.name() == 'REJECTED'} ? 'text-danger' :
+                                       (${app.status.name() == 'REVIEWED'} ? 'text-warning' : 'text-secondary'))">
+                </strong>
+            </p>
+            <small class="text-muted">
+                Soumis le :
+                <span th:text="${#temporals.format(app.submittedAt, 'dd/MM/yyyy HH:mm')}"></span>
+            </small>
+        </div>
+    </div>
+
+</main>
 
 </body>
 </html>
