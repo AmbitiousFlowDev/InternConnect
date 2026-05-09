@@ -205,27 +205,60 @@ public class OfferController {
         
 
     }
-    @GetMapping("/offers/search")
-    public String searchOffers(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) String sector,
-            @RequestParam(required = false) String duration,
-            @RequestParam(required = false) String company,
-            @AuthenticationPrincipal User currentUser,
-            Model model) {
 
-        var results = offerService.searchOffers(keyword, location, sector, duration, company);
+        @GetMapping("/offers/search")
+        public String searchOffers(
+                @RequestParam(required = false) String keyword,
+                @RequestParam(required = false) String location,
+                @RequestParam(required = false) String sector,
+                @RequestParam(required = false) String duration,
+                @RequestParam(required = false) String company,
+                @AuthenticationPrincipal User currentUser,
+                Model model) {
 
-        model.addAttribute("results", results);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("location", location);
-        model.addAttribute("sector", sector);
-        model.addAttribute("duration", duration);
-        model.addAttribute("company", company);
-        model.addAttribute("user", currentUser);
+            var results = offerService.searchOffers(keyword, location, sector, duration, company);
+            model.addAttribute("results", results);
+            model.addAttribute("keyword", keyword);
 
-        return "pages/offers/search";
+
+            if (currentUser != null) {
+                model.addAttribute("user", currentUser);
+                model.addAttribute("userDisplayName", getDisplayName(currentUser));
+                model.addAttribute("userInitials", getInitials(currentUser));
+            }
+
+            return "pages/offers/search";
+        }
+
+
+        private String getDisplayName(User user) {
+            String firstName = clean(user.getFirstName());
+            String lastName  = clean(user.getLastName());
+            String fullName  = (firstName + " " + lastName).trim();
+
+            if (!fullName.isBlank()) return fullName;
+
+            String email = clean(user.getEmail());
+            return email.isBlank() ? "Utilisateur" : email;
+        }
+
+        private String getInitials(User user) {
+            String firstName = clean(user.getFirstName());
+            String lastName  = clean(user.getLastName());
+
+            String initials = firstLetter(firstName) + firstLetter(lastName);
+            if (!initials.isBlank()) return initials.toUpperCase();
+
+            String email = clean(user.getEmail());
+            return email.isBlank() ? "U" : firstLetter(email).toUpperCase();
+        }
+
+        private String firstLetter(String value) {
+            return value.isBlank() ? "" : value.substring(0, 1);
+        }
+
+        private String clean(String value) {
+            return value == null ? "" : value.trim();
+        }
     }
 
-}

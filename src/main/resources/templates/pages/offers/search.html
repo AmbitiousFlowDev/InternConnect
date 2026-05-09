@@ -7,18 +7,11 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Recherche de stages — InternConnect</title>
-
-    <!-- Bootstrap CSS via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <!-- Bootstrap Icons via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Ton CSS custom (garde le chemin de home.html) -->
     <link rel="stylesheet" th:href="@{/assets/css/main.css}">
     <script th:src="@{/assets/js/main.js}" defer></script>
 </head>
 
 <body>
-
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top py-2">
     <div class="container-xl">
@@ -46,7 +39,7 @@
                     </a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link active" th:href="@{/offers/search}">
+                    <a class="nav-link active" aria-current="page" th:href="@{/offers/search}">
                         <i class="bi bi-briefcase me-1"></i>Stages
                     </a>
                 </li>
@@ -63,13 +56,16 @@
             </ul>
 
             <div class="d-flex align-items-center gap-2">
+
                 <div sec:authorize="isAnonymous()" class="d-flex align-items-center gap-2">
                     <a th:href="@{/}" class="btn btn-outline-light btn-sm rounded-pill">Presentation</a>
                     <a th:href="@{/login}" class="btn btn-light btn-sm rounded-pill">Connexion</a>
                 </div>
+
                 <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-2">
                     <a th:href="@{/profile}"
-                       class="btn btn-light btn-sm rounded-pill d-flex align-items-center gap-2">
+                       class="btn btn-light btn-sm rounded-pill d-flex align-items-center gap-2"
+                       title="Profil">
                         <span class="avatar-box avatar-box-light"
                               th:text="${userInitials != null ? userInitials : 'U'}">U</span>
                         <span class="d-none d-md-inline fw-semibold"
@@ -82,8 +78,8 @@
                         </button>
                     </form>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 </nav>
@@ -100,10 +96,14 @@
                     Filtrez les offres par mot-clé, ville, secteur, durée ou entreprise.
                 </p>
             </div>
+            <div class="col-lg-4 d-flex justify-content-lg-end" sec:authorize="isAuthenticated()">
+                <a th:href="@{/dashboard}" class="btn btn-outline-primary rounded-pill px-4">
+                    <i class="bi bi-speedometer2 me-1"></i>Mon tableau de bord
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- Formulaire de recherche -->
     <section class="card card-soft p-4 mb-5">
         <form th:action="@{/offers/search}" method="get" class="row g-3 align-items-end">
 
@@ -113,7 +113,7 @@
                     <span class="input-group-text"><i class="bi bi-search"></i></span>
                     <input id="keyword" type="text" name="keyword"
                            class="form-control"
-                           placeholder="Titre, compétence..."
+                           placeholder="Titre, compétence, entreprise..."
                            th:value="${keyword}"/>
                 </div>
             </div>
@@ -128,10 +128,14 @@
 
             <div class="col-lg-3">
                 <label for="sector" class="form-label small fw-medium">Secteur</label>
-                <input id="sector" type="text" name="sector"
-                       class="form-control"
-                       placeholder="IT, Finance..."
-                       th:value="${sector}"/>
+                <select id="sector" name="sector" class="form-select">
+                    <option value="">Tous les secteurs</option>
+                    <option value="Software Development">Développement</option>
+                    <option value="Data Analytics">Data Analytics</option>
+                    <option value="Cloud & DevOps">Cloud &amp; DevOps</option>
+                    <option value="Frontend Development">Frontend</option>
+                    <option value="Cybersecurity">Cybersécurité</option>
+                </select>
             </div>
 
             <div class="col-lg-3">
@@ -152,98 +156,172 @@
 
             <div class="col-lg-3 d-grid">
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-funnel me-1"></i>Rechercher
+                    <i class="bi bi-funnel me-1"></i>Filtrer
                 </button>
+            </div>
+
+            <div class="col-lg-3 d-grid">
+                <a th:href="@{/offers/search}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-1"></i>Réinitialiser
+                </a>
             </div>
 
         </form>
     </section>
 
-    <!-- Résultats -->
-    <section>
 
+    <div class="row g-4">
+        <section class="col-lg-8">
 
-        <div class="d-flex justify-content-between align-items-center mb-3"
-             th:if="${results != null and not results.isEmpty()}">
-            <h2 class="h5 fw-bold mb-0">Résultats</h2>
-            <span class="text-muted small"
-                  th:text="${results.size()} + ' offre(s) trouvée(s)'"></span>
-        </div>
-
-        <!-- Aucun résultat -->
-        <div class="card card-soft p-5 text-center"
-             th:if="${results != null and results.isEmpty()}">
-            <i class="bi bi-inbox fs-1 text-muted opacity-50 mb-3"></i>
-            <h3 class="h5 fw-bold">Aucun stage trouvé</h3>
-            <p class="text-muted mb-0">Essayez d'autres critères de recherche.</p>
-        </div>
-
-
-        <article th:each="offer : ${results}" class="card card-soft card-hover mb-4">
-            <div class="card-body p-4">
-
-                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                    <div class="d-flex gap-3">
-                        <div class="avatar-box avatar-square"
-                             th:text="${offer.company != null and #strings.length(offer.company) >= 2}
-                                      ? ${#strings.substring(offer.company,0,2).toUpperCase()}
-                                      : 'IC'">IC</div>
-                        <div>
-                            <h3 class="h5 fw-bold mb-1">
-                                <a th:href="@{'/internships/' + ${offer.id}}"
-                                   sec:authorize="isAuthenticated()"
-                                   class="text-dark text-decoration-none"
-                                   th:text="${offer.title}">Titre</a>
-                                <span sec:authorize="isAnonymous()"
-                                      th:text="${offer.title}">Titre</span>
-                            </h3>
-                            <p class="text-muted mb-0">
-                                <span th:text="${offer.company}">Entreprise</span>
-                                <span th:if="${offer.location}"> · <span th:text="${offer.location}">Ville</span></span>
-                            </p>
-                        </div>
-                    </div>
-                    <span class="badge text-bg-success" th:text="${offer.status}">ACTIVE</span>
-                </div>
-
-                <p class="text-muted small mb-3" th:text="${offer.description}">Description.</p>
-
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                    <span class="badge text-bg-light border" th:if="${offer.sector}">
-                        <i class="bi bi-building me-1"></i><span th:text="${offer.sector}">Secteur</span>
-                    </span>
-                    <span class="badge text-bg-light border" th:if="${offer.duration}">
-                        <i class="bi bi-clock me-1"></i><span th:text="${offer.duration}">Durée</span>
-                    </span>
-                    <span class="badge text-bg-light border" th:if="${offer.salary}">
-                        <i class="bi bi-cash-stack me-1"></i><span th:text="${offer.salary}">Salaire</span>
-                    </span>
-                </div>
-
-                <div class="d-flex flex-column flex-md-row gap-2">
-                    <a th:href="@{'/internships/' + ${offer.id}}"
-                       sec:authorize="isAuthenticated()"
-                       class="btn btn-primary btn-sm rounded-pill px-4">Voir l'offre</a>
-                    <a th:href="@{/login}"
-                       sec:authorize="isAnonymous()"
-                       class="btn btn-primary btn-sm rounded-pill px-4">Se connecter pour postuler</a>
-                    <form th:action="@{'/bookmarks/' + ${offer.id}}" method="post"
-                          class="m-0" sec:authorize="isAuthenticated()">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-4">
-                            <i class="bi bi-bookmark me-1"></i>Sauvegarder
-                        </button>
-                    </form>
-                </div>
-
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 fw-bold mb-0"
+                    th:text="${results != null and not results.isEmpty()} ? 'Résultats' : 'Stages disponibles'">
+                    Résultats
+                </h2>
+                <span class="text-muted small"
+                      th:if="${results != null and not results.isEmpty()}"
+                      th:text="${results.size()} + ' offre(s) trouvée(s)'"></span>
             </div>
-        </article>
 
-    </section>
+
+            <div class="card card-soft p-5 text-center"
+                 th:if="${results != null and results.isEmpty()}">
+                <i class="bi bi-inbox fs-1 text-muted opacity-50 mb-3 d-block"></i>
+                <h3 class="h5 fw-bold">Aucun stage trouvé</h3>
+                <p class="text-muted mb-3">Essayez d'autres critères de recherche.</p>
+                <div>
+                    <a th:href="@{/offers/search}" class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                        Voir toutes les offres
+                    </a>
+                </div>
+            </div>
+
+
+            <article th:each="offer : ${results}" class="card card-soft card-hover mb-4">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                        <div class="d-flex gap-3">
+                            <div class="avatar-box avatar-square"
+                                 th:text="${offer.company != null && #strings.length(offer.company) >= 2}
+                                          ? ${#strings.substring(offer.company,0,2).toUpperCase()}
+                                          : 'IC'">IC</div>
+                            <div>
+                                <h3 class="h5 fw-bold mb-1">
+                                    <a th:href="@{'/internships/' + ${offer.id}}"
+                                       sec:authorize="isAuthenticated()"
+                                       class="text-dark text-decoration-none"
+                                       th:text="${offer.title != null ? offer.title : 'Stage'}">Titre</a>
+                                    <span sec:authorize="isAnonymous()"
+                                          th:text="${offer.title != null ? offer.title : 'Stage'}">Titre</span>
+                                </h3>
+                                <p class="text-muted mb-0">
+                                    <span th:text="${offer.company != null ? offer.company : 'Entreprise'}">Entreprise</span>
+                                    <span th:if="${offer.location != null}">
+                                        · <span th:text="${offer.location}">Ville</span>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <span class="badge text-bg-success"
+                              th:text="${offer.status != null ? offer.status : 'ACTIVE'}">ACTIVE</span>
+                    </div>
+
+                    <p class="text-muted small mb-3"
+                       th:if="${offer.description != null}"
+                       th:text="${offer.description}">Description du stage.</p>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge text-bg-light border">
+                            <i class="bi bi-building me-1"></i>
+                            <span th:text="${offer.sector != null ? offer.sector : 'Secteur'}">Secteur</span>
+                        </span>
+                        <span class="badge text-bg-light border">
+                            <i class="bi bi-clock me-1"></i>
+                            <span th:text="${offer.duration != null ? offer.duration : 'Durée'}">Durée</span>
+                        </span>
+                        <span class="badge text-bg-light border" th:if="${offer.salary != null}">
+                            <i class="bi bi-cash-stack me-1"></i>
+                            <span th:text="${offer.salary}">Salaire</span>
+                        </span>
+                    </div>
+
+                    <div th:if="${offer.requiredSkills != null}" class="small text-muted mb-3">
+                        <i class="bi bi-tools me-1"></i>
+                        <span th:text="${offer.requiredSkills}">Compétences</span>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row gap-2">
+                        <a th:href="@{'/internships/' + ${offer.id}}"
+                           sec:authorize="isAuthenticated()"
+                           class="btn btn-primary btn-sm rounded-pill px-4">Voir l'offre</a>
+                        <a th:href="@{/login}"
+                           sec:authorize="isAnonymous()"
+                           class="btn btn-primary btn-sm rounded-pill px-4">Se connecter pour postuler</a>
+                        <form th:action="@{'/bookmarks/' + ${offer.id}}" method="post"
+                              class="m-0" sec:authorize="isAuthenticated()">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                                <i class="bi bi-bookmark me-1"></i>Sauvegarder
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </article>
+
+        </section>
+
+
+        <aside class="col-lg-4">
+
+            <section class="card card-soft p-4 mb-4" sec:authorize="isAuthenticated()">
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-person-circle me-2 text-primary"></i>Votre profil
+                </h5>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="avatar-box avatar-box-lg"
+                         th:text="${userInitials != null ? userInitials : 'U'}">U</div>
+                    <div>
+                        <h6 class="fw-bold mb-1"
+                            th:text="${userDisplayName != null ? userDisplayName : 'Utilisateur'}">Utilisateur</h6>
+                        <p class="text-muted small mb-0"
+                           th:text="${user != null && user.role != null ? user.role : 'USER'}">USER</p>
+                    </div>
+                </div>
+                <a th:href="@{/profile}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                    Compléter mon profil
+                </a>
+            </section>
+
+            <section class="card card-soft p-4 mb-4">
+                <h5 class="fw-bold mb-3">Tendances</h5>
+                <div class="mb-3">
+                    <p class="mb-0 small fw-bold">#PFE2026</p>
+                    <span class="text-muted small">Opportunités de fin d'études</span>
+                </div>
+                <div class="mb-3">
+                    <p class="mb-0 small fw-bold">#SpringBoot</p>
+                    <span class="text-muted small">Stages backend Java</span>
+                </div>
+                <div>
+                    <p class="mb-0 small fw-bold">#RemoteInternship</p>
+                    <span class="text-muted small">Stages à distance</span>
+                </div>
+            </section>
+
+            <section class="card card-soft p-4" sec:authorize="hasRole('POSTER')">
+                <h5 class="fw-bold mb-3">Pour les recruteurs</h5>
+                <p class="text-muted small mb-3">
+                    Publiez une offre de stage et suivez les candidatures depuis votre tableau de bord.
+                </p>
+                <a th:href="@{/offers/publish}" class="btn btn-primary">Publier une offre</a>
+            </section>
+
+        </aside>
+    </div>
 
 </main>
-
-
 <footer class="mt-5 border-top bg-white">
     <div class="container-xl py-5">
         <div class="row g-4">
@@ -282,23 +360,18 @@
                         <span class="small text-muted">Tous les systèmes sont opérationnels</span>
                     </div>
                     <p class="small text-muted mb-0">
-                        Besoin d'aide ? <span class="text-primary fw-medium">support@internconnect.univ.fr</span>
+                        Besoin d'aide ? Contactez-nous à
+                        <span class="text-primary fw-medium">support@internconnect.univ.fr</span>
                     </p>
                 </div>
             </div>
         </div>
-
         <hr class="my-5">
-
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
             <p class="text-muted small mb-0">&copy; 2026 InternConnect. Conçu pour les étudiants.</p>
             <span class="text-muted small">Version 1.0.0</span>
         </div>
     </div>
 </footer>
-
-<!-- Bootstrap JS via CDN -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
