@@ -21,7 +21,11 @@ public interface OfferService {
     
     void removeSavedOffer(Long offerId, User currentUser);
 
-
-
-
+    List<Internship> searchOffers(
+            String keyword,
+            String location,
+            String sector,
+            String duration,
+            String company
+    );
 }
