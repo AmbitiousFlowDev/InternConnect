@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Application {
 
     public enum ApplicationStatus {
-        SUBMITTED, UNDER_REVIEW,  PENDING ,ACCEPTED, REJECTED, WITHDRAWN
+        SUBMITTED, UNDER_REVIEW,ACCEPTED, REJECTED
     }
 
     @Id
@@ -35,19 +35,21 @@ public class Application {
 
     private String resumeFile;
 
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ApplicationStatus status = ApplicationStatus.PENDING;
-
+    private ApplicationStatus status;
     @Column(nullable = false)
-    private LocalDateTime submittedAt= LocalDateTime.now();
-
+    private LocalDateTime submittedAt;
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
     @PrePersist
     public void prePersist() {
         this.submittedAt = LocalDateTime.now();
-
-    }
+        this.updatedAt = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = ApplicationStatus.SUBMITTED;}
+        }
     @PreUpdate
     public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
