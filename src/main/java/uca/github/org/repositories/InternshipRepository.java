@@ -13,6 +13,11 @@ import org.springframework.data.repository.query.Param;
 public interface InternshipRepository extends JpaRepository<Internship, Long> {
     List<Internship> findByStatusOrderByPublishedAtDescIdDesc(Internship.InternshipStatus status);
 
+    List<Internship> findByPosterAndStatusNotOrderByPublishedAtDescIdDesc(
+            User poster,
+            Internship.InternshipStatus status
+    );
+
     List<Internship> findByPosterOrderByPublishedAtDescIdDesc(User poster);
     @Query("SELECT i FROM Internship i WHERE " +
             "i.status = 'ACTIVE' AND " +

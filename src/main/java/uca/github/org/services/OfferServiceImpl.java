@@ -82,6 +82,21 @@ public class OfferServiceImpl implements OfferService {
 
         return internshipRepository.save(offer);
     }
+    
+    @Override
+    public void deleteOffer(Long id, User currentUser) {
+        Internship offer = internshipRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
+
+        if (!offer.getPoster().getId().equals(currentUser.getId())
+                && currentUser.getRole() != User.Role.ADMIN) {
+            throw new IllegalArgumentException("Vous n'avez pas le droit de supprimer cette offre.");
+        }
+
+        offer.setStatus(Internship.InternshipStatus.ARCHIVED);
+        internshipRepository.save(offer);
+    }
+
     @Override
     public List<Internship> searchOffers(
             String keyword,

@@ -17,6 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.dao.DataAccessException;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -75,7 +77,10 @@ public class OfferController {
         }
 
         model.addAttribute("user", currentUser);
-        model.addAttribute("offers", internshipRepository.findByPosterOrderByPublishedAtDescIdDesc(currentUser));
+        model.addAttribute("offers", internshipRepository.findByPosterAndStatusNotOrderByPublishedAtDescIdDesc(
+                currentUser,
+                Internship.InternshipStatus.ARCHIVED
+        ));
 
         return "pages/offers/my-offers";
     }
@@ -205,6 +210,30 @@ public class OfferController {
         
 
     }
+    
+    @PostMapping("/offers/delete")
+    public String deleteOffer(
+            @RequestParam Long id,
+            @AuthenticationPrincipal User currentUser,
+            RedirectAttributes redirectAttributes) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            offerService.deleteOffer(id, currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "L'offre a bien été supprimée.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Impossible de supprimer l'offre pour le moment.");
+        }
+
+        return "redirect:/offers/my";
+    }
+
+
 
         @GetMapping("/offers/search")
         public String searchOffers(

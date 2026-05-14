@@ -143,10 +143,56 @@
 
                         <div class="d-flex gap-2">
                             <a th:href="@{/offers/edit/{id}(id=${offer.id})}" class="btn btn-outline-primary btn-sm">
-                                Modifier
+                               Modifier
                             </a>
+
+                             <button type="button"
+                                     class="btn btn-outline-danger btn-sm"
+                                     data-bs-toggle="modal"
+                                     th:data-bs-target="${'#deleteOfferModal-' + offer.id}">
+                                     Supprimer
+                             </button>
                         </div>
+
                     </div>
+                    
+                    <div class="modal fade"
+                         th:id="${'deleteOfferModal-' + offer.id}"
+                         tabindex="-1"
+                         aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                           <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirmer la suppression</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                 Voulez-vous vraiment supprimer cette offre ?
+                                 <strong th:text="${offer.title}">Titre offre</strong>
+                           </div>
+
+                           <div class="modal-footer">
+                               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                     Annuler
+                               </button>
+
+                              <form th:action="@{/offers/delete}" method="post" class="m-0">
+                                   <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                   <input type="hidden" name="id" th:value="${offer.id}">
+
+                                  <button type="submit" class="btn btn-danger">
+                                     Supprimer
+                                  </button>
+                              </form>
+                           </div>
+
+                        </div>
+                   </div>
+             </div>
+                    
+                    
                 </div>
             </div>
 
