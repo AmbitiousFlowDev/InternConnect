@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternConnect - Mes Candidatures</title>
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+    <script th:src="@{/assets/js/main.js}" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top py-2">
+    <div class="container-xl">
+
+        <a class="navbar-brand fw-bold fs-3" th:href="@{/home}">InternConnect</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar" aria-controls="mainNavbar"
+                aria-expanded="false" aria-label="Basculer la navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-lg-4 me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/home}">
+                        <i class="bi bi-house-door me-1"></i>Accueil
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/dashboard}">
+                        <i class="bi bi-speedometer2 me-1"></i>Tableau de bord
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/internships}">
+                        <i class="bi bi-briefcase me-1"></i>Stages
+                    </a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyRole('POSTER','ADMIN')">
+                    <a class="nav-link" th:href="@{/offers/publish}">
+                        <i class="bi bi-plus-circle me-1"></i>Ajouter offre
+                    </a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyRole('POSTER','ADMIN')">
+                    <a class="nav-link" th:href="@{/offers/my}">
+                        <i class="bi bi-list-task me-1"></i>Mes offres
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/applications/status}">
+                        <i class="bi bi-file-earmark-text me-1"></i>Candidatures
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/bookmarks}">
+                        <i class="bi bi-bookmark me-1"></i>Sauvegardés
+                    </a>
+                </li>
+
+            </ul>
+
+            <div class="d-flex align-items-center gap-3">
+                <a th:href="@{/profile}"
+                   class="btn btn-light btn-sm rounded-pill d-flex align-items-center gap-2"
+                   title="Profil">
+            <span class="avatar-box avatar-box-light"
+                  th:text="${user != null && user.firstName != null && user.lastName != null}
+                  ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)} : '??'">
+              AM
+            </span>
+                    <span class="d-none d-md-inline fw-semibold"
+                          th:text="${user != null && user.firstName != null ? user.firstName + ' ' + user.lastName : 'Utilisateur'}">
+            </span>
+                </a>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="btn btn-outline-light btn-sm rounded-pill" title="Déconnexion">
+                        <i class="bi bi-box-arrow-right me-1"></i>
+                        <span class="d-none d-md-inline">Déconnexion</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- MAIN -->
+<main class="container-xl py-5">
+
+    <!-- HEADER -->
+    <section class="mb-4">
+        <h1 class="display-6 fw-bold mb-1">Mes Candidatures</h1>
+        <p class="text-secondary mb-0">Suivez l'état de toutes vos candidatures en temps réel.</p>
+    </section>
+
+    <!-- FILTRES PAR STATUT -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a th:href="@{/applications}"
+           th:classappend="${selectedStatus == null} ? ' active' : ''"
+           class="btn btn-sm btn-outline-secondary">
+            Toutes
+        </a>
+        <a th:each="s : ${statuses}"
+           th:href="@{/applications/status(status=${s})}"
+           th:classappend="${selectedStatus == s} ? ' active' : ''"
+           class="btn btn-sm btn-outline-secondary">
+            <span th:text="${s}"></span>
+            <span class="badge bg-secondary ms-1" th:text="${statusSummary[s]}"></span>
+        </a>
+    </div>
+
+    <!-- AUCUN RÉSULTAT -->
+    <div th:if="${applications == null or applications.isEmpty()}"
+         class="text-center py-5 text-muted">
+        <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+        <p>Aucune candidature trouvée pour ce filtre.</p>
+        <a th:href="@{/home}" class="btn btn-primary btn-sm px-4">Explorer les stages</a>
+    </div>
+
+    <!-- LISTE DES CANDIDATURES -->
+    <div class="card overflow-hidden" th:unless="${applications == null or applications.isEmpty()}">
+        <div class="list-group list-group-flush">
+
+            <div th:each="app : ${applications}" class="list-group-item p-4">
+                <div class="d-flex gap-3">
+
+                    <!-- Avatar entreprise -->
+                    <div class="avatar-box avatar-square"
+                         th:text="${app.internship != null && app.internship.company != null
+                           && #strings.length(app.internship.company) >= 2}
+                 ? ${#strings.substring(app.internship.company, 0, 2).toUpperCase()} : 'IC'">
+                    </div>
+
+                    <div class="flex-grow-1">
+                        <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-2">
+
+                            <div>
+                                <h6 class="fw-bold mb-1" th:text="${app.internship != null ? app.internship.title : 'Stage'}"></h6>
+                                <div class="d-flex flex-wrap gap-3 text-muted small">
+                    <span>
+                      <i class="bi bi-building me-1"></i>
+                      <span th:text="${app.internship != null ? app.internship.company : 'Entreprise'}"></span>
+                    </span>
+                                    <span>
+                      <i class="bi bi-geo-alt me-1"></i>
+                      <span th:text="${app.internship != null ? app.internship.location : 'Non spécifié'}"></span>
+                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Badge statut -->
+                            <!-- Badge statut — corrigé UNDER_REVIEW -->
+                            <span class="badge align-self-start px-3 py-2"
+                                  th:text="${app.status}"
+                                  th:classappend="${app.status.name() == 'ACCEPTED'} ? ' bg-success'
+                    : (${app.status.name() == 'REJECTED'} ? ' bg-danger'
+                    : (${app.status.name() == 'UNDER_REVIEW'} ? ' bg-info'
+                    : ' bg-warning text-dark'))">
+</span>
+
+                        </div>
+
+                        <!-- Timeline -->
+                        <div class="text-muted small d-flex flex-wrap gap-3">
+                <span>
+                  <i class="bi bi-clock me-1"></i>
+                  Soumise le
+                  <span th:text="${app.submittedAt != null ? #temporals.format(app.submittedAt, 'dd MMM yyyy') : 'Date inconnue'}"></span>
+                </span>
+                            <span th:if="${app.updatedAt != null and app.updatedAt != app.submittedAt}">
+                  <i class="bi bi-arrow-repeat me-1"></i>
+                  Mise à jour le
+                  <span th:text="${#temporals.format(app.updatedAt, 'dd MMM yyyy')}"></span>
+                </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="mt-5 border-top bg-white">
+    <div class="container-xl py-5">
+        <div class="row g-4">
+
+            <div class="col-lg-4 col-md-6">
+                <a class="navbar-brand fw-bold fs-4 text-primary d-block mb-3" th:href="@{/home}">InternConnect</a>
+                <p class="text-muted small pe-lg-5">
+                    Connecter la prochaine génération de talents avec des opportunités de stage pertinentes.
+                </p>
+                <div class="d-flex gap-3 mt-4">
+                    <a href="#" class="text-secondary"><i class="bi bi-linkedin"></i></a>
+                    <a href="#" class="text-secondary"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" class="text-secondary"><i class="bi bi-github"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-6">
+                <h6 class="fw-bold mb-3">Plateforme</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><a th:href="@{/home}" class="text-muted text-decoration-none">Stages</a></li>
+                    <li class="mb-2"><a th:href="@{/dashboard}" class="text-muted text-decoration-none">Tableau de bord</a></li>
+                    <li class="mb-2"><a th:href="@{/profile}" class="text-muted text-decoration-none">Profil</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-6">
+                <h6 class="fw-bold mb-3">Support</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Centre d'aide</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Confidentialité</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Conditions</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 col-md-12">
+                <div class="p-4 rounded-4 bg-light">
+                    <h6 class="fw-bold mb-2">Statut du système</h6>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="p-1 bg-success rounded-circle"></span>
+                        <span class="small text-muted">Tous les systèmes sont opérationnels</span>
+                    </div>
+                    <p class="small text-muted mb-0">
+                        Besoin d'aide ? Contactez-nous à
+                        <span class="text-primary fw-medium">support@internconnect.univ.fr</span>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        <hr class="my-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <p class="text-muted small mb-0">&copy; 2026 InternConnect. Conçu pour les étudiants.</p>
+            <span class="text-muted small">Version 1.0.0</span>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

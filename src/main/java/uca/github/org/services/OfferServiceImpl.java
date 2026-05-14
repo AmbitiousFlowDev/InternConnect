@@ -12,7 +12,7 @@ import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 import uca.github.org.repositories.InternshipRepository;
 
-
+import java.util.List;
 
 
 @Service
@@ -42,13 +42,13 @@ public class OfferServiceImpl implements OfferService {
                 .requestedDocuments(form.getRequestedDocuments())
                 .contactEmail(form.getContactEmail())
                 .expiresAt(form.getExpiresAt() != null && !form.getExpiresAt().isBlank()
-                ? LocalDate.parse(form.getExpiresAt())
-                : null)
+                        ? LocalDate.parse(form.getExpiresAt())
+                        : null)
                 .build();
 
         return internshipRepository.save(internship);
     }
-    
+
     @Override
     public Internship updateOffer(OfferEditForm form, User currentUser) {
         Internship offer = internshipRepository.findById(form.getId())
@@ -97,5 +97,15 @@ public class OfferServiceImpl implements OfferService {
         internshipRepository.save(offer);
     }
 
+    @Override
+    public List<Internship> searchOffers(
+            String keyword,
+            String location,
+            String sector,
+            String duration,
+            String company) {
+        return internshipRepository.searchOffers(
+                keyword, location, sector, duration, company);
+    }
 
 }
