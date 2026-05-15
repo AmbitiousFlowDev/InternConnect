@@ -1,24 +1,18 @@
 package uca.github.org.services;
 
 import java.time.LocalDate;
-import uca.github.org.forms.OfferEditForm;
-
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import uca.github.org.forms.OfferEditForm;
 import uca.github.org.forms.OfferPublicationForm;
+import uca.github.org.models.Bookmark;
 import uca.github.org.models.Internship;
 import uca.github.org.models.User;
-import uca.github.org.repositories.InternshipRepository;
-import uca.github.org.models.Bookmark;
 import uca.github.org.repositories.BookmarkRepository;
-
-import java.util.List;
-
-
-import java.util.List;
-
+import uca.github.org.repositories.InternshipRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +20,6 @@ public class OfferServiceImpl implements OfferService {
 
     private final InternshipRepository internshipRepository;
     private final BookmarkRepository bookmarkRepository;
-
 
     @Override
     public Internship publishOffer(OfferPublicationForm form, User poster) {
@@ -89,7 +82,7 @@ public class OfferServiceImpl implements OfferService {
 
         return internshipRepository.save(offer);
     }
-    
+
     @Override
     public void deleteOffer(Long id, User currentUser) {
         Internship offer = internshipRepository.findById(id)
@@ -103,12 +96,12 @@ public class OfferServiceImpl implements OfferService {
         offer.setStatus(Internship.InternshipStatus.ARCHIVED);
         internshipRepository.save(offer);
     }
-    
+
     @Override
     public List<Bookmark> getSavedOffers(User currentUser) {
         return bookmarkRepository.findByUserOrderByAddedAtDesc(currentUser);
     }
-    
+
     @Override
     public Bookmark saveOffer(Long offerId, User currentUser) {
         Internship offer = internshipRepository.findById(offerId)
@@ -126,7 +119,7 @@ public class OfferServiceImpl implements OfferService {
                                 .build()
                 ));
     }
-    
+
     @Override
     public void removeSavedOffer(Long offerId, User currentUser) {
         Internship offer = internshipRepository.findById(offerId)
@@ -138,8 +131,6 @@ public class OfferServiceImpl implements OfferService {
         bookmarkRepository.delete(bookmark);
     }
 
-
-
     @Override
     public List<Internship> searchOffers(
             String keyword,
@@ -147,8 +138,13 @@ public class OfferServiceImpl implements OfferService {
             String sector,
             String duration,
             String company) {
-        return internshipRepository.searchOffers(
-                keyword, location, sector, duration, company);
-    }
 
+        return internshipRepository.searchOffers(
+                keyword,
+                location,
+                sector,
+                duration,
+                company
+        );
+    }
 }

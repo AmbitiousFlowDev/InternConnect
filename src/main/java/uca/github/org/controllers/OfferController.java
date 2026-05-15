@@ -1,44 +1,35 @@
 package uca.github.org.controllers;
 
-import uca.github.org.forms.OfferPublicationForm;
-import uca.github.org.models.User;
-import uca.github.org.services.OfferService;
-import uca.github.org.forms.OfferEditForm;
-import uca.github.org.models.Internship;
-import uca.github.org.repositories.InternshipRepository;
-
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.dao.DataAccessException;
-import org.springframework.web.bind.annotation.RequestParam;
-
-
-import lombok.RequiredArgsConstructor;
-
-import jakarta.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.util.List;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import uca.github.org.forms.OfferEditForm;
+import uca.github.org.forms.OfferPublicationForm;
+import uca.github.org.models.Internship;
+import uca.github.org.models.User;
+import uca.github.org.repositories.InternshipRepository;
+import uca.github.org.services.OfferService;
 
 @Controller
 @RequiredArgsConstructor
 public class OfferController {
 
     private final OfferService offerService;
-    
     private final InternshipRepository internshipRepository;
-
 
     @GetMapping("/offers/publish")
     public String showPublishForm(
@@ -60,7 +51,7 @@ public class OfferController {
 
         return "pages/offers/publish";
     }
-    
+
     @GetMapping("/offers/my")
     public String myOffers(
             @AuthenticationPrincipal User currentUser,
@@ -84,8 +75,7 @@ public class OfferController {
 
         return "pages/offers/my-offers";
     }
-    
-    
+
     @GetMapping("/offers/edit/{id}")
     public String showEditForm(
             @PathVariable Long id,
@@ -142,7 +132,7 @@ public class OfferController {
 
         return "pages/offers/edit";
     }
-    
+
     @GetMapping("/bookmarks")
     public String savedOffers(
             @AuthenticationPrincipal User currentUser,
@@ -157,9 +147,6 @@ public class OfferController {
 
         return "pages/offers/saved";
     }
-
-
-
 
     @PostMapping("/offers/publish")
     public String publishOffer(
@@ -188,8 +175,7 @@ public class OfferController {
         redirectAttributes.addFlashAttribute("successMessage", "Votre offre a bien été publiée.");
         return "redirect:/offers/publish";
     }
-    
-    
+
     @PostMapping("/offers/update")
     public String updateOffer(
             @Valid @ModelAttribute("offerEditForm") OfferEditForm offerEditForm,
@@ -223,10 +209,8 @@ public class OfferController {
             model.addAttribute("errorMessage", "Impossible de modifier l'offre pour le moment.");
             return "pages/offers/edit";
         }
-        
-
     }
-    
+
     @PostMapping("/offers/delete")
     public String deleteOffer(
             @RequestParam Long id,
@@ -248,8 +232,7 @@ public class OfferController {
 
         return "redirect:/offers/my";
     }
-    
-    
+
     @PostMapping("/offers/save")
     public String saveOffer(
             @RequestParam Long id,
@@ -271,8 +254,7 @@ public class OfferController {
 
         return "redirect:/home";
     }
-    
-    
+
     @PostMapping("/offers/unsave")
     public String removeSavedOffer(
             @RequestParam Long id,
@@ -295,63 +277,60 @@ public class OfferController {
         return "redirect:/bookmarks";
     }
 
+    @GetMapping("/offers/search")
+    public String searchOffers(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String sector,
+            @RequestParam(required = false) String duration,
+            @RequestParam(required = false) String company,
+            @AuthenticationPrincipal User currentUser,
+            Model model) {
 
+        var results = offerService.searchOffers(keyword, location, sector, duration, company);
+        model.addAttribute("results", results);
+        model.addAttribute("keyword", keyword);
 
-
-
-        @GetMapping("/offers/search")
-        public String searchOffers(
-                @RequestParam(required = false) String keyword,
-                @RequestParam(required = false) String location,
-                @RequestParam(required = false) String sector,
-                @RequestParam(required = false) String duration,
-                @RequestParam(required = false) String company,
-                @AuthenticationPrincipal User currentUser,
-                Model model) {
-
-            var results = offerService.searchOffers(keyword, location, sector, duration, company);
-            model.addAttribute("results", results);
-            model.addAttribute("keyword", keyword);
-
-
-            if (currentUser != null) {
-                model.addAttribute("user", currentUser);
-                model.addAttribute("userDisplayName", getDisplayName(currentUser));
-                model.addAttribute("userInitials", getInitials(currentUser));
-            }
-
-            return "pages/offers/search";
+        if (currentUser != null) {
+            model.addAttribute("user", currentUser);
+            model.addAttribute("userDisplayName", getDisplayName(currentUser));
+            model.addAttribute("userInitials", getInitials(currentUser));
         }
 
-
-        private String getDisplayName(User user) {
-            String firstName = clean(user.getFirstName());
-            String lastName  = clean(user.getLastName());
-            String fullName  = (firstName + " " + lastName).trim();
-
-            if (!fullName.isBlank()) return fullName;
-
-            String email = clean(user.getEmail());
-            return email.isBlank() ? "Utilisateur" : email;
-        }
-
-        private String getInitials(User user) {
-            String firstName = clean(user.getFirstName());
-            String lastName  = clean(user.getLastName());
-
-            String initials = firstLetter(firstName) + firstLetter(lastName);
-            if (!initials.isBlank()) return initials.toUpperCase();
-
-            String email = clean(user.getEmail());
-            return email.isBlank() ? "U" : firstLetter(email).toUpperCase();
-        }
-
-        private String firstLetter(String value) {
-            return value.isBlank() ? "" : value.substring(0, 1);
-        }
-
-        private String clean(String value) {
-            return value == null ? "" : value.trim();
-        }
+        return "pages/offers/search";
     }
 
+    private String getDisplayName(User user) {
+        String firstName = clean(user.getFirstName());
+        String lastName = clean(user.getLastName());
+        String fullName = (firstName + " " + lastName).trim();
+
+        if (!fullName.isBlank()) {
+            return fullName;
+        }
+
+        String email = clean(user.getEmail());
+        return email.isBlank() ? "Utilisateur" : email;
+    }
+
+    private String getInitials(User user) {
+        String firstName = clean(user.getFirstName());
+        String lastName = clean(user.getLastName());
+
+        String initials = firstLetter(firstName) + firstLetter(lastName);
+        if (!initials.isBlank()) {
+            return initials.toUpperCase();
+        }
+
+        String email = clean(user.getEmail());
+        return email.isBlank() ? "U" : firstLetter(email).toUpperCase();
+    }
+
+    private String firstLetter(String value) {
+        return value.isBlank() ? "" : value.substring(0, 1);
+    }
+
+    private String clean(String value) {
+        return value == null ? "" : value.trim();
+    }
+}
