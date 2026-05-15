@@ -1,25 +1,25 @@
 package uca.github.org.services;
 
 import java.time.LocalDate;
-import uca.github.org.forms.OfferEditForm;
-
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import uca.github.org.forms.OfferEditForm;
 import uca.github.org.forms.OfferPublicationForm;
+import uca.github.org.models.Bookmark;
 import uca.github.org.models.Internship;
 import uca.github.org.models.User;
+import uca.github.org.repositories.BookmarkRepository;
 import uca.github.org.repositories.InternshipRepository;
-
-import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
 public class OfferServiceImpl implements OfferService {
 
     private final InternshipRepository internshipRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     @Override
     public Internship publishOffer(OfferPublicationForm form, User poster) {
@@ -82,7 +82,7 @@ public class OfferServiceImpl implements OfferService {
 
         return internshipRepository.save(offer);
     }
-    
+
     @Override
     public void deleteOffer(Long id, User currentUser) {
         Internship offer = internshipRepository.findById(id)
@@ -98,14 +98,53 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
+    public List<Bookmark> getSavedOffers(User currentUser) {
+        return bookmarkRepository.findByUserOrderByAddedAtDesc(currentUser);
+    }
+
+    @Override
+    public Bookmark saveOffer(Long offerId, User currentUser) {
+        Internship offer = internshipRepository.findById(offerId)
+                .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
+
+        if (offer.getStatus() != Internship.InternshipStatus.ACTIVE) {
+            throw new IllegalArgumentException("Cette offre n'est plus disponible.");
+        }
+
+        return bookmarkRepository.findByUserAndInternship(currentUser, offer)
+                .orElseGet(() -> bookmarkRepository.save(
+                        Bookmark.builder()
+                                .user(currentUser)
+                                .internship(offer)
+                                .build()
+                ));
+    }
+
+    @Override
+    public void removeSavedOffer(Long offerId, User currentUser) {
+        Internship offer = internshipRepository.findById(offerId)
+                .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
+
+        Bookmark bookmark = bookmarkRepository.findByUserAndInternship(currentUser, offer)
+                .orElseThrow(() -> new IllegalArgumentException("Cette offre n'est pas sauvegardée."));
+
+        bookmarkRepository.delete(bookmark);
+    }
+
+    @Override
     public List<Internship> searchOffers(
             String keyword,
             String location,
             String sector,
             String duration,
             String company) {
-        return internshipRepository.searchOffers(
-                keyword, location, sector, duration, company);
-    }
 
+        return internshipRepository.searchOffers(
+                keyword,
+                location,
+                sector,
+                duration,
+                company
+        );
+    }
 }
