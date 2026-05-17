@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import uca.github.org.models.Application;
 import uca.github.org.models.Internship;
 import uca.github.org.models.User;
+import java.util.Optional;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
