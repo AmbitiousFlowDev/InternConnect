@@ -7,10 +7,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import uca.github.org.models.Application;
+import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 import uca.github.org.repositories.ApplicationRepository;
+import uca.github.org.repositories.InternshipRepository;
 import uca.github.org.services.ApplicationServiceImpl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +27,9 @@ class ApplicationServiceTest {
 
     @Mock
     private ApplicationRepository applicationRepository;
+
+    @Mock
+    private InternshipRepository internshipRepository;
 
     @InjectMocks
     private ApplicationServiceImpl applicationService;
@@ -188,5 +195,121 @@ class ApplicationServiceTest {
         assertThat(summary).containsKey(Application.ApplicationStatus.UNDER_REVIEW);
         assertThat(summary.get(Application.ApplicationStatus.SUBMITTED)).isEqualTo(3L);
         assertThat(summary.get(Application.ApplicationStatus.ACCEPTED)).isEqualTo(1L);
+    }
+
+    // -------------------------------------------------------
+    // getOfferApplications
+    // -------------------------------------------------------
+
+    @Test
+    void getOfferApplications_shouldReturnApplicantsForOfferOwner() {
+        User poster = User.builder().id(1L).role(User.Role.POSTER).build();
+        Internship internship = Internship.builder().id(10L).poster(poster).build();
+        Application firstApplication = Application.builder()
+                .applicant(User.builder().firstName("Sara").lastName("Amrani").build())
+                .internship(internship)
+                .submittedAt(LocalDateTime.of(2026, 5, 10, 9, 30))
+                .build();
+        Application secondApplication = Application.builder()
+                .applicant(User.builder().firstName("Youssef").lastName("Bennani").build())
+                .internship(internship)
+                .submittedAt(LocalDateTime.of(2026, 5, 11, 14, 0))
+                .build();
+
+        when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(applicationRepository.findByInternshipOrderBySubmittedAtDesc(internship))
+                .thenReturn(List.of(secondApplication, firstApplication));
+
+        List<Application> result = applicationService.getOfferApplications(10L, poster, null, null);
+
+        assertThat(result).containsExactly(secondApplication, firstApplication);
+        verify(applicationRepository).findByInternshipOrderBySubmittedAtDesc(internship);
+    }
+
+    @Test
+    void getOfferApplications_shouldFilterApplicantsByName() {
+        User poster = User.builder().id(1L).role(User.Role.POSTER).build();
+        Internship internship = Internship.builder().id(10L).poster(poster).build();
+        Application matchingApplication = Application.builder()
+                .applicant(User.builder().firstName("Sara").lastName("Amrani").build())
+                .internship(internship)
+                .submittedAt(LocalDateTime.of(2026, 5, 10, 9, 30))
+                .build();
+        Application otherApplication = Application.builder()
+                .applicant(User.builder().firstName("Youssef").lastName("Bennani").build())
+                .internship(internship)
+                .submittedAt(LocalDateTime.of(2026, 5, 11, 14, 0))
+                .build();
+
+        when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(applicationRepository.findByInternshipOrderBySubmittedAtDesc(internship))
+                .thenReturn(List.of(otherApplication, matchingApplication));
+
+        List<Application> result = applicationService.getOfferApplications(10L, poster, "sara", null);
+
+        assertThat(result).containsExactly(matchingApplication);
+    }
+
+    @Test
+    void getOfferApplications_shouldFilterApplicantsBySubmittedDate() {
+        User poster = User.builder().id(1L).role(User.Role.POSTER).build();
+        Internship internship = Internship.builder().id(10L).poster(poster).build();
+        Application matchingApplication = Application.builder()
+                .applicant(User.builder().firstName("Sara").lastName("Amrani").build())
+                .internship(internship)
+                .submittedAt(LocalDateTime.of(2026, 5, 10, 9, 30))
+                .build();
+        Application otherApplication = Application.builder()
+                .applicant(User.builder().firstName("Youssef").lastName("Bennani").build())
+                .internship(internship)
+                .submittedAt(LocalDateTime.of(2026, 5, 11, 14, 0))
+                .build();
+
+        when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(applicationRepository.findByInternshipOrderBySubmittedAtDesc(internship))
+                .thenReturn(List.of(otherApplication, matchingApplication));
+
+        List<Application> result = applicationService.getOfferApplications(
+                10L,
+                poster,
+                null,
+                LocalDate.of(2026, 5, 10));
+
+        assertThat(result).containsExactly(matchingApplication);
+    }
+
+    @Test
+    void getOfferApplications_shouldAllowAdminToViewAnyOffer() {
+        User poster = User.builder().id(1L).role(User.Role.POSTER).build();
+        User admin = User.builder().id(2L).role(User.Role.ADMIN).build();
+        Internship internship = Internship.builder().id(10L).poster(poster).build();
+        Application application = Application.builder()
+                .applicant(User.builder().firstName("Sara").lastName("Amrani").build())
+                .internship(internship)
+                .submittedAt(LocalDateTime.of(2026, 5, 10, 9, 30))
+                .build();
+
+        when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(applicationRepository.findByInternshipOrderBySubmittedAtDesc(internship))
+                .thenReturn(List.of(application));
+
+        List<Application> result = applicationService.getOfferApplications(10L, admin, null, null);
+
+        assertThat(result).containsExactly(application);
+    }
+
+    @Test
+    void getOfferApplications_shouldRejectUserWhoDoesNotOwnOffer() {
+        User poster = User.builder().id(1L).role(User.Role.POSTER).build();
+        User otherUser = User.builder().id(2L).role(User.Role.USER).build();
+        Internship internship = Internship.builder().id(10L).poster(poster).build();
+
+        when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+
+        assertThatThrownBy(() -> applicationService.getOfferApplications(10L, otherUser, null, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("droit");
+
+        verify(applicationRepository, never()).findByInternshipOrderBySubmittedAtDesc(any());
     }
 }
