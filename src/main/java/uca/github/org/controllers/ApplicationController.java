@@ -2,6 +2,7 @@ package uca.github.org.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import uca.github.org.models.Application;
 import uca.github.org.models.User;
 import uca.github.org.services.ApplicationService;
+
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -17,6 +20,36 @@ import java.util.*;
 public class ApplicationController {
 
     private final ApplicationService applicationService;
+
+    @GetMapping("/offers/{offerId}")
+    public String getOfferApplications(
+            @PathVariable Long offerId,
+            @RequestParam(required = false) String applicantName,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate submittedDate,
+            @AuthenticationPrincipal User currentUser,
+            Model model) {
+
+        if (currentUser == null) return "redirect:/login";
+
+        try {
+            List<Application> applications = applicationService.getOfferApplications(
+                    offerId,
+                    currentUser,
+                    applicantName,
+                    submittedDate);
+
+            model.addAttribute("applications", applications);
+            model.addAttribute("offerId", offerId);
+            model.addAttribute("applicantName", applicantName);
+            model.addAttribute("submittedDate", submittedDate);
+            model.addAttribute("user", currentUser);
+
+            return "pages/offers/applicants";
+        } catch (IllegalArgumentException | EntityNotFoundException e) {
+            return "redirect:/offers/my";
+        }
+    }
 
     @GetMapping("/status")
     public String getApplicationStatus(
