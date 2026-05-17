@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Applicants</title>
+    <link rel="stylesheet"
+      th:href="@{/css/applications.css}">
+</head>
+
+<body>
+
+<div class="container py-4">
+
+    <div class="ic-page-header">
+
+        <div>
+            <h1 class="ic-page-header__title">
+                Applicants
+            </h1>
+
+            <p class="ic-page-header__subtitle"
+               th:text="${offer.title}">
+            </p>
+        </div>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="ic-applicants-table">
+
+            <thead>
+            <tr>
+                <th>Student</th>
+                <th>Email</th>
+                <th>CV</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="application : ${applications}">
+
+                <td>
+
+                    <div class="ic-applicant-info">
+
+                        <div class="ic-applicant-avatar"
+                             th:text="${application.student.firstName.substring(0,1)}">
+                        </div>
+
+                        <div>
+
+                            <p class="ic-applicant-name"
+                               th:text="${application.student.firstName + ' ' + application.student.lastName}">
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+                <td th:text="${application.student.email}"></td>
+
+                <td>
+
+                    <a th:href="@{/applications/cv/{id}(id=${application.id})}"
+                       class="ic-btn ic-btn--secondary">
+                        Download CV
+                    </a>
+
+                </td>
+
+                <td>
+
+                    <form method="post"
+                          th:action="@{/applications/status/{id}(id=${application.id})}"
+                          data-ic-status-form>
+
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}" />
+
+                        <select name="status"
+                                class="ic-status-select">
+
+                            <option value="SUBMITTED">Submitted</option>
+                            <option value="UNDER_REVIEW">Under Review</option>
+                            <option value="ACCEPTED">Accepted</option>
+                            <option value="REJECTED">Rejected</option>
+
+                        </select>
+
+                    </form>
+
+                </td>
+
+                <td>
+
+                    <button class="ic-btn-update-status">
+                        Update
+                    </button>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+<script th:src="@{/js/applications.js}"></script>
+</body>
+</html>

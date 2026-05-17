@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Applications</title>
+</head>
+
+<body>
+
+<div class="container py-4">
+
+    <div class="ic-page-header">
+
+        <div>
+            <h1 class="ic-page-header__title">
+                My Applications
+            </h1>
+
+            <p class="ic-page-header__subtitle">
+                Track all your internship applications
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(applications)}"
+         class="ic-empty-state">
+
+        <div class="ic-empty-state__illustration">
+            📄
+        </div>
+
+        <h3 class="ic-empty-state__title">
+            No applications yet
+        </h3>
+
+        <p class="ic-empty-state__description">
+            Start applying for internships to see them here.
+        </p>
+
+    </div>
+
+    <!-- Applications -->
+    <div th:unless="${#lists.isEmpty(applications)}"
+         class="row g-4">
+
+        <div class="col-12"
+             th:each="application : ${applications}">
+
+            <div class="ic-app-card"
+                 th:attr="data-status=${application.status}">
+
+                <div class="ic-app-card__header">
+
+                    <div>
+                        <h3 class="ic-app-card__title"
+                            th:text="${application.offer.title}">
+                        </h3>
+
+                        <p class="ic-app-card__company"
+                           th:text="${application.offer.companyName}">
+                        </p>
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+
+                        <span th:if="${application.status.name() == 'SUBMITTED'}"
+                              class="ic-badge ic-badge--submitted">
+                            Submitted
+                        </span>
+
+                        <span th:if="${application.status.name() == 'UNDER_REVIEW'}"
+                              class="ic-badge ic-badge--under-review">
+                            Under Review
+                        </span>
+
+                        <span th:if="${application.status.name() == 'ACCEPTED'}"
+                              class="ic-badge ic-badge--accepted">
+                            Accepted
+                        </span>
+
+                        <span th:if="${application.status.name() == 'REJECTED'}"
+                              class="ic-badge ic-badge--rejected">
+                            Rejected
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="ic-app-card__meta">
+
+                    <div class="ic-app-card__meta-item">
+                        Applied on:
+                        <span th:text="${application.createdAt}">
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="ic-app-card__actions">
+
+                    <form th:action="@{/applications/withdraw/{id}(id=${application.id})}"
+                          method="post"
+                          data-ic-withdraw>
+
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}" />
+
+                        <button type="submit"
+                                class="ic-btn ic-btn--danger-outline">
+                            Withdraw
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

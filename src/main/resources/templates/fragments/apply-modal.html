@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Backdrop -->
+<div id="ic-apply-modal-backdrop"
+     class="ic-modal-backdrop"
+     aria-hidden="true"></div>
+
+<!-- Modal -->
+<div id="ic-apply-modal"
+     class="ic-modal"
+     aria-hidden="true"
+     role="dialog"
+     aria-labelledby="ic-apply-modal-title">
+
+    <div class="ic-modal__dialog">
+
+        <!-- Header -->
+        <div class="ic-modal__header">
+            <h2 class="ic-modal__title" id="ic-apply-modal-title">
+                Apply for Internship
+            </h2>
+
+            <button type="button"
+                    class="ic-modal__close"
+                    data-ic-modal-close>
+                ✕
+            </button>
+        </div>
+
+        <!-- Steps -->
+        <div class="ic-modal__steps">
+
+            <div class="ic-step is-active">
+                <div class="ic-step__dot">1</div>
+                <span class="ic-step__label">Personal Info</span>
+                <div class="ic-step__line"></div>
+            </div>
+
+            <div class="ic-step">
+                <div class="ic-step__dot">2</div>
+                <span class="ic-step__label">Documents</span>
+            </div>
+
+        </div>
+
+        <!-- Form -->
+        <form th:action="@{/applications/apply}"
+              method="post"
+              enctype="multipart/form-data"
+              data-ic-form
+              data-ic-multistep>
+
+            <!-- CSRF -->
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}" />
+
+            <!-- Offer ID -->
+            <input type="hidden"
+                   name="offerId"
+                   id="offer-id-input">
+
+            <!-- STEP 1 -->
+            <div data-ic-step class="ic-step-panel">
+
+                <div class="ic-modal__body">
+
+                    <div class="ic-form-group">
+                        <label class="ic-label">
+                            Full Name
+                            <span class="ic-required">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="app-full-name"
+                               name="fullName"
+                               class="ic-input"
+                               required>
+
+                        <p class="ic-field-error"
+                           id="app-full-name-error"
+                           hidden></p>
+                    </div>
+
+                    <div class="ic-form-group">
+                        <label class="ic-label">
+                            Email
+                            <span class="ic-required">*</span>
+                        </label>
+
+                        <input type="email"
+                               id="app-email"
+                               name="email"
+                               class="ic-input"
+                               required>
+
+                        <p class="ic-field-error"
+                           id="app-email-error"
+                           hidden></p>
+                    </div>
+
+                    <div class="ic-form-group">
+                        <label class="ic-label">
+                            Phone Number
+                            <span class="ic-required">*</span>
+                        </label>
+
+                        <input type="text"
+                               name="phone"
+                               class="ic-input"
+                               data-ic-validate="phone"
+                               required>
+
+                        <p class="ic-field-error"
+                           id="phone-error"
+                           hidden></p>
+                    </div>
+
+                </div>
+
+                <div class="ic-modal__footer">
+                    <button type="button"
+                            class="ic-btn ic-btn--primary"
+                            data-ic-next>
+                        Continue
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- STEP 2 -->
+            <div data-ic-step
+                 class="ic-step-panel"
+                 hidden>
+
+                <div class="ic-modal__body">
+
+                    <div class="ic-form-group">
+
+                        <label class="ic-label">
+                            Cover Letter
+                        </label>
+
+                        <textarea name="coverLetter"
+                                  class="ic-textarea"
+                                  rows="6"></textarea>
+
+                    </div>
+
+                    <div class="ic-form-group">
+
+                        <label class="ic-label">
+                            Upload CV
+                            <span class="ic-required">*</span>
+                        </label>
+
+                        <div class="ic-file-upload">
+
+                            <input type="file"
+                                   name="cvFile"
+                                   class="ic-file-upload__input"
+                                   accept=".pdf,.doc,.docx"
+                                   required>
+
+                            <div class="ic-file-upload__zone">
+                                <div class="ic-file-upload__icon">
+                                    📄
+                                </div>
+
+                                <p class="ic-file-upload__title">
+                                    Drag & drop your CV
+                                </p>
+
+                                <p class="ic-file-upload__subtitle">
+                                    PDF or DOCX
+                                </p>
+                            </div>
+
+                            <div class="ic-file-selected">
+                                <span class="ic-file-selected__name"></span>
+
+                                <button type="button"
+                                        class="ic-file-selected__remove">
+                                    ✕
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="ic-modal__footer">
+
+                    <button type="button"
+                            class="ic-btn ic-btn--secondary"
+                            data-ic-back>
+                        Back
+                    </button>
+
+                    <button type="submit"
+                            class="ic-btn ic-btn--primary"
+                            data-ic-submit>
+                        Submit Application
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

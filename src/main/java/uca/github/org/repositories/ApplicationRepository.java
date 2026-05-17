@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import uca.github.org.models.Application;
+import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 
 @Repository
@@ -13,4 +14,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     List<Application> findByApplicantOrderBySubmittedAtDesc(User applicant);
     List<Application>findByApplicantAndStatusOrderBySubmittedAtDesc(
             User applicant, Application.ApplicationStatus status);
+
+            // NOUVEAU
+    boolean existsByApplicantAndInternship(User applicant, Internship internship);
+    Optional<Application> findByApplicantAndInternship(User applicant, Internship internship);
 }
