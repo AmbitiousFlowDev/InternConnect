@@ -27,7 +27,7 @@ public class InternConnectSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/", "/index", "/index.html", "/home", "/home.html", "/register", "/css/**", "/js/**" , "/assets/**", "/applications/**" )
+                .requestMatchers("/", "/index", "/index.html", "/home", "/home.html", "/register", "/css/**", "/js/**" , "/assets/**" )
                 .permitAll()
                 .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/dashboard" , true).permitAll())

@@ -1,7 +1,9 @@
 package uca.github.org.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,7 @@ import uca.github.org.models.Application;
 import uca.github.org.models.User;
 import uca.github.org.services.ApplicationService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +24,6 @@ import java.util.Map;
 public class ApplicationController {
 
     private final ApplicationService applicationService;
-
-    // =========================
-    // POSTULER A UNE OFFRE
-    // =========================
 
     @PostMapping("/apply")
     public String apply(
@@ -38,7 +37,6 @@ public class ApplicationController {
         }
 
         try {
-
             applicationService.apply(
                     currentUser,
                     offerId,
@@ -70,9 +68,39 @@ public class ApplicationController {
         return "redirect:/internships";
     }
 
-    // =========================
-    // PAGE DES CANDIDATURES
-    // =========================
+    @GetMapping("/offers/{offerId}")
+    public String getOfferApplications(
+            @PathVariable Long offerId,
+            @RequestParam(required = false) String applicantName,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate submittedDate,
+            @AuthenticationPrincipal User currentUser,
+            Model model) {
+
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            List<Application> applications = applicationService.getOfferApplications(
+                    offerId,
+                    currentUser,
+                    applicantName,
+                    submittedDate
+            );
+
+            model.addAttribute("applications", applications);
+            model.addAttribute("offerId", offerId);
+            model.addAttribute("applicantName", applicantName);
+            model.addAttribute("submittedDate", submittedDate);
+            model.addAttribute("user", currentUser);
+
+            return "pages/offers/applicants";
+
+        } catch (IllegalArgumentException | EntityNotFoundException e) {
+            return "redirect:/offers/my";
+        }
+    }
 
     @GetMapping("/status")
     public String applicationStatus(
@@ -104,10 +132,6 @@ public class ApplicationController {
         return "applications";
     }
 
-    // =========================
-    // RETIRER UNE CANDIDATURE
-    // =========================
-
     @PostMapping("/withdraw/{id}")
     public String withdrawApplication(
             @PathVariable Long id,
@@ -119,7 +143,6 @@ public class ApplicationController {
         }
 
         try {
-
             applicationService.withdraw(currentUser, id);
 
             redirectAttributes.addFlashAttribute(

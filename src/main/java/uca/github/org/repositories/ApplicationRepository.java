@@ -1,22 +1,43 @@
 package uca.github.org.repositories;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import uca.github.org.models.Application;
 import uca.github.org.models.Internship;
 import uca.github.org.models.User;
-import java.util.Optional;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
-    long countByApplicant(User applicant);
-    long countByApplicantAndStatus(User applicant, Application.ApplicationStatus status);
-    List<Application> findByApplicantOrderBySubmittedAtDesc(User applicant);
-    List<Application>findByApplicantAndStatusOrderBySubmittedAtDesc(
-            User applicant, Application.ApplicationStatus status);
 
-            // NOUVEAU
-    boolean existsByApplicantAndInternship(User applicant, Internship internship);
-    Optional<Application> findByApplicantAndInternship(User applicant, Internship internship);
+    long countByApplicant(User applicant);
+
+    long countByApplicantAndStatus(
+            User applicant,
+            Application.ApplicationStatus status
+    );
+
+    List<Application> findByApplicantOrderBySubmittedAtDesc(User applicant);
+
+    List<Application> findByApplicantAndStatusOrderBySubmittedAtDesc(
+            User applicant,
+            Application.ApplicationStatus status
+    );
+
+    boolean existsByApplicantAndInternship(
+            User applicant,
+            Internship internship
+    );
+
+    Optional<Application> findByApplicantAndInternship(
+            User applicant,
+            Internship internship
+    );
+
+    List<Application> findByInternshipOrderBySubmittedAtDesc(
+            Internship internship
+    );
 }

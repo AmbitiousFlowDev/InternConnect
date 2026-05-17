@@ -3,18 +3,20 @@ package uca.github.org.services;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import uca.github.org.models.Application;
 import uca.github.org.models.Internship;
 import uca.github.org.models.User;
-
 import uca.github.org.repositories.ApplicationRepository;
 import uca.github.org.repositories.InternshipRepository;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -83,12 +85,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             String coverLetter
     ) {
 
-        System.out.println("===== APPLY DEBUG =====");
-        System.out.println("Applicant ID : " + applicant.getId());
-        System.out.println("Internship ID : " + internshipId);
-        System.out.println("Cover Letter : " + coverLetter);
-        System.out.println("=======================");
-
         Internship internship = internshipRepository.findById(internshipId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
@@ -101,8 +97,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                         applicant,
                         internship
                 );
-
-        System.out.println("Already applied : " + alreadyApplied);
 
         if (alreadyApplied) {
             throw new IllegalStateException(
@@ -117,13 +111,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .status(Application.ApplicationStatus.SUBMITTED)
                 .build();
 
-        Application savedApplication =
-                applicationRepository.save(application);
-
-        System.out.println("APPLICATION SAVED SUCCESSFULLY");
-        System.out.println("Saved ID : " + savedApplication.getId());
-
-        return savedApplication;
+        return applicationRepository.save(application);
     }
 
     @Override
@@ -137,28 +125,21 @@ public class ApplicationServiceImpl implements ApplicationService {
                         )
                 );
 
-        if (!application.getApplicant().getId()
-                .equals(applicant.getId())) {
-
+        if (!application.getApplicant().getId().equals(applicant.getId())) {
             throw new AccessDeniedException(
                     "You are not the owner of this application."
             );
         }
 
-        if (application.getStatus() ==
-                Application.ApplicationStatus.ACCEPTED
-                ||
-                application.getStatus() ==
-                        Application.ApplicationStatus.REJECTED) {
+        if (application.getStatus() == Application.ApplicationStatus.ACCEPTED
+                || application.getStatus() == Application.ApplicationStatus.REJECTED) {
 
             throw new IllegalStateException(
                     "Cannot withdraw this application."
             );
         }
 
-        application.setStatus(
-                Application.ApplicationStatus.WITHDRAWN
-        );
+        application.setStatus(Application.ApplicationStatus.WITHDRAWN);
 
         applicationRepository.save(application);
     }
@@ -171,12 +152,97 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         return internshipRepository.findById(internshipId)
                 .map(internship ->
-                        applicationRepository
-                                .existsByApplicantAndInternship(
-                                        applicant,
-                                        internship
-                                )
+                        applicationRepository.existsByApplicantAndInternship(
+                                applicant,
+                                internship
+                        )
                 )
                 .orElse(false);
+    }
+
+    @Override
+    public List<Application> getOfferApplications(
+            Long offerId,
+            User currentUser,
+            String applicantName,
+            LocalDate submittedDate
+    ) {
+
+        Internship internship = internshipRepository.findById(offerId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Offer not found: " + offerId
+                        )
+                );
+
+        if (!canViewOfferApplications(internship, currentUser)) {
+            throw new IllegalArgumentException(
+                    "Vous n'avez pas le droit de consulter ces candidatures."
+            );
+        }
+
+        String normalizedName = normalize(applicantName);
+
+        return applicationRepository.findByInternshipOrderBySubmittedAtDesc(internship)
+                .stream()
+                .filter(application -> matchesApplicantName(application, normalizedName))
+                .filter(application -> matchesSubmittedDate(application, submittedDate))
+                .toList();
+    }
+
+    private boolean canViewOfferApplications(
+            Internship internship,
+            User currentUser
+    ) {
+        if (currentUser == null) {
+            return false;
+        }
+
+        if (currentUser.getRole() == User.Role.ADMIN) {
+            return true;
+        }
+
+        return internship.getPoster() != null
+                && internship.getPoster().getId() != null
+                && internship.getPoster().getId().equals(currentUser.getId());
+    }
+
+    private boolean matchesApplicantName(
+            Application application,
+            String applicantName
+    ) {
+        if (applicantName.isBlank()) {
+            return true;
+        }
+
+        User applicant = application.getApplicant();
+
+        if (applicant == null) {
+            return false;
+        }
+
+        String firstName = applicant.getFirstName() == null ? "" : applicant.getFirstName();
+        String lastName = applicant.getLastName() == null ? "" : applicant.getLastName();
+
+        String fullName = normalize(firstName + " " + lastName);
+        String reversedName = normalize(lastName + " " + firstName);
+
+        return fullName.contains(applicantName)
+                || reversedName.contains(applicantName);
+    }
+
+    private boolean matchesSubmittedDate(
+            Application application,
+            LocalDate submittedDate
+    ) {
+        return submittedDate == null
+                || application.getSubmittedAt() != null
+                && application.getSubmittedAt().toLocalDate().equals(submittedDate);
+    }
+
+    private String normalize(String value) {
+        return value == null
+                ? ""
+                : value.trim().toLowerCase(Locale.ROOT);
     }
 }

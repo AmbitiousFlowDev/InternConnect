@@ -1,10 +1,11 @@
 package uca.github.org.services;
 
-import uca.github.org.models.Application;
-import uca.github.org.models.User;
-
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+
+import uca.github.org.models.Application;
+import uca.github.org.models.User;
 
 public interface ApplicationService {
 
@@ -22,22 +23,26 @@ public interface ApplicationService {
 
     Map<Application.ApplicationStatus, Long> getStatusSummary(User user);
 
-    // POSTULER
     Application apply(
             User applicant,
             Long internshipId,
             String coverLetter
     );
 
-    // RETIRER CANDIDATURE
     void withdraw(
             User applicant,
             Long applicationId
     );
 
-    // VERIFIER SI DEJA POSTULE
     boolean hasAlreadyApplied(
             User applicant,
             Long internshipId
+    );
+
+    List<Application> getOfferApplications(
+            Long offerId,
+            User currentUser,
+            String applicantName,
+            LocalDate submittedDate
     );
 }
