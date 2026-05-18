@@ -46,7 +46,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             Long applicationId,
             Application.ApplicationStatus newStatus
     ) {
-
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
@@ -61,13 +60,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Map<Application.ApplicationStatus, Long> getStatusSummary(User user) {
+        Map<Application.ApplicationStatus, Long> summary = new LinkedHashMap<>();
 
-        Map<Application.ApplicationStatus, Long> summary =
-                new LinkedHashMap<>();
-
-        for (Application.ApplicationStatus status :
-                Application.ApplicationStatus.values()) {
-
+        for (Application.ApplicationStatus status : Application.ApplicationStatus.values()) {
             summary.put(
                     status,
                     applicationRepository.countByApplicantAndStatus(user, status)
@@ -84,7 +79,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             Long internshipId,
             String coverLetter
     ) {
-
         Internship internship = internshipRepository.findById(internshipId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
@@ -92,11 +86,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                         )
                 );
 
-        boolean alreadyApplied =
-                applicationRepository.existsByApplicantAndInternship(
-                        applicant,
-                        internship
-                );
+        boolean alreadyApplied = applicationRepository.existsByApplicantAndInternship(
+                applicant,
+                internship
+        );
 
         if (alreadyApplied) {
             throw new IllegalStateException(
@@ -116,8 +109,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public void withdraw(User applicant, Long applicationId) {
-
+    public void withdraw(
+            User applicant,
+            Long applicationId
+    ) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
@@ -125,7 +120,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                         )
                 );
 
-        if (!application.getApplicant().getId().equals(applicant.getId())) {
+        if (application.getApplicant() == null
+                || application.getApplicant().getId() == null
+                || !application.getApplicant().getId().equals(applicant.getId())) {
+
             throw new AccessDeniedException(
                     "You are not the owner of this application."
             );
@@ -149,7 +147,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             User applicant,
             Long internshipId
     ) {
-
         return internshipRepository.findById(internshipId)
                 .map(internship ->
                         applicationRepository.existsByApplicantAndInternship(
@@ -167,7 +164,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             String applicantName,
             LocalDate submittedDate
     ) {
-
         Internship internship = internshipRepository.findById(offerId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
@@ -221,8 +217,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             return false;
         }
 
-        String firstName = applicant.getFirstName() == null ? "" : applicant.getFirstName();
-        String lastName = applicant.getLastName() == null ? "" : applicant.getLastName();
+        String firstName = applicant.getFirstName() == null
+                ? ""
+                : applicant.getFirstName();
+
+        String lastName = applicant.getLastName() == null
+                ? ""
+                : applicant.getLastName();
 
         String fullName = normalize(firstName + " " + lastName);
         String reversedName = normalize(lastName + " " + firstName);
