@@ -18,7 +18,11 @@ import java.util.List;
 public class Internship {
 
     public enum InternshipStatus {
-        DRAFT, ACTIVE, CLOSED, REJECTED, ARCHIVED
+        DRAFT,
+        ACTIVE,
+        CLOSED,
+        REJECTED,
+        ARCHIVED
     }
 
     @Id
@@ -36,31 +40,37 @@ public class Internship {
     private String description;
 
     private String company;
+
     private String sector;
+
     private String location;
+
     private String duration;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal compensation;
 
+    private String salary;
+
     @Column(columnDefinition = "TEXT")
     private String requiredSkills;
-    
+
     private String educationLevel;
 
     @Column(columnDefinition = "TEXT")
-    private String softSkills;
+    private String languages;
 
     @Column(columnDefinition = "TEXT")
-    private String desiredProfile;
+    private String requestedDocuments;
 
-    private String languages;
+    private String contactEmail;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InternshipStatus status;
 
     private LocalDate publishedAt;
+
     private LocalDate expiresAt;
 
     @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
@@ -78,12 +88,4 @@ public class Internship {
     @OneToMany(mappedBy = "internship", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Recommendation> recommendations = new ArrayList<>();
-
-    private String salary;
-    
-    private String requestedDocuments;
-
-    private String contactEmail;
-
-
 }
