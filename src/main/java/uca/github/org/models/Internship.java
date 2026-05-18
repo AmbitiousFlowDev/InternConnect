@@ -55,6 +55,12 @@ public class Internship {
     @Column(columnDefinition = "TEXT")
     private String requiredSkills;
 
+    @Column(columnDefinition = "TEXT")
+    private String softSkills;
+
+    @Column(columnDefinition = "TEXT")
+    private String desiredProfile;
+
     private String educationLevel;
 
     @Column(columnDefinition = "TEXT")

@@ -73,7 +73,7 @@
                     </span>
 
                     <span class="d-none d-md-inline fw-semibold"
-                          th:text="${user != null && user.firstName != null
+                          th:text="${user != null && user.firstName != null && user.lastName != null
                           ? user.firstName + ' ' + user.lastName
                           : 'Utilisateur'}">
                         Utilisateur
@@ -134,7 +134,7 @@
 
                 <div class="list-group-item" th:each="offer : ${offers}">
 
-                    <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
 
                         <div>
                             <h5 class="fw-bold mb-1" th:text="${offer.title}">
@@ -143,7 +143,7 @@
 
                             <p class="text-muted mb-1">
                                 <span th:text="${offer.company}">Entreprise</span>
-                                ·
+                                <span th:if="${offer.company != null && offer.location != null}"> · </span>
                                 <span th:text="${offer.location}">Localisation</span>
                             </p>
 
@@ -157,11 +157,13 @@
 
                             <a th:href="@{/applications/offers/{id}(id=${offer.id})}"
                                class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-people me-1"></i>
                                 Candidats
                             </a>
 
                             <a th:href="@{/offers/edit/{id}(id=${offer.id})}"
                                class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil-square me-1"></i>
                                 Modifier
                             </a>
 
@@ -169,26 +171,9 @@
                                     class="btn btn-outline-danger btn-sm"
                                     data-bs-toggle="modal"
                                     th:data-bs-target="${'#deleteOfferModal-' + offer.id}">
+                                <i class="bi bi-trash me-1"></i>
                                 Supprimer
                             </button>
-
-                            <div th:if="${offer.alreadyApplied}">
-                                <span class="badge bg-success">
-                                    Already Applied
-                                </span>
-                            </div>
-
-                            <div th:unless="${offer.alreadyApplied}">
-                                <button class="btn btn-primary btn-sm ic-btn-apply"
-                                        type="button"
-                                        data-ic-open-apply
-                                        th:attr="
-                                            data-offer-id=${offer.id},
-                                            data-offer-title=${offer.title},
-                                            data-company-name=${offer.company}">
-                                    Apply Now
-                                </button>
-                            </div>
 
                         </div>
 
@@ -261,9 +246,6 @@
 
 </main>
 
-<div th:replace="fragments/apply-modal :: *"></div>
-
-<script th:src="@{/assets/js/applications.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

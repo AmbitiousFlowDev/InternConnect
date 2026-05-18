@@ -22,8 +22,12 @@ import java.util.Map;
 @RequestMapping("/applications")
 @RequiredArgsConstructor
 public class ApplicationController {
-    
+
     private final ApplicationService applicationService;
+
+    // =========================
+    // APPLY TO AN INTERNSHIP OFFER
+    // =========================
 
     @PostMapping("/apply")
     public String apply(
@@ -59,12 +63,16 @@ public class ApplicationController {
 
             redirectAttributes.addFlashAttribute(
                     "errorMessage",
-                    "Une erreur est survenue."
+                    "Une erreur est survenue lors de l'envoi de la candidature."
             );
         }
 
         return "redirect:/internships";
     }
+
+    // =========================
+    // VIEW APPLICANTS OF ONE OFFER
+    // =========================
 
     @GetMapping("/offers/{offerId}")
     public String getOfferApplications(
@@ -73,7 +81,8 @@ public class ApplicationController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate submittedDate,
             @AuthenticationPrincipal User currentUser,
-            Model model
+            Model model,
+            RedirectAttributes redirectAttributes
     ) {
         if (currentUser == null) {
             return "redirect:/login";
@@ -96,9 +105,19 @@ public class ApplicationController {
             return "pages/offers/applicants";
 
         } catch (IllegalArgumentException | EntityNotFoundException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Impossible de consulter les candidatures de cette offre."
+            );
+
             return "redirect:/offers/my";
         }
     }
+
+    // =========================
+    // VIEW CURRENT USER APPLICATIONS
+    // =========================
 
     @GetMapping("/status")
     public String applicationStatus(
@@ -133,10 +152,15 @@ public class ApplicationController {
         return "pages/applications";
     }
 
+    // =========================
+    // UPDATE APPLICATION STATUS
+    // =========================
+
     @PostMapping("/{id}/status")
     public String updateStatus(
             @PathVariable Long id,
             @RequestParam Application.ApplicationStatus status,
+            @RequestParam(required = false) Long offerId,
             @AuthenticationPrincipal User currentUser,
             RedirectAttributes redirectAttributes
     ) {
@@ -160,9 +184,16 @@ public class ApplicationController {
             );
         }
 
+        if (offerId != null) {
+            return "redirect:/applications/offers/" + offerId;
+        }
+
         return "redirect:/applications/status";
     }
 
+    // =========================
+    // WITHDRAW CURRENT USER APPLICATION
+    // =========================
 
     @PostMapping("/withdraw/{id}")
     public String withdrawApplication(

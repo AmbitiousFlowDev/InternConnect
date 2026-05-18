@@ -132,32 +132,32 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="application : ${applications}">
+                <tr th:each="candidateApplication : ${applications}">
                     <td>
                         <div class="fw-semibold"
-                             th:text="${application.applicant != null
-                             ? application.applicant.firstName + ' ' + application.applicant.lastName
+                             th:text="${candidateApplication.applicant != null
+                             ? candidateApplication.applicant.firstName + ' ' + candidateApplication.applicant.lastName
                              : 'Candidat'}">
                             Candidat
                         </div>
                     </td>
-                    <td th:text="${application.applicant != null ? application.applicant.email : 'Non renseigne'}">
+                    <td th:text="${candidateApplication.applicant != null ? candidateApplication.applicant.email : 'Non renseigne'}">
                         email@example.com
                     </td>
                     <td>
                         <span class="badge px-3 py-2"
-                              th:text="${application.status}"
-                              th:classappend="${application.status.name() == 'ACCEPTED'} ? ' bg-success'
-                              : (${application.status.name() == 'REJECTED'} ? ' bg-danger'
-                              : (${application.status.name() == 'UNDER_REVIEW'} ? ' bg-info'
+                              th:text="${candidateApplication.status}"
+                              th:classappend="${candidateApplication.status.name() == 'ACCEPTED'} ? ' bg-success'
+                              : (${candidateApplication.status.name() == 'REJECTED'} ? ' bg-danger'
+                              : (${candidateApplication.status.name() == 'UNDER_REVIEW'} ? ' bg-info'
                               : ' bg-warning text-dark'))">
                             SUBMITTED
                         </span>
                     </td>
-                    <td th:text="${application.submittedAt != null ? #temporals.format(application.submittedAt, 'dd MMM yyyy HH:mm') : 'Date inconnue'}">
+                    <td th:text="${candidateApplication.submittedAt != null ? #temporals.format(candidateApplication.submittedAt, 'dd MMM yyyy HH:mm') : 'Date inconnue'}">
                         01 Jan 2026
                     </td>
-                    <td th:text="${application.resumeFile != null && !application.resumeFile.isBlank() ? application.resumeFile : 'Non fourni'}">
+                    <td th:text="${candidateApplication.resumeFile != null && !candidateApplication.resumeFile.isBlank() ? candidateApplication.resumeFile : 'Non fourni'}">
                         cv.pdf
                     </td>
                 </tr>

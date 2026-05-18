@@ -45,42 +45,42 @@
          class="row g-4">
 
         <div class="col-12"
-             th:each="application : ${applications}">
+             th:each="submittedApplication : ${applications}">
 
             <div class="ic-app-card"
-                 th:attr="data-status=${application.status}">
+                 th:attr="data-status=${submittedApplication.status}">
 
                 <div class="ic-app-card__header">
 
                     <div>
                         <h3 class="ic-app-card__title"
-                            th:text="${application.offer.title}">
+                            th:text="${submittedApplication.offer.title}">
                         </h3>
 
                         <p class="ic-app-card__company"
-                           th:text="${application.offer.companyName}">
+                           th:text="${submittedApplication.offer.companyName}">
                         </p>
                     </div>
 
                     <!-- Status -->
                     <div>
 
-                        <span th:if="${application.status.name() == 'SUBMITTED'}"
+                        <span th:if="${submittedApplication.status.name() == 'SUBMITTED'}"
                               class="ic-badge ic-badge--submitted">
                             Submitted
                         </span>
 
-                        <span th:if="${application.status.name() == 'UNDER_REVIEW'}"
+                        <span th:if="${submittedApplication.status.name() == 'UNDER_REVIEW'}"
                               class="ic-badge ic-badge--under-review">
                             Under Review
                         </span>
 
-                        <span th:if="${application.status.name() == 'ACCEPTED'}"
+                        <span th:if="${submittedApplication.status.name() == 'ACCEPTED'}"
                               class="ic-badge ic-badge--accepted">
                             Accepted
                         </span>
 
-                        <span th:if="${application.status.name() == 'REJECTED'}"
+                        <span th:if="${submittedApplication.status.name() == 'REJECTED'}"
                               class="ic-badge ic-badge--rejected">
                             Rejected
                         </span>
@@ -93,7 +93,7 @@
 
                     <div class="ic-app-card__meta-item">
                         Applied on:
-                        <span th:text="${application.createdAt}">
+                        <span th:text="${submittedApplication.createdAt}">
                         </span>
                     </div>
 
@@ -101,7 +101,7 @@
 
                 <div class="ic-app-card__actions">
 
-                    <form th:action="@{/applications/withdraw/{id}(id=${application.id})}"
+                    <form th:action="@{/applications/withdraw/{id}(id=${submittedApplication.id})}"
                           method="post"
                           data-ic-withdraw>
 
