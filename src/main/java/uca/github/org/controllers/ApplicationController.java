@@ -22,7 +22,7 @@ import java.util.Map;
 @RequestMapping("/applications")
 @RequiredArgsConstructor
 public class ApplicationController {
-
+    
     private final ApplicationService applicationService;
 
     @PostMapping("/apply")
@@ -30,8 +30,8 @@ public class ApplicationController {
             @RequestParam Long offerId,
             @RequestParam(required = false) String coverLetter,
             @AuthenticationPrincipal User currentUser,
-            RedirectAttributes redirectAttributes) {
-
+            RedirectAttributes redirectAttributes
+    ) {
         if (currentUser == null) {
             return "redirect:/login";
         }
@@ -57,8 +57,6 @@ public class ApplicationController {
 
         } catch (Exception e) {
 
-            e.printStackTrace();
-
             redirectAttributes.addFlashAttribute(
                     "errorMessage",
                     "Une erreur est survenue."
@@ -75,8 +73,8 @@ public class ApplicationController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate submittedDate,
             @AuthenticationPrincipal User currentUser,
-            Model model) {
-
+            Model model
+    ) {
         if (currentUser == null) {
             return "redirect:/login";
         }
@@ -106,8 +104,8 @@ public class ApplicationController {
     public String applicationStatus(
             @AuthenticationPrincipal User currentUser,
             @RequestParam(required = false) Application.ApplicationStatus status,
-            Model model) {
-
+            Model model
+    ) {
         if (currentUser == null) {
             return "redirect:/login";
         }
@@ -115,7 +113,10 @@ public class ApplicationController {
         List<Application> applications;
 
         if (status != null) {
-            applications = applicationService.getUserApplicationsByStatus(currentUser, status);
+            applications = applicationService.getUserApplicationsByStatus(
+                    currentUser,
+                    status
+            );
         } else {
             applications = applicationService.getUserApplications(currentUser);
         }
@@ -129,15 +130,46 @@ public class ApplicationController {
         model.addAttribute("statusSummary", summary);
         model.addAttribute("user", currentUser);
 
-        return "applications";
+        return "pages/applications";
     }
+
+    @PostMapping("/{id}/status")
+    public String updateStatus(
+            @PathVariable Long id,
+            @RequestParam Application.ApplicationStatus status,
+            @AuthenticationPrincipal User currentUser,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            applicationService.updateApplicationStatus(id, status);
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Statut de candidature mis à jour avec succès."
+            );
+
+        } catch (IllegalArgumentException | EntityNotFoundException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Impossible de mettre à jour le statut de la candidature."
+            );
+        }
+
+        return "redirect:/applications/status";
+    }
+
 
     @PostMapping("/withdraw/{id}")
     public String withdrawApplication(
             @PathVariable Long id,
             @AuthenticationPrincipal User currentUser,
-            RedirectAttributes redirectAttributes) {
-
+            RedirectAttributes redirectAttributes
+    ) {
         if (currentUser == null) {
             return "redirect:/login";
         }
