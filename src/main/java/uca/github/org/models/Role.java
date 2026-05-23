@@ -53,4 +53,11 @@ public class Role {
     public String getAuthorityName() {
         return "ROLE_" + name;
     }
+
+    public Set<Permission> getPermissions() {
+        if (permissions == null) {
+            permissions = new LinkedHashSet<>();
+        }
+        return permissions;
+    }
 }

@@ -48,13 +48,40 @@ class RoleManagementServiceTest {
                 .build();
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(roleRepository.findById(2L)).thenReturn(Optional.of(posterRole));
+        when(roleRepository.findAllById(Set.of(2L))).thenReturn(java.util.List.of(posterRole));
         when(userRepository.save(user)).thenReturn(user);
 
         User result = roleManagementService.assignRole(1L, 2L);
 
         assertThat(result.getRole()).isEqualTo(User.Role.POSTER);
         assertThat(result.getAssignedRoles()).containsExactly(posterRole);
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void assignRoles_ShouldKeepHighestLegacyRoleAsPrimary() {
+        User user = User.builder()
+                .id(1L)
+                .role(User.Role.USER)
+                .build();
+        Role userRole = Role.builder()
+                .id(2L)
+                .name("USER")
+                .build();
+        Role adminRole = Role.builder()
+                .id(3L)
+                .name("ADMIN")
+                .build();
+        Set<Long> roleIds = Set.of(2L, 3L);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(roleRepository.findAllById(roleIds)).thenReturn(java.util.List.of(userRole, adminRole));
+        when(userRepository.save(user)).thenReturn(user);
+
+        User result = roleManagementService.assignRoles(1L, roleIds);
+
+        assertThat(result.getRole()).isEqualTo(User.Role.ADMIN);
+        assertThat(result.getAssignedRoles()).containsExactlyInAnyOrder(userRole, adminRole);
         verify(userRepository).save(user);
     }
 

@@ -20,12 +20,12 @@ import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class RoleManagementController {
 
     private final RoleManagementService roleManagementService;
 
     @GetMapping("/roles")
+    @PreAuthorize("(hasAuthority('MANAGE_ROLES') and hasAuthority('VIEW_USERS')) or hasRole('ADMIN')")
     public String roles(Model model, @AuthenticationPrincipal User currentUser) {
         model.addAttribute("user", currentUser);
         model.addAttribute("roles", roleManagementService.getAllRoles());
@@ -35,6 +35,7 @@ public class RoleManagementController {
     }
 
     @PostMapping("/roles/users/assign")
+    @PreAuthorize("hasAuthority('ASSIGN_ROLES') or hasRole('ADMIN')")
     public String assignRole(
             @RequestParam Long userId,
             @RequestParam Long roleId,
@@ -45,7 +46,20 @@ public class RoleManagementController {
         return "redirect:/roles";
     }
 
+    @PostMapping("/roles/users/assign-many")
+    @PreAuthorize("hasAuthority('ASSIGN_ROLES') or hasRole('ADMIN')")
+    public String assignRoles(
+            @RequestParam Long userId,
+            @RequestParam(required = false) Set<Long> roleIds,
+            RedirectAttributes redirectAttributes) {
+
+        roleManagementService.assignRoles(userId, roleIds == null ? Set.of() : new LinkedHashSet<>(roleIds));
+        redirectAttributes.addFlashAttribute("successMessage", "Roles utilisateur mis a jour.");
+        return "redirect:/roles";
+    }
+
     @PostMapping("/roles/users/{userId}/role")
+    @PreAuthorize("hasAuthority('ASSIGN_ROLES') or hasRole('ADMIN')")
     public String assignRoleToUser(
             @PathVariable Long userId,
             @RequestParam Long roleId,
@@ -55,6 +69,7 @@ public class RoleManagementController {
     }
 
     @PostMapping("/roles/permissions")
+    @PreAuthorize("hasAuthority('MANAGE_ROLES') or hasRole('ADMIN')")
     public String updatePermissions(
             @RequestParam Long roleId,
             @RequestParam(required = false) Set<Permission> permissions,

@@ -105,11 +105,11 @@ public class User implements UserDetails {
                 ? Stream.empty()
                 : Stream.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
 
-        Stream<SimpleGrantedAuthority> managedRoleAuthorities = assignedRoles.stream()
+        Stream<SimpleGrantedAuthority> managedRoleAuthorities = managedRoles().stream()
                 .filter(Objects::nonNull)
                 .map(managedRole -> new SimpleGrantedAuthority(managedRole.getAuthorityName()));
 
-        Stream<SimpleGrantedAuthority> permissionAuthorities = assignedRoles.stream()
+        Stream<SimpleGrantedAuthority> permissionAuthorities = managedRoles().stream()
                 .filter(Objects::nonNull)
                 .flatMap(managedRole -> managedRole.getPermissions().stream())
                 .map(permission -> new SimpleGrantedAuthority(permission.name()));
@@ -118,6 +118,20 @@ public class User implements UserDetails {
                 .flatMap(authorities -> authorities)
                 .distinct()
                 .toList();
+    }
+
+    public boolean hasAssignedRole(Long roleId) {
+        return roleId != null && managedRoles().stream()
+                .filter(Objects::nonNull)
+                .map(uca.github.org.models.Role::getId)
+                .anyMatch(roleId::equals);
+    }
+
+    private Set<uca.github.org.models.Role> managedRoles() {
+        if (assignedRoles == null) {
+            assignedRoles = new LinkedHashSet<>();
+        }
+        return assignedRoles;
     }
 
     @Override

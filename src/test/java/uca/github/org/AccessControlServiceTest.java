@@ -46,4 +46,22 @@ class AccessControlServiceTest {
 
         assertThat(accessControlService.canManageOwnOffers(user)).isFalse();
     }
+
+    @Test
+    void canAssignRoles_ShouldAllowManagedPermission() {
+        User user = User.builder()
+                .role(User.Role.USER)
+                .assignedRoles(new LinkedHashSet<>(Set.of(Role.builder()
+                        .name("PEOPLE_MANAGER")
+                        .permissions(new LinkedHashSet<>(Set.of(Permission.ASSIGN_ROLES)))
+                        .build())))
+                .build();
+
+        assertThat(accessControlService.canAssignRoles(user)).isTrue();
+    }
+
+    @Test
+    void canManageRoles_ShouldRejectNullUser() {
+        assertThat(accessControlService.canManageRoles(null)).isFalse();
+    }
 }
