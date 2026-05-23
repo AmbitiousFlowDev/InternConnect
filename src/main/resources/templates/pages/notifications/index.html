@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifications</title>
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js" defer></script>
+    <script th:src="@{/assets/js/notifications.js}" defer></script>
+</head>
+<body class="bg-light" th:attr="data-notifications-realtime=${notificationRealtimeEnabled}">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top py-2">
+    <div class="container-xl">
+        <a class="navbar-brand fw-bold fs-3" th:href="@{/home}">InternConnect</a>
+        <div class="ms-auto d-flex gap-2">
+            <a class="btn btn-light btn-sm rounded-pill" th:href="@{/notifications/preferences}">
+                <i class="bi bi-sliders me-1"></i> Préférences
+            </a>
+            <a class="btn btn-outline-light btn-sm rounded-pill" th:href="@{/dashboard}">
+                Tableau de bord
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">Notifications</h1>
+            <p class="text-muted mb-0">Suivez les activités importantes liées à votre compte.</p>
+        </div>
+
+        <form th:action="@{/notifications/read-all}" method="post" class="m-0">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit" class="btn btn-outline-primary">
+                Tout marquer comme lu
+            </button>
+        </form>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div th:if="${#lists.isEmpty(notifications)}" class="text-center text-muted py-5">
+                <i class="bi bi-bell fs-1 d-block mb-3 opacity-25"></i>
+                Aucune notification pour le moment.
+            </div>
+
+            <div class="list-group list-group-flush" data-notification-list
+                 th:if="${!#lists.isEmpty(notifications)}">
+
+                <div class="list-group-item p-4"
+                     th:each="notification : ${notifications}"
+                     th:classappend="${notification.isRead} ? '' : ' bg-light'">
+
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                        <div>
+                            <span class="badge mb-2"
+                                  th:classappend="${notification.isRead} ? ' text-bg-secondary' : ' text-bg-primary'"
+                                  th:text="${notification.type}">
+                                SYSTEM
+                            </span>
+
+                            <h5 class="fw-bold mb-1" th:text="${notification.title}">
+                                Titre
+                            </h5>
+
+                            <p class="text-muted mb-2" th:text="${notification.content}">
+                                Contenu
+                            </p>
+
+                            <small class="text-muted"
+                                   th:text="${notification.createdAt != null ? #temporals.format(notification.createdAt, 'dd/MM/yyyy HH:mm') : 'Date inconnue'}">
+                                23/05/2026 10:00
+                            </small>
+                        </div>
+
+                        <div class="d-flex gap-2 flex-wrap justify-content-end">
+                            <a th:if="${notification.targetUrl != null && !#strings.isEmpty(notification.targetUrl)}"
+                               th:href="@{${notification.targetUrl}}"
+                               class="btn btn-outline-primary btn-sm">
+                                Ouvrir
+                            </a>
+
+                            <form th:if="${!notification.isRead}"
+                                  th:action="@{/notifications/{id}/read(id=${notification.id})}"
+                                  method="post"
+                                  class="m-0">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn btn-outline-success btn-sm">
+                                    Lu
+                                </button>
+                            </form>
+
+                            <form th:action="@{/notifications/{id}/delete(id=${notification.id})}"
+                                  method="post"
+                                  class="m-0">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" data-notification-toasts></div>
+
+</body>
+</html>
