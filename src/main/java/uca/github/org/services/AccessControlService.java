@@ -15,4 +15,10 @@ public interface AccessControlService {
     boolean canManageOwnOffers(User user);
 
     boolean canViewOfferApplications(User user);
+
+    boolean canManageRoles(User user);
+
+    boolean canAssignRoles(User user);
+
+    boolean canViewUsers(User user);
 }

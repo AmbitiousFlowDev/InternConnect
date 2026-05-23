@@ -5,6 +5,8 @@ import uca.github.org.models.Permission;
 import uca.github.org.models.Role;
 import uca.github.org.models.User;
 
+import java.util.Set;
+
 @Service
 public class AccessControlServiceImpl implements AccessControlService {
 
@@ -15,7 +17,7 @@ public class AccessControlServiceImpl implements AccessControlService {
         }
 
         return user.getRole() == role
-                || user.getAssignedRoles().stream()
+                || assignedRoles(user).stream()
                 .map(Role::getName)
                 .anyMatch(role.name()::equals);
     }
@@ -26,7 +28,7 @@ public class AccessControlServiceImpl implements AccessControlService {
             return false;
         }
 
-        return user.getAssignedRoles().stream()
+        return assignedRoles(user).stream()
                 .flatMap(role -> role.getPermissions().stream())
                 .anyMatch(permission::equals);
     }
@@ -56,5 +58,27 @@ public class AccessControlServiceImpl implements AccessControlService {
         return hasPermission(user, Permission.VIEW_OFFER_APPLICATIONS)
                 || hasRole(user, User.Role.POSTER)
                 || hasRole(user, User.Role.ADMIN);
+    }
+
+    @Override
+    public boolean canManageRoles(User user) {
+        return hasPermission(user, Permission.MANAGE_ROLES)
+                || hasRole(user, User.Role.ADMIN);
+    }
+
+    @Override
+    public boolean canAssignRoles(User user) {
+        return hasPermission(user, Permission.ASSIGN_ROLES)
+                || hasRole(user, User.Role.ADMIN);
+    }
+
+    @Override
+    public boolean canViewUsers(User user) {
+        return hasPermission(user, Permission.VIEW_USERS)
+                || hasRole(user, User.Role.ADMIN);
+    }
+
+    private Set<Role> assignedRoles(User user) {
+        return user.getAssignedRoles() == null ? Set.of() : user.getAssignedRoles();
     }
 }
