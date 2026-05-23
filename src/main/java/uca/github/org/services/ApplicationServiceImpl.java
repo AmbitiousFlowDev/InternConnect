@@ -25,6 +25,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final InternshipRepository internshipRepository;
+    private final AccessControlService accessControlService;
 
     @Override
     public List<Application> getUserApplications(User user) {
@@ -194,11 +195,12 @@ public class ApplicationServiceImpl implements ApplicationService {
             return false;
         }
 
-        if (currentUser.getRole() == User.Role.ADMIN) {
+        if (accessControlService.canManageAnyOffer(currentUser)) {
             return true;
         }
 
-        return internship.getPoster() != null
+        return accessControlService.canViewOfferApplications(currentUser)
+                && internship.getPoster() != null
                 && internship.getPoster().getId() != null
                 && internship.getPoster().getId().equals(currentUser.getId());
     }
