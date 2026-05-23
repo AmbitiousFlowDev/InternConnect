@@ -95,6 +95,7 @@
           <th>Utilisateur</th>
           <th>Email</th>
           <th>Role principal</th>
+          <th>Roles assignes</th>
           <th class="text-end">Modifier</th>
         </tr>
         </thead>
@@ -106,17 +107,24 @@
           <td class="text-muted" th:text="${managedUser.email}">email@example.com</td>
           <td><span class="badge text-bg-secondary" th:text="${managedUser.role}">USER</span></td>
           <td>
-            <form th:action="@{/roles/users/assign}" method="post" class="d-flex justify-content-end gap-2">
+            <span class="badge text-bg-light me-1"
+                  th:each="assignedRole : ${managedUser.assignedRoles}"
+                  th:text="${assignedRole.label}">Role</span>
+          </td>
+          <td>
+            <form th:action="@{/roles/users/assign-many}" method="post" class="d-flex flex-column flex-xl-row justify-content-end gap-2">
               <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
               <input type="hidden" name="userId" th:value="${managedUser.id}">
-              <select class="form-select form-select-sm w-auto" name="roleId" aria-label="Role">
-                <option th:each="role : ${roles}"
-                        th:value="${role.id}"
-                        th:selected="${managedUser.role != null && managedUser.role.name() == role.name}"
-                        th:text="${role.label}">
-                  Role
-                </option>
-              </select>
+              <div class="d-flex flex-wrap justify-content-end gap-2">
+                <label class="form-check form-check-inline m-0" th:each="role : ${roles}">
+                  <input class="form-check-input"
+                         type="checkbox"
+                         name="roleIds"
+                         th:value="${role.id}"
+                         th:checked="${managedUser.assignedRoles.![id].contains(role.id)}">
+                  <span class="form-check-label small" th:text="${role.label}">Role</span>
+                </label>
+              </div>
               <button type="submit" class="btn btn-primary btn-sm">
                 <i class="bi bi-person-gear me-1"></i> Appliquer
               </button>

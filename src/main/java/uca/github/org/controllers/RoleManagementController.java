@@ -46,6 +46,18 @@ public class RoleManagementController {
         return "redirect:/roles";
     }
 
+    @PostMapping("/roles/users/assign-many")
+    @PreAuthorize("hasAuthority('ASSIGN_ROLES') or hasRole('ADMIN')")
+    public String assignRoles(
+            @RequestParam Long userId,
+            @RequestParam(required = false) Set<Long> roleIds,
+            RedirectAttributes redirectAttributes) {
+
+        roleManagementService.assignRoles(userId, roleIds == null ? Set.of() : new LinkedHashSet<>(roleIds));
+        redirectAttributes.addFlashAttribute("successMessage", "Roles utilisateur mis a jour.");
+        return "redirect:/roles";
+    }
+
     @PostMapping("/roles/users/{userId}/role")
     @PreAuthorize("hasAuthority('ASSIGN_ROLES') or hasRole('ADMIN')")
     public String assignRoleToUser(

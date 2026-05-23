@@ -14,5 +14,7 @@ public interface RoleManagementService {
 
     User assignRole(Long userId, Long roleId);
 
+    User assignRoles(Long userId, Set<Long> roleIds);
+
     Role updatePermissions(Long roleId, Set<Permission> permissions);
 }

@@ -13,6 +13,7 @@ import uca.github.org.repositories.UserRepository;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,14 +35,24 @@ public class RoleManagementServiceImpl implements RoleManagementService {
     @Override
     @Transactional
     public User assignRole(Long userId, Long roleId) {
+        return assignRoles(userId, Set.of(roleId));
+    }
+
+    @Override
+    @Transactional
+    public User assignRoles(Long userId, Set<Long> roleIds) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur introuvable."));
-        Role role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new EntityNotFoundException("Role introuvable."));
+        Set<Long> requestedRoleIds = roleIds == null ? Set.of() : roleIds;
+        List<Role> roles = roleRepository.findAllById(requestedRoleIds);
 
-        user.setRole(toLegacyRole(role));
+        if (roles.size() != requestedRoleIds.size()) {
+            throw new EntityNotFoundException("Un ou plusieurs roles sont introuvables.");
+        }
+
+        user.setRole(resolvePrimaryRole(roles));
         user.getAssignedRoles().clear();
-        user.getAssignedRoles().add(role);
+        user.getAssignedRoles().addAll(roles);
 
         return userRepository.save(user);
     }
@@ -56,11 +67,23 @@ public class RoleManagementServiceImpl implements RoleManagementService {
         return roleRepository.save(role);
     }
 
-    private User.Role toLegacyRole(Role role) {
-        try {
-            return User.Role.valueOf(role.getName());
-        } catch (IllegalArgumentException ex) {
+    private User.Role resolvePrimaryRole(List<Role> roles) {
+        Set<String> roleNames = roles.stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+
+        if (roleNames.contains(User.Role.ADMIN.name())) {
+            return User.Role.ADMIN;
+        }
+        if (roleNames.contains(User.Role.POSTER.name())) {
+            return User.Role.POSTER;
+        }
+        if (roleNames.contains(User.Role.USER.name())) {
             return User.Role.USER;
         }
+        if (roleNames.contains(User.Role.VISITOR.name())) {
+            return User.Role.VISITOR;
+        }
+        return User.Role.USER;
     }
 }
