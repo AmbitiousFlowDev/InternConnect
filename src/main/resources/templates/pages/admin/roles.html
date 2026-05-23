@@ -69,7 +69,7 @@
                        name="permissions"
                        th:value="${permission}"
                        th:checked="${role.permissions.contains(permission)}">
-                <span class="form-check-label small" th:text="${permission}">PERMISSION</span>
+                <span class="form-check-label small" th:text="${permission.label}" th:title="${permission.description}">Permission</span>
               </label>
             </div>
             <button type="submit" class="btn btn-outline-primary btn-sm w-100">
@@ -121,7 +121,7 @@
                          type="checkbox"
                          name="roleIds"
                          th:value="${role.id}"
-                         th:checked="${managedUser.assignedRoles.![id].contains(role.id)}">
+                         th:checked="${managedUser.hasAssignedRole(role.id)}">
                   <span class="form-check-label small" th:text="${role.label}">Role</span>
                 </label>
               </div>
