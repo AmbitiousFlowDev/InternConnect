@@ -21,3 +21,17 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: intern-connect-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql-db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    depends_on:
+      mysql-db:
+        condition: service_healthy
