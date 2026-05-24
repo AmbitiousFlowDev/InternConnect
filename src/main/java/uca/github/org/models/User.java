@@ -98,6 +98,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Notification> notifications = new ArrayList<>();
+    
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private NotificationPreference notificationPreference;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
