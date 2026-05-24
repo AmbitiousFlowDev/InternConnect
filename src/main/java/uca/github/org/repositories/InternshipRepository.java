@@ -40,4 +40,15 @@ public interface InternshipRepository extends JpaRepository<Internship, Long> {
             @Param("duration") String duration,
             @Param("status") String status
     );
+    @Query("SELECT i FROM Internship i WHERE " +
+            "i.status = 'ACTIVE' AND (" +
+            "(:sector IS NULL OR LOWER(i.sector) LIKE LOWER(CONCAT('%', :sector, '%'))) OR " +
+            "(:location IS NULL OR LOWER(i.location) LIKE LOWER(CONCAT('%', :location, '%'))) OR " +
+            "(:keywords IS NULL OR LOWER(i.title) LIKE LOWER(CONCAT('%', :keywords, '%')) OR " +
+            "LOWER(i.description) LIKE LOWER(CONCAT('%', :keywords, '%'))))")
+    List<Internship> findRecommendedOffers(
+            @Param("sector") String sector,
+            @Param("location") String location,
+            @Param("keywords") String keywords
+    );
 }

@@ -10,6 +10,7 @@ import uca.github.org.forms.OfferEditForm;
 import uca.github.org.forms.OfferPublicationForm;
 import uca.github.org.models.Bookmark;
 import uca.github.org.models.Internship;
+import uca.github.org.models.Profile;
 import uca.github.org.models.User;
 import uca.github.org.repositories.BookmarkRepository;
 import uca.github.org.repositories.InternshipRepository;
@@ -146,6 +147,16 @@ public class OfferServiceImpl implements OfferService {
                 sector,
                 duration,
                 company
+        );
+    }
+    @Override
+    public List<Internship> getRecommendedOffers(User user) {
+        Profile profile = user.getProfile();
+        if (profile == null) return List.of();
+        return internshipRepository.findRecommendedOffers(
+                profile.getPreferredSector(),
+                profile.getPreferredLocation(),
+                profile.getPreferredKeywords()
         );
     }
 }

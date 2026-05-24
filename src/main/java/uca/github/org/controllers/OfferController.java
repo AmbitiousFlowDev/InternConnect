@@ -335,4 +335,16 @@ public class OfferController {
     private String clean(String value) {
         return value == null ? "" : value.trim();
     }
+    @GetMapping("/offers/recommendations")
+    public String getRecommendations(
+            @AuthenticationPrincipal User currentUser,
+            Model model) {
+
+        if (currentUser == null) return "redirect:/login";
+
+        var recommendations = offerService.getRecommendedOffers(currentUser);
+        model.addAttribute("recommendations", recommendations);
+        model.addAttribute("user", currentUser);
+        return "pages/offers/recommendations";
+    }
 }

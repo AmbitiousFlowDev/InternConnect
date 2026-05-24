@@ -37,4 +37,13 @@ public class Profile {
 
     @Column(columnDefinition = "TEXT")
     private String coverLetter;
+
+    @Column
+    private String preferredSector;
+
+    @Column
+    private String preferredLocation;
+
+    @Column
+    private String preferredKeywords;
 }
