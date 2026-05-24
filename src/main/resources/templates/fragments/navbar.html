@@ -42,6 +42,27 @@
           </a>
         </li>
 
+        <li class="nav-item" sec:authorize="hasAnyRole('POSTER','ADMIN')">
+          <a class="nav-link" th:classappend="${activePage == 'publish'} ? ' active'" th:href="@{/offers/publish}">
+            <i class="bi bi-plus-circle me-1"></i>
+            Ajouter offre
+          </a>
+        </li>
+
+        <li class="nav-item" sec:authorize="hasAnyRole('POSTER','ADMIN')">
+          <a class="nav-link" th:classappend="${activePage == 'my-offers'} ? ' active'" th:href="@{/offers/my}">
+            <i class="bi bi-list-task me-1"></i>
+            Mes offres
+          </a>
+        </li>
+
+        <li class="nav-item" sec:authorize="isAuthenticated()">
+          <a class="nav-link" th:classappend="${activePage == 'recommendations'} ? ' active'" th:href="@{/offers/recommendations}">
+            <i class="bi bi-stars me-1"></i>
+            Recommandations
+          </a>
+        </li>
+
         <li class="nav-item" sec:authorize="isAuthenticated()">
           <a class="nav-link" th:classappend="${activePage == 'applications'} ? ' active'" th:href="@{/applications/status}">
             <i class="bi bi-file-earmark-text me-1"></i>
@@ -60,6 +81,19 @@
           <a class="nav-link" th:classappend="${activePage == 'messages'} ? ' active'" th:href="@{/messages}">
             <i class="bi bi-chat-dots me-1"></i>
             Messages
+          </a>
+        </li>
+
+        <li class="nav-item" sec:authorize="isAuthenticated()">
+          <a class="nav-link position-relative" th:classappend="${activePage == 'notifications'} ? ' active'" th:href="@{/notifications}">
+            <i class="bi bi-bell me-1"></i>
+            Notifications
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  data-notification-badge
+                  th:classappend="${unreadNotificationsCount == null || unreadNotificationsCount == 0} ? ' d-none' : ''"
+                  th:text="${unreadNotificationsCount != null ? unreadNotificationsCount : 0}">
+              0
+            </span>
           </a>
         </li>
 
@@ -86,9 +120,9 @@
              class="btn btn-light btn-sm rounded-pill d-flex align-items-center gap-2"
              title="Profil">
             <span class="avatar-box avatar-box-light"
-                  th:text="${userInitials != null ? userInitials : 'U'}">U</span>
+                  th:text="${userInitials != null ? userInitials : (user != null && user.firstName != null ? #strings.substring(user.firstName,0,1).toUpperCase() : 'U')}">U</span>
             <span class="d-none d-md-inline fw-semibold"
-                  th:text="${userDisplayName != null ? userDisplayName : 'Profil'}">Profil</span>
+                  th:text="${userDisplayName != null ? userDisplayName : (user != null && user.firstName != null ? user.firstName + ' ' + user.lastName : 'Profil')}">Profil</span>
           </a>
 
           <form th:action="@{/logout}" method="post" class="m-0">

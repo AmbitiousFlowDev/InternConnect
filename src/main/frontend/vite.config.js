@@ -11,7 +11,8 @@ export default defineConfig({
 
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "main.js")
+        main: resolve(__dirname, "main.js"),
+        notifications: resolve(__dirname, "notifications.js")
       },
       output: {
         entryFileNames: "assets/js/[name].js",
