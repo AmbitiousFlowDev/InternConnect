@@ -1,6 +1,7 @@
 package uca.github.org.services;
 
 import jakarta.persistence.EntityNotFoundException;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +13,7 @@ import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 import uca.github.org.repositories.ApplicationRepository;
 import uca.github.org.repositories.InternshipRepository;
+import uca.github.org.models.Notification;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -25,6 +27,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final InternshipRepository internshipRepository;
+    private final NotificationService notificationService;
 
     @Override
     public List<Application> getUserApplications(User user) {
@@ -55,7 +58,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         application.setStatus(newStatus);
 
-        return applicationRepository.save(application);
+        Application savedApplication = applicationRepository.save(application);
+
+        notificationService.createNotification(
+                savedApplication.getApplicant(),
+                Notification.NotificationType.STATUS_UPDATE,
+                "Statut de candidature mis à jour",
+                "Votre candidature est maintenant : " + newStatus,
+                "/applications/status"
+        );
+
+        return savedApplication;
     }
 
     @Override
@@ -104,7 +117,18 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .status(Application.ApplicationStatus.SUBMITTED)
                 .build();
 
-        return applicationRepository.save(application);
+        Application savedApplication = applicationRepository.save(application);
+
+        notificationService.createNotification(
+                internship.getPoster(),
+                Notification.NotificationType.APPLICATION,
+                "Nouvelle candidature",
+                applicant.getFirstName() + " " + applicant.getLastName()
+                        + " a postulé à votre offre : " + internship.getTitle(),
+                "/applications/offers/" + internship.getId()
+        );
+
+        return savedApplication;
     }
 
     @Override

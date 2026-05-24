@@ -1,6 +1,7 @@
 package uca.github.org;
 
 import jakarta.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import uca.github.org.models.User;
 import uca.github.org.repositories.ApplicationRepository;
 import uca.github.org.repositories.InternshipRepository;
 import uca.github.org.services.ApplicationServiceImpl;
+import uca.github.org.services.NotificationService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +32,9 @@ class ApplicationServiceTest {
 
     @Mock
     private InternshipRepository internshipRepository;
+    
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private ApplicationServiceImpl applicationService;

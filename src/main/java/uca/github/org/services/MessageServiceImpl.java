@@ -1,6 +1,7 @@
 package uca.github.org.services;
 
 import jakarta.persistence.EntityNotFoundException;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import uca.github.org.models.User;
 import uca.github.org.repositories.InternshipRepository;
 import uca.github.org.repositories.MessageRepository;
 import uca.github.org.repositories.UserRepository;
+import uca.github.org.models.Notification;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,6 +25,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final InternshipRepository internshipRepository;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -43,7 +46,18 @@ public class MessageServiceImpl implements MessageService {
                 .isRead(false)
                 .build();
 
-        return messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+
+        notificationService.createNotification(
+                recipient,
+                Notification.NotificationType.MESSAGE,
+                "Nouveau message",
+                sender.getFirstName() + " " + sender.getLastName()
+                        + " vous a envoyé un message.",
+                "/messages/" + sender.getId()
+        );
+
+        return savedMessage;
     }
 
     @Override
