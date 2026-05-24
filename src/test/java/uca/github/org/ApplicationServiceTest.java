@@ -12,6 +12,7 @@ import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 import uca.github.org.repositories.ApplicationRepository;
 import uca.github.org.repositories.InternshipRepository;
+import uca.github.org.services.AccessControlService;
 import uca.github.org.services.ApplicationServiceImpl;
 import uca.github.org.services.NotificationService;
 
@@ -35,6 +36,9 @@ class ApplicationServiceTest {
     
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private AccessControlService accessControlService;
 
     @InjectMocks
     private ApplicationServiceImpl applicationService;
@@ -222,6 +226,8 @@ class ApplicationServiceTest {
                 .build();
 
         when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(accessControlService.canManageAnyOffer(poster)).thenReturn(false);
+        when(accessControlService.canViewOfferApplications(poster)).thenReturn(true);
         when(applicationRepository.findByInternshipOrderBySubmittedAtDesc(internship))
                 .thenReturn(List.of(secondApplication, firstApplication));
 
@@ -247,6 +253,8 @@ class ApplicationServiceTest {
                 .build();
 
         when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(accessControlService.canManageAnyOffer(poster)).thenReturn(false);
+        when(accessControlService.canViewOfferApplications(poster)).thenReturn(true);
         when(applicationRepository.findByInternshipOrderBySubmittedAtDesc(internship))
                 .thenReturn(List.of(otherApplication, matchingApplication));
 
@@ -271,6 +279,8 @@ class ApplicationServiceTest {
                 .build();
 
         when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(accessControlService.canManageAnyOffer(poster)).thenReturn(false);
+        when(accessControlService.canViewOfferApplications(poster)).thenReturn(true);
         when(applicationRepository.findByInternshipOrderBySubmittedAtDesc(internship))
                 .thenReturn(List.of(otherApplication, matchingApplication));
 
@@ -295,6 +305,7 @@ class ApplicationServiceTest {
                 .build();
 
         when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(accessControlService.canManageAnyOffer(admin)).thenReturn(true);
         when(applicationRepository.findByInternshipOrderBySubmittedAtDesc(internship))
                 .thenReturn(List.of(application));
 
@@ -310,6 +321,8 @@ class ApplicationServiceTest {
         Internship internship = Internship.builder().id(10L).poster(poster).build();
 
         when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(accessControlService.canManageAnyOffer(otherUser)).thenReturn(false);
+        when(accessControlService.canViewOfferApplications(otherUser)).thenReturn(false);
 
         assertThatThrownBy(() -> applicationService.getOfferApplications(10L, otherUser, null, null))
                 .isInstanceOf(IllegalArgumentException.class)

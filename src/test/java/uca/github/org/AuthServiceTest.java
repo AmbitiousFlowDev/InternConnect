@@ -15,12 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import uca.github.org.models.User;
+import uca.github.org.repositories.RoleRepository;
 import uca.github.org.repositories.UserRepository;
 import uca.github.org.services.AuthServiceImpl;
+
+import java.util.Optional;
 
 /**
  * Unit and Integration tests for {@link AuthServiceImpl}.
@@ -31,12 +33,14 @@ import uca.github.org.services.AuthServiceImpl;
  * 
  * @version 1.0
  */
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RoleRepository roleRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -76,6 +80,7 @@ class AuthServiceTest {
     void register_ShouldSaveUserWithEncodedPassword() {
         String encodedPass = "encodedHash123";
         when(passwordEncoder.encode("rawPassword")).thenReturn(encodedPass);
+        when(roleRepository.findByName(User.Role.USER.name())).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
         User savedUser = authService.register(testUser);
         assertNotNull(savedUser, "The saved user should not be null");

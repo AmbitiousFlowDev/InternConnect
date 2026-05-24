@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "users")
@@ -46,6 +47,15 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    @Builder.Default
+    private Set<uca.github.org.models.Role> assignedRoles = new LinkedHashSet<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -94,7 +104,37 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        Stream<SimpleGrantedAuthority> primaryRole = role == null
+                ? Stream.empty()
+                : Stream.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+
+        Stream<SimpleGrantedAuthority> managedRoleAuthorities = managedRoles().stream()
+                .filter(Objects::nonNull)
+                .map(managedRole -> new SimpleGrantedAuthority(managedRole.getAuthorityName()));
+
+        Stream<SimpleGrantedAuthority> permissionAuthorities = managedRoles().stream()
+                .filter(Objects::nonNull)
+                .flatMap(managedRole -> managedRole.getPermissions().stream())
+                .map(permission -> new SimpleGrantedAuthority(permission.name()));
+
+        return Stream.of(primaryRole, managedRoleAuthorities, permissionAuthorities)
+                .flatMap(authorities -> authorities)
+                .distinct()
+                .toList();
+    }
+
+    public boolean hasAssignedRole(Long roleId) {
+        return roleId != null && managedRoles().stream()
+                .filter(Objects::nonNull)
+                .map(uca.github.org.models.Role::getId)
+                .anyMatch(roleId::equals);
+    }
+
+    private Set<uca.github.org.models.Role> managedRoles() {
+        if (assignedRoles == null) {
+            assignedRoles = new LinkedHashSet<>();
+        }
+        return assignedRoles;
     }
 
     @Override

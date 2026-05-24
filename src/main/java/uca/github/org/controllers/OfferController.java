@@ -22,6 +22,7 @@ import uca.github.org.forms.OfferPublicationForm;
 import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 import uca.github.org.repositories.InternshipRepository;
+import uca.github.org.services.AccessControlService;
 import uca.github.org.services.OfferService;
 
 @Controller
@@ -30,6 +31,7 @@ public class OfferController {
 
     private final OfferService offerService;
     private final InternshipRepository internshipRepository;
+    private final AccessControlService accessControlService;
 
     @GetMapping("/offers/publish")
     public String showPublishForm(
@@ -41,7 +43,7 @@ public class OfferController {
             return "redirect:/login";
         }
 
-        if (currentUser.getRole() != User.Role.POSTER && currentUser.getRole() != User.Role.ADMIN) {
+        if (!accessControlService.canPublishOffers(currentUser)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Seuls les posteurs peuvent publier une offre.");
             return "redirect:/dashboard";
         }
@@ -62,7 +64,7 @@ public class OfferController {
             return "redirect:/login";
         }
 
-        if (currentUser.getRole() != User.Role.POSTER && currentUser.getRole() != User.Role.ADMIN) {
+        if (!accessControlService.canManageOwnOffers(currentUser)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Seuls les posteurs peuvent gérer leurs offres.");
             return "redirect:/dashboard";
         }
@@ -97,7 +99,7 @@ public class OfferController {
         Internship offer = optionalOffer.get();
 
         if (!offer.getPoster().getId().equals(currentUser.getId())
-                && currentUser.getRole() != User.Role.ADMIN) {
+                && !accessControlService.canManageAnyOffer(currentUser)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Vous n'avez pas le droit de modifier cette offre.");
             return "redirect:/offers/my";
         }
@@ -160,7 +162,7 @@ public class OfferController {
             return "redirect:/login";
         }
 
-        if (currentUser.getRole() != User.Role.POSTER && currentUser.getRole() != User.Role.ADMIN) {
+        if (!accessControlService.canPublishOffers(currentUser)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Seuls les posteurs peuvent publier une offre.");
             return "redirect:/dashboard";
         }
@@ -332,5 +334,17 @@ public class OfferController {
 
     private String clean(String value) {
         return value == null ? "" : value.trim();
+    }
+    @GetMapping("/offers/recommendations")
+    public String getRecommendations(
+            @AuthenticationPrincipal User currentUser,
+            Model model) {
+
+        if (currentUser == null) return "redirect:/login";
+
+        var recommendations = offerService.getRecommendedOffers(currentUser);
+        model.addAttribute("recommendations", recommendations);
+        model.addAttribute("user", currentUser);
+        return "pages/offers/recommendations";
     }
 }

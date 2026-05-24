@@ -10,6 +10,7 @@ import uca.github.org.forms.OfferEditForm;
 import uca.github.org.forms.OfferPublicationForm;
 import uca.github.org.models.Bookmark;
 import uca.github.org.models.Internship;
+import uca.github.org.models.Profile;
 import uca.github.org.models.User;
 import uca.github.org.repositories.BookmarkRepository;
 import uca.github.org.repositories.InternshipRepository;
@@ -20,6 +21,7 @@ public class OfferServiceImpl implements OfferService {
 
     private final InternshipRepository internshipRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final AccessControlService accessControlService;
 
     @Override
     public Internship publishOffer(OfferPublicationForm form, User poster) {
@@ -55,7 +57,7 @@ public class OfferServiceImpl implements OfferService {
                 .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
 
         if (!offer.getPoster().getId().equals(currentUser.getId())
-                && currentUser.getRole() != User.Role.ADMIN) {
+                && !accessControlService.canManageAnyOffer(currentUser)) {
             throw new IllegalArgumentException("Vous n'avez pas le droit de modifier cette offre.");
         }
 
@@ -89,7 +91,7 @@ public class OfferServiceImpl implements OfferService {
                 .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
 
         if (!offer.getPoster().getId().equals(currentUser.getId())
-                && currentUser.getRole() != User.Role.ADMIN) {
+                && !accessControlService.canManageAnyOffer(currentUser)) {
             throw new IllegalArgumentException("Vous n'avez pas le droit de supprimer cette offre.");
         }
 
@@ -145,6 +147,16 @@ public class OfferServiceImpl implements OfferService {
                 sector,
                 duration,
                 company
+        );
+    }
+    @Override
+    public List<Internship> getRecommendedOffers(User user) {
+        Profile profile = user.getProfile();
+        if (profile == null) return List.of();
+        return internshipRepository.findRecommendedOffers(
+                profile.getPreferredSector(),
+                profile.getPreferredLocation(),
+                profile.getPreferredKeywords()
         );
     }
 }

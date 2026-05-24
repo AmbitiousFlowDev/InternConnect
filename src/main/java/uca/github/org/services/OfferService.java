@@ -29,4 +29,5 @@ public interface OfferService {
             String duration,
             String company
     );
+    List<Internship> getRecommendedOffers(User user);
 }
