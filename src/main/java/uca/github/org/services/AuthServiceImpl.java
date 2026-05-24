@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uca.github.org.models.User;
+import uca.github.org.repositories.RoleRepository;
 import uca.github.org.repositories.UserRepository;
 
 
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     /**
      * Handles the logic for creating a new user account.
@@ -26,6 +28,11 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     @Transactional
     public User register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getRole() == null) {
+            user.setRole(User.Role.USER);
+        }
+        roleRepository.findByName(user.getRole().name())
+                .ifPresent(role -> user.getAssignedRoles().add(role));
         user.setStatus(User.AccountStatus.ACTIVE);
         user.setRegistrationDate(LocalDate.now());
         return userRepository.save(user);

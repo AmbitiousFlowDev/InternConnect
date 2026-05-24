@@ -21,6 +21,7 @@ public class OfferServiceImpl implements OfferService {
 
     private final InternshipRepository internshipRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final AccessControlService accessControlService;
 
     @Override
     public Internship publishOffer(OfferPublicationForm form, User poster) {
@@ -56,7 +57,7 @@ public class OfferServiceImpl implements OfferService {
                 .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
 
         if (!offer.getPoster().getId().equals(currentUser.getId())
-                && currentUser.getRole() != User.Role.ADMIN) {
+                && !accessControlService.canManageAnyOffer(currentUser)) {
             throw new IllegalArgumentException("Vous n'avez pas le droit de modifier cette offre.");
         }
 
@@ -90,7 +91,7 @@ public class OfferServiceImpl implements OfferService {
                 .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
 
         if (!offer.getPoster().getId().equals(currentUser.getId())
-                && currentUser.getRole() != User.Role.ADMIN) {
+                && !accessControlService.canManageAnyOffer(currentUser)) {
             throw new IllegalArgumentException("Vous n'avez pas le droit de supprimer cette offre.");
         }
 

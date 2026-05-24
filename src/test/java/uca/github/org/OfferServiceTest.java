@@ -20,6 +20,7 @@ import uca.github.org.models.Internship;
 import uca.github.org.models.User;
 import uca.github.org.repositories.BookmarkRepository;
 import uca.github.org.repositories.InternshipRepository;
+import uca.github.org.services.AccessControlService;
 import uca.github.org.services.OfferServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +31,9 @@ class OfferServiceTest {
 
     @Mock
     private BookmarkRepository bookmarkRepository;
+
+    @Mock
+    private AccessControlService accessControlService;
 
     @InjectMocks
     private OfferServiceImpl offerService;

@@ -8,4 +8,5 @@ import uca.github.org.models.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
     java.util.Optional<User> findByEmail(String email);
+    java.util.List<User> findAllByOrderByLastNameAscFirstNameAsc();
 }
