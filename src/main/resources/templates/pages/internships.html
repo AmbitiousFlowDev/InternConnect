@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -15,50 +15,7 @@
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top py-2">
-    <div class="container-xl">
-        <a class="navbar-brand fw-bold fs-3" th:href="@{/home}">InternConnect</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ms-lg-4 me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/home}">
-                        <i class="bi bi-house-door me-1"></i>Accueil
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" th:href="@{/internships}">
-                        <i class="bi bi-briefcase me-1"></i>Stages
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/applications/status}">
-                        <i class="bi bi-file-earmark-text me-1"></i>Candidatures
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/bookmarks}">
-                        <i class="bi bi-bookmark me-1"></i>Sauvegardés
-                    </a>
-                </li>
-            </ul>
-            <div class="d-flex align-items-center gap-2">
-                <a th:href="@{/profile}" class="btn btn-light btn-sm rounded-pill d-flex align-items-center gap-2">
-                    <span class="avatar-box avatar-box-light" th:text="${userInitials != null ? userInitials : 'U'}">U</span>
-                    <span class="fw-semibold" th:text="${userDisplayName != null ? userDisplayName : 'Profil'}">Profil</span>
-                </a>
-                <form th:action="@{/logout}" method="post" class="m-0">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <button type="submit" class="btn btn-outline-light btn-sm rounded-pill">
-                        <i class="bi bi-box-arrow-right me-1"></i>Déconnexion
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{fragments/navbar :: main('internships')}"></div>
 
 <!-- POPUP -->
 <div style="position:fixed; top:80px; right:20px; z-index:9999;">
@@ -69,7 +26,7 @@
         <div class="d-flex">
             <div class="toast-body fs-6">
                 <i class="bi bi-check-circle-fill me-2"></i>
-                <span th:text="${successMessage}">Candidature envoyée avec succès !</span>
+                <span th:text="${successMessage}">Candidature envoyÃ©e avec succÃ¨s !</span>
             </div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
@@ -94,7 +51,7 @@
         <div class="row align-items-center g-4">
             <div class="col-lg-8">
                 <h1 class="display-5 fw-bold mb-2">Offres de stage</h1>
-                <p class="text-secondary mb-0">Découvrez les opportunités adaptées à votre profil.</p>
+                <p class="text-secondary mb-0">DÃ©couvrez les opportunitÃ©s adaptÃ©es Ã  votre profil.</p>
             </div>
             <div class="col-lg-4 d-flex justify-content-lg-end">
                 <a th:href="@{/dashboard}" class="btn btn-outline-primary rounded-pill px-4">
@@ -112,7 +69,7 @@
                         <div>
                             <h3 class="h4 fw-bold mb-1" th:text="${internship.title}">Titre</h3>
                             <p class="text-muted mb-0">
-                                <span th:text="${internship.company}">Entreprise</span> ·
+                                <span th:text="${internship.company}">Entreprise</span> Â·
                                 <span th:text="${internship.location}">Ville</span>
                             </p>
                         </div>
@@ -128,7 +85,7 @@
                         </span>
                         <span class="badge text-bg-light border">
                             <i class="bi bi-clock me-1"></i>
-                            <span th:text="${internship.duration}">Durée</span>
+                            <span th:text="${internship.duration}">DurÃ©e</span>
                         </span>
                         <span class="badge text-bg-light border">
                             <i class="bi bi-cash-stack me-1"></i>
@@ -147,7 +104,7 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Lettre de motivation</label>
                             <textarea name="coverLetter" class="form-control" rows="4"
-                                      placeholder="Écrivez votre lettre..." required></textarea>
+                                      placeholder="Ã‰crivez votre lettre..." required></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary rounded-pill w-100">
                             <i class="bi bi-send me-1"></i>Postuler
@@ -162,7 +119,7 @@
          class="card card-soft p-5 text-center mt-4">
         <i class="bi bi-inbox fs-1 text-muted opacity-50 mb-3"></i>
         <h3 class="h5 fw-bold">Aucun stage disponible</h3>
-        <p class="text-muted">Les offres apparaîtront ici.</p>
+        <p class="text-muted">Les offres apparaÃ®tront ici.</p>
     </div>
 
 </main>
@@ -170,7 +127,7 @@
 <footer class="mt-5 border-top bg-white">
     <div class="container-xl py-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <p class="text-muted small mb-0">© 2026 InternConnect</p>
+            <p class="text-muted small mb-0">Â© 2026 InternConnect</p>
             <span class="text-muted small">Version 1.0.0</span>
         </div>
     </div>

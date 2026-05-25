@@ -10,7 +10,8 @@ RUN ./mvnw -B dependency:go-offline
 
 COPY src/ src/
 
-RUN ./mvnw -B -DskipTests package
+# Always clean before packaging so the image contains the current templates and frontend assets.
+RUN ./mvnw -B -DskipTests clean package
 
 
 FROM eclipse-temurin:25-jre-jammy AS runtime
