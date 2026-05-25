@@ -1,0 +1,12 @@
+.git
+.github
+.idea
+.vscode
+bin
+target
+node_modules
+src/main/frontend/node
+src/main/frontend/node_modules
+*.iml
+*.log
+.DS_Store
