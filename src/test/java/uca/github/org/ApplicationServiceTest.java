@@ -178,6 +178,62 @@ class ApplicationServiceTest {
                 .isInstanceOf(EntityNotFoundException.class);
     }
 
+    @Test
+    void updateApplicationStatus_shouldRejectPosterWhoDoesNotOwnOffer() {
+        User owner = User.builder().id(1L).role(User.Role.POSTER).build();
+        User otherPoster = User.builder().id(2L).role(User.Role.POSTER).build();
+        Internship internship = Internship.builder().id(10L).poster(owner).build();
+        Application app = Application.builder()
+                .internship(internship)
+                .status(Application.ApplicationStatus.SUBMITTED)
+                .build();
+
+        when(applicationRepository.findById(1L)).thenReturn(Optional.of(app));
+        when(accessControlService.canManageAnyOffer(otherPoster)).thenReturn(false);
+        when(accessControlService.canViewOfferApplications(otherPoster)).thenReturn(true);
+
+        assertThatThrownBy(() -> applicationService.updateApplicationStatus(
+                1L,
+                Application.ApplicationStatus.ACCEPTED,
+                otherPoster))
+                .hasMessageContaining("droit");
+
+        verify(applicationRepository, never()).save(any());
+    }
+
+    @Test
+    void apply_shouldRejectPosterRole() {
+        User poster = User.builder().id(1L).role(User.Role.POSTER).build();
+        Internship internship = Internship.builder().id(10L).build();
+
+        when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(accessControlService.canApplyToOffers(poster)).thenReturn(false);
+
+        assertThatThrownBy(() -> applicationService.apply(poster, 10L, "Lettre"))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("recruteurs");
+
+        verify(applicationRepository, never()).save(any());
+    }
+
+    @Test
+    void apply_shouldAllowStudentRole() {
+        User student = User.builder().id(1L).role(User.Role.USER).firstName("Sara").lastName("Amrani").build();
+        User poster = User.builder().id(2L).role(User.Role.POSTER).build();
+        Internship internship = Internship.builder().id(10L).poster(poster).title("Stage Java").build();
+        Application saved = Application.builder().id(99L).applicant(student).internship(internship).build();
+
+        when(internshipRepository.findById(10L)).thenReturn(Optional.of(internship));
+        when(accessControlService.canApplyToOffers(student)).thenReturn(true);
+        when(applicationRepository.existsByApplicantAndInternship(student, internship)).thenReturn(false);
+        when(applicationRepository.save(any(Application.class))).thenReturn(saved);
+
+        Application result = applicationService.apply(student, 10L, "Lettre");
+
+        assertThat(result).isSameAs(saved);
+        verify(applicationRepository).save(any(Application.class));
+    }
+
     // -------------------------------------------------------
     // getStatusSummary
     // -------------------------------------------------------

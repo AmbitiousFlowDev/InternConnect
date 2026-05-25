@@ -21,6 +21,12 @@ public interface ApplicationService {
             Application.ApplicationStatus newStatus
     );
 
+    Application updateApplicationStatus(
+            Long applicationId,
+            Application.ApplicationStatus newStatus,
+            User currentUser
+    );
+
     Map<Application.ApplicationStatus, Long> getStatusSummary(User user);
 
     Application apply(

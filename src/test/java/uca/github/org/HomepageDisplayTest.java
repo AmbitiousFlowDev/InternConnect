@@ -26,6 +26,7 @@ import uca.github.org.controllers.HomeController;
 import uca.github.org.models.Internship;
 import uca.github.org.records.HomeStats;
 import uca.github.org.services.HomeService;
+import uca.github.org.services.UserDisplayService;
 
 @SpringBootTest(
         classes = HomepageDisplayTest.HomepageTestApplication.class,
@@ -90,7 +91,7 @@ class HomepageDisplayTest {
 
     @Configuration(proxyBeanMethods = false)
     @EnableAutoConfiguration
-    @Import({ HomeController.class, InternConnectSecurityConfiguration.class })
+    @Import({ HomeController.class, InternConnectSecurityConfiguration.class, UserDisplayService.class })
     static class HomepageTestApplication {
     }
 }

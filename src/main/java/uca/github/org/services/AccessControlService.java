@@ -10,6 +10,10 @@ public interface AccessControlService {
 
     boolean canPublishOffers(User user);
 
+    boolean canApplyToOffers(User user);
+
+    boolean canSaveOffers(User user);
+
     boolean canManageAnyOffer(User user);
 
     boolean canManageOwnOffers(User user);

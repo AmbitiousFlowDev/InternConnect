@@ -13,8 +13,8 @@ class OfferDetailsTemplateTest {
     void offerDetailsTemplate_ShouldDisplayCandidateMatchingSection() throws Exception {
         String template = Files.readString(Path.of("src/main/resources/templates/pages/offers/details.html"));
 
-        assertTrue(template.contains("Recommended Candidates"));
-        assertTrue(template.contains("No relevant candidates found for this offer."));
-        assertTrue(template.contains("Matched Criteria"));
+        assertTrue(template.contains("Candidats recommandés"));
+        assertTrue(template.contains("Aucun candidat pertinent trouvé pour cette offre."));
+        assertTrue(template.contains("Critères correspondants"));
     }
 }

@@ -25,6 +25,10 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Internship publishOffer(OfferPublicationForm form, User poster) {
+        if (!accessControlService.canPublishOffers(poster)) {
+            throw new IllegalArgumentException("Votre compte recruteur doit être vérifié avant de publier une offre. Veuillez soumettre un justificatif.");
+        }
+
         Internship internship = Internship.builder()
                 .poster(poster)
                 .title(form.getTitle())
@@ -101,11 +105,18 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public List<Bookmark> getSavedOffers(User currentUser) {
+        if (!accessControlService.canSaveOffers(currentUser)) {
+            throw new IllegalArgumentException("Seuls les étudiants peuvent consulter les offres sauvegardées.");
+        }
         return bookmarkRepository.findByUserOrderByAddedAtDesc(currentUser);
     }
 
     @Override
     public Bookmark saveOffer(Long offerId, User currentUser) {
+        if (!accessControlService.canSaveOffers(currentUser)) {
+            throw new IllegalArgumentException("Seuls les étudiants peuvent sauvegarder des offres.");
+        }
+
         Internship offer = internshipRepository.findById(offerId)
                 .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
 
@@ -124,6 +135,10 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public void removeSavedOffer(Long offerId, User currentUser) {
+        if (!accessControlService.canSaveOffers(currentUser)) {
+            throw new IllegalArgumentException("Seuls les étudiants peuvent retirer des offres sauvegardées.");
+        }
+
         Internship offer = internshipRepository.findById(offerId)
                 .orElseThrow(() -> new IllegalArgumentException("Offre introuvable."));
 

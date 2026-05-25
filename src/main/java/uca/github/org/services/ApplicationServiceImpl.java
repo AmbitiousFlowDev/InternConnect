@@ -50,12 +50,30 @@ public class ApplicationServiceImpl implements ApplicationService {
             Long applicationId,
             Application.ApplicationStatus newStatus
     ) {
+        return updateApplicationStatus(applicationId, newStatus, null);
+    }
+
+    @Override
+    @Transactional
+    public Application updateApplicationStatus(
+            Long applicationId,
+            Application.ApplicationStatus newStatus,
+            User currentUser
+    ) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
                                 "Application not found: " + applicationId
                         )
                 );
+
+        if (currentUser != null && !canUpdateApplicationStatus(application, currentUser)) {
+            throw new AccessDeniedException("Vous n'avez pas le droit de modifier cette candidature.");
+        }
+
+        if (!isPosterManagedStatus(newStatus)) {
+            throw new IllegalArgumentException("Statut de candidature invalide.");
+        }
 
         application.setStatus(newStatus);
 
@@ -99,6 +117,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 "Internship not found: " + internshipId
                         )
                 );
+
+        if (!accessControlService.canApplyToOffers(applicant)) {
+            throw new IllegalStateException("Les recruteurs ne peuvent pas postuler aux offres de stage.");
+        }
 
         boolean alreadyApplied = applicationRepository.existsByApplicantAndInternship(
                 applicant,
@@ -227,6 +249,27 @@ public class ApplicationServiceImpl implements ApplicationService {
                 && internship.getPoster() != null
                 && internship.getPoster().getId() != null
                 && internship.getPoster().getId().equals(currentUser.getId());
+    }
+
+    private boolean canUpdateApplicationStatus(Application application, User currentUser) {
+        if (currentUser == null || application == null || application.getInternship() == null) {
+            return false;
+        }
+        if (accessControlService.canManageAnyOffer(currentUser)) {
+            return true;
+        }
+        Internship internship = application.getInternship();
+        return accessControlService.canViewOfferApplications(currentUser)
+                && internship.getPoster() != null
+                && internship.getPoster().getId() != null
+                && internship.getPoster().getId().equals(currentUser.getId());
+    }
+
+    private boolean isPosterManagedStatus(Application.ApplicationStatus status) {
+        return status == Application.ApplicationStatus.SUBMITTED
+                || status == Application.ApplicationStatus.UNDER_REVIEW
+                || status == Application.ApplicationStatus.ACCEPTED
+                || status == Application.ApplicationStatus.REJECTED;
     }
 
     private boolean matchesApplicantName(

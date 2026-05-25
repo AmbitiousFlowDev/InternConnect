@@ -24,7 +24,7 @@
         <li class="nav-item" sec:authorize="isAnonymous()">
           <a class="nav-link" th:classappend="${activePage == 'presentation'} ? ' active'" th:href="@{/}">
             <i class="bi bi-compass"></i>
-            Presentation
+            Présentation
           </a>
         </li>
 
@@ -35,14 +35,14 @@
           </a>
         </li>
 
-        <li class="nav-item" sec:authorize="isAuthenticated()">
+        <li class="nav-item" sec:authorize="hasRole('USER')">
           <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? ' active'" th:href="@{/dashboard}">
             <i class="bi bi-speedometer2"></i>
             Tableau de bord
           </a>
         </li>
 
-        <li class="nav-item" sec:authorize="isAuthenticated()">
+        <li class="nav-item" sec:authorize="hasRole('USER')">
           <a class="nav-link" th:classappend="${activePage == 'internships'} ? ' active'" th:href="@{/internships}">
             <i class="bi bi-briefcase"></i>
             Stages
@@ -87,25 +87,30 @@
             Plus
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li>
+            <li sec:authorize="hasRole('USER')">
               <a class="dropdown-item" th:classappend="${activePage == 'recommendations'} ? ' active'" th:href="@{/offers/recommendations}">
                 <i class="bi bi-stars me-2"></i>Recommandations
               </a>
             </li>
-            <li>
-              <a class="dropdown-item" th:classappend="${activePage == 'bookmarks'} ? ' active'" th:href="@{/bookmarks}">
-                <i class="bi bi-bookmark me-2"></i>Sauvegardes
+            <li sec:authorize="hasRole('USER')">
+              <a class="dropdown-item" th:classappend="${activePage == 'bookmarks'} ? ' active'" th:href="@{/saved-internships}">
+                <i class="bi bi-bookmark me-2"></i>Mes stages sauvegardés
               </a>
             </li>
             <li><hr class="dropdown-divider"></li>
             <li sec:authorize="hasAnyRole('POSTER','ADMIN')">
               <a class="dropdown-item" th:classappend="${activePage == 'publish'} ? ' active'" th:href="@{/offers/publish}">
-                <i class="bi bi-plus-circle me-2"></i>Ajouter offre
+                <i class="bi bi-plus-circle me-2"></i>Publier une offre
               </a>
             </li>
             <li sec:authorize="hasAnyRole('POSTER','ADMIN')">
               <a class="dropdown-item" th:classappend="${activePage == 'my-offers'} ? ' active'" th:href="@{/offers/my}">
                 <i class="bi bi-list-task me-2"></i>Mes offres
+              </a>
+            </li>
+            <li sec:authorize="hasRole('POSTER')">
+              <a class="dropdown-item" th:classappend="${activePage == 'recruiter-verification'} ? ' active'" th:href="@{/recruiter-verification}">
+                <i class="bi bi-patch-check me-2"></i>Vérification recruteur
               </a>
             </li>
           </ul>
@@ -114,7 +119,13 @@
         <li class="nav-item" sec:authorize="hasRole('ADMIN')">
           <a class="nav-link" th:classappend="${activePage == 'roles'} ? ' active'" th:href="@{/roles}">
             <i class="bi bi-shield-lock"></i>
-            Roles
+            Rôles
+          </a>
+        </li>
+        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+          <a class="nav-link" th:classappend="${activePage == 'recruiter-verifications'} ? ' active'" th:href="@{/admin/recruiter-verifications}">
+            <i class="bi bi-patch-check"></i>
+            Vérifications recruteurs
           </a>
         </li>
       </ul>
@@ -136,14 +147,14 @@
              title="Profil"
              aria-label="Profil">
             <span class="app-navbar-avatar"
-                  th:text="${userInitials != null ? userInitials : (user != null && user.firstName != null ? #strings.substring(user.firstName,0,1).toUpperCase() : 'U')}">U</span>
+                  th:text="${userInitials != null ? userInitials : 'U'}">U</span>
           </a>
 
           <form th:action="@{/logout}" method="post" class="m-0">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <button type="submit" class="btn btn-outline-light btn-sm rounded-pill">
               <i class="bi bi-box-arrow-right"></i>
-              Deconnexion
+              Déconnexion
             </button>
           </form>
         </div>

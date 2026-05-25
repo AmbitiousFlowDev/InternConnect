@@ -71,9 +71,7 @@
         <div class="card card-soft p-4 text-center h-100">
 
           <div class="profile-avatar mb-3"
-               th:text="${user != null && user.firstName != null && user.lastName != null}
-                        ? ${#strings.substring(user.firstName,0,1) + #strings.substring(user.lastName,0,1)}
-                        : '??'">
+               th:text="${@userDisplayService.getInitials(user)}">
             JD
           </div>
 

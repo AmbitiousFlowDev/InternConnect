@@ -17,7 +17,7 @@ class AccessControlServiceTest {
     private final AccessControlService accessControlService = new AccessControlServiceImpl();
 
     @Test
-    void canPublishOffers_ShouldAllowManagedPermission() {
+    void canApplyToOffers_ShouldAllowStudentRoleOnly() {
         User user = User.builder()
                 .role(User.Role.USER)
                 .assignedRoles(new LinkedHashSet<>(Set.of(Role.builder()
@@ -26,7 +26,8 @@ class AccessControlServiceTest {
                         .build())))
                 .build();
 
-        assertThat(accessControlService.canPublishOffers(user)).isTrue();
+        assertThat(accessControlService.canApplyToOffers(user)).isTrue();
+        assertThat(accessControlService.canSaveOffers(user)).isTrue();
     }
 
     @Test

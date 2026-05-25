@@ -1,14 +1,20 @@
 package uca.github.org.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uca.github.org.models.Permission;
+import uca.github.org.models.RecruiterVerification;
 import uca.github.org.models.Role;
 import uca.github.org.models.User;
+import uca.github.org.repositories.RecruiterVerificationRepository;
 
 import java.util.Set;
 
 @Service
 public class AccessControlServiceImpl implements AccessControlService {
+
+    @Autowired(required = false)
+    private RecruiterVerificationRepository recruiterVerificationRepository;
 
     @Override
     public boolean hasRole(User user, User.Role role) {
@@ -35,9 +41,20 @@ public class AccessControlServiceImpl implements AccessControlService {
 
     @Override
     public boolean canPublishOffers(User user) {
-        return hasPermission(user, Permission.PUBLISH_OFFERS)
-                || hasRole(user, User.Role.POSTER)
-                || hasRole(user, User.Role.ADMIN);
+        if (hasRole(user, User.Role.ADMIN)) {
+            return true;
+        }
+        return hasRole(user, User.Role.POSTER) && isRecruiterApproved(user);
+    }
+
+    @Override
+    public boolean canApplyToOffers(User user) {
+        return hasRole(user, User.Role.USER);
+    }
+
+    @Override
+    public boolean canSaveOffers(User user) {
+        return hasRole(user, User.Role.USER);
     }
 
     @Override
@@ -80,5 +97,15 @@ public class AccessControlServiceImpl implements AccessControlService {
 
     private Set<Role> assignedRoles(User user) {
         return user.getAssignedRoles() == null ? Set.of() : user.getAssignedRoles();
+    }
+
+    private boolean isRecruiterApproved(User user) {
+        if (user == null || recruiterVerificationRepository == null) {
+            return false;
+        }
+        return recruiterVerificationRepository.existsByRecruiterAndStatus(
+                user,
+                RecruiterVerification.VerificationStatus.APPROVED
+        );
     }
 }

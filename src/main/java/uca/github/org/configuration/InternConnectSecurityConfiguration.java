@@ -32,8 +32,9 @@ public class InternConnectSecurityConfiguration {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/", "/index", "/index.html", "/home", "/home.html", "/register", "/css/**", "/js/**" , "/assets/**" )
                 .permitAll()
-                .requestMatchers("/roles/**").hasRole("ADMIN")
-                .requestMatchers("/offers/publish", "/offers/my").hasAnyRole("POSTER", "ADMIN")
+                .requestMatchers("/roles/**", "/admin/**").hasRole("ADMIN")
+                .requestMatchers("/applications/**", "/saved-internships", "/bookmarks", "/offers/save", "/offers/unsave").hasAnyRole("USER", "POSTER", "ADMIN")
+                .requestMatchers("/offers/publish", "/offers/my", "/poster/**", "/recruiter-verification").hasAnyRole("POSTER", "ADMIN")
                 .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/dashboard" , true).permitAll())
                 .logout(logout -> logout.logoutSuccessUrl("/login?logout")
