@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -6,11 +6,10 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Recherche de stages â€” InternConnect</title>
+    <title>Recherche de stages — InternConnect</title>
     <link rel="stylesheet" th:href="@{/assets/css/main.css}">
     <script th:src="@{/assets/js/main.js}" defer></script>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js" defer></script>
     <script th:src="@{/assets/js/notifications.js}" defer></script>
 </head>
@@ -28,7 +27,7 @@
             <div class="col-lg-8">
                 <h1 class="display-6 fw-bold mb-2">Rechercher un stage</h1>
                 <p class="text-secondary mb-0">
-                    Filtrez les offres par mot-clÃ©, ville, secteur, durÃ©e ou entreprise.
+                    Filtrez les offres par mot-clé, ville, secteur, durée ou entreprise.
                 </p>
             </div>
             <div class="col-lg-4 d-flex justify-content-lg-end" sec:authorize="isAuthenticated()">
@@ -43,12 +42,12 @@
         <form th:action="@{/offers/search}" method="get" class="row g-3 align-items-end">
 
             <div class="col-lg-6">
-                <label for="keyword" class="form-label small fw-medium">Mot-clÃ©</label>
+                <label for="keyword" class="form-label small fw-medium">Mot-clé</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-search"></i></span>
                     <input id="keyword" type="text" name="keyword"
                            class="form-control"
-                           placeholder="Titre, compÃ©tence, entreprise..."
+                           placeholder="Titre, compétence, entreprise..."
                            th:value="${keyword}"/>
                 </div>
             </div>
@@ -65,16 +64,16 @@
                 <label for="sector" class="form-label small fw-medium">Secteur</label>
                 <select id="sector" name="sector" class="form-select">
                     <option value="">Tous les secteurs</option>
-                    <option value="Software Development">DÃ©veloppement</option>
+                    <option value="Software Development">Développement</option>
                     <option value="Data Analytics">Data Analytics</option>
                     <option value="Cloud & DevOps">Cloud &amp; DevOps</option>
                     <option value="Frontend Development">Frontend</option>
-                    <option value="Cybersecurity">CybersÃ©curitÃ©</option>
+                    <option value="Cybersecurity">Cybersécurité</option>
                 </select>
             </div>
 
             <div class="col-lg-3">
-                <label for="duration" class="form-label small fw-medium">DurÃ©e</label>
+                <label for="duration" class="form-label small fw-medium">Durée</label>
                 <input id="duration" type="text" name="duration"
                        class="form-control"
                        placeholder="2 mois, 6 mois..."
@@ -97,7 +96,7 @@
 
             <div class="col-lg-3 d-grid">
                 <a th:href="@{/offers/search}" class="btn btn-outline-secondary">
-                    <i class="bi bi-x-circle me-1"></i>RÃ©initialiser
+                    <i class="bi bi-x-circle me-1"></i>Réinitialiser
                 </a>
             </div>
 
@@ -110,20 +109,20 @@
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="h5 fw-bold mb-0"
-                    th:text="${results != null and not results.isEmpty()} ? 'RÃ©sultats' : 'Stages disponibles'">
-                    RÃ©sultats
+                    th:text="${results != null and not results.isEmpty()} ? 'Résultats' : 'Stages disponibles'">
+                    Résultats
                 </h2>
                 <span class="text-muted small"
                       th:if="${results != null and not results.isEmpty()}"
-                      th:text="${results.size()} + ' offre(s) trouvÃ©e(s)'"></span>
+                      th:text="${results.size()} + ' offre(s) trouvée(s)'"></span>
             </div>
 
 
             <div class="card card-soft p-5 text-center"
                  th:if="${results != null and results.isEmpty()}">
                 <i class="bi bi-inbox fs-1 text-muted opacity-50 mb-3 d-block"></i>
-                <h3 class="h5 fw-bold">Aucun stage trouvÃ©</h3>
-                <p class="text-muted mb-3">Essayez d'autres critÃ¨res de recherche.</p>
+                <h3 class="h5 fw-bold">Aucun stage trouvé</h3>
+                <p class="text-muted mb-3">Essayez d'autres critères de recherche.</p>
                 <div>
                     <a th:href="@{/offers/search}" class="btn btn-outline-primary btn-sm rounded-pill px-4">
                         Voir toutes les offres
@@ -153,7 +152,7 @@
                                 <p class="text-muted mb-0">
                                     <span th:text="${offer.company != null ? offer.company : 'Entreprise'}">Entreprise</span>
                                     <span th:if="${offer.location != null}">
-                                        Â· <span th:text="${offer.location}">Ville</span>
+                                        · <span th:text="${offer.location}">Ville</span>
                                     </span>
                                 </p>
                             </div>
@@ -173,7 +172,7 @@
                         </span>
                         <span class="badge text-bg-light border">
                             <i class="bi bi-clock me-1"></i>
-                            <span th:text="${offer.duration != null ? offer.duration : 'DurÃ©e'}">DurÃ©e</span>
+                            <span th:text="${offer.duration != null ? offer.duration : 'Durée'}">Durée</span>
                         </span>
                         <span class="badge text-bg-light border" th:if="${offer.salary != null}">
                             <i class="bi bi-cash-stack me-1"></i>
@@ -183,7 +182,7 @@
 
                     <div th:if="${offer.requiredSkills != null}" class="small text-muted mb-3">
                         <i class="bi bi-tools me-1"></i>
-                        <span th:text="${offer.requiredSkills}">CompÃ©tences</span>
+                        <span th:text="${offer.requiredSkills}">Compétences</span>
                     </div>
 
                     <div class="d-flex flex-column flex-md-row gap-2">
@@ -225,7 +224,7 @@
                     </div>
                 </div>
                 <a th:href="@{/profile}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
-                    ComplÃ©ter mon profil
+                    Compléter mon profil
                 </a>
             </section>
 
@@ -233,7 +232,7 @@
                 <h5 class="fw-bold mb-3">Tendances</h5>
                 <div class="mb-3">
                     <p class="mb-0 small fw-bold">#PFE2026</p>
-                    <span class="text-muted small">OpportunitÃ©s de fin d'Ã©tudes</span>
+                    <span class="text-muted small">Opportunités de fin d'études</span>
                 </div>
                 <div class="mb-3">
                     <p class="mb-0 small fw-bold">#SpringBoot</p>
@@ -241,7 +240,7 @@
                 </div>
                 <div>
                     <p class="mb-0 small fw-bold">#RemoteInternship</p>
-                    <span class="text-muted small">Stages Ã  distance</span>
+                    <span class="text-muted small">Stages à distance</span>
                 </div>
             </section>
 
@@ -263,7 +262,7 @@
             <div class="col-lg-4 col-md-6">
                 <a class="navbar-brand fw-bold fs-4 text-primary d-block mb-3" th:href="@{/home}">InternConnect</a>
                 <p class="text-muted small pe-lg-5">
-                    Connecter la prochaine gÃ©nÃ©ration de talents avec des opportunitÃ©s de stage pertinentes.
+                    Connecter la prochaine génération de talents avec des opportunités de stage pertinentes.
                 </p>
                 <div class="d-flex gap-3 mt-4">
                     <a href="#" class="text-secondary"><i class="bi bi-linkedin"></i></a>
@@ -283,19 +282,19 @@
                 <h6 class="fw-bold mb-3">Support</h6>
                 <ul class="list-unstyled small">
                     <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Centre d'aide</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">ConfidentialitÃ©</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Confidentialité</a></li>
                     <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Conditions</a></li>
                 </ul>
             </div>
             <div class="col-lg-4 col-md-12">
                 <div class="p-4 rounded-4 bg-light">
-                    <h6 class="fw-bold mb-2">Statut du systÃ¨me</h6>
+                    <h6 class="fw-bold mb-2">Statut du système</h6>
                     <div class="d-flex align-items-center gap-2 mb-3">
                         <span class="p-1 bg-success rounded-circle"></span>
-                        <span class="small text-muted">Tous les systÃ¨mes sont opÃ©rationnels</span>
+                        <span class="small text-muted">Tous les systèmes sont opérationnels</span>
                     </div>
                     <p class="small text-muted mb-0">
-                        Besoin d'aide ? Contactez-nous Ã 
+                        Besoin d'aide ? Contactez-nous à
                         <span class="text-primary fw-medium">support@internconnect.univ.fr</span>
                     </p>
                 </div>
@@ -303,7 +302,7 @@
         </div>
         <hr class="my-5">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-            <p class="text-muted small mb-0">&copy; 2026 InternConnect. ConÃ§u pour les Ã©tudiants.</p>
+            <p class="text-muted small mb-0">&copy; 2026 InternConnect. Conçu pour les étudiants.</p>
             <span class="text-muted small">Version 1.0.0</span>
         </div>
     </div>

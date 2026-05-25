@@ -77,7 +77,7 @@
         </div>
 
         <div th:if="${partnerId != null}" class="d-flex flex-column h-100">
-          <div class="card-body border-bottom py-3">
+          <div class="card-body border-bottom py-3 app-chat-header">
             <div class="d-flex align-items-center gap-3">
               <span class="avatar-box avatar-box-lg">
                 <span th:each="partner : ${partners}"
@@ -121,7 +121,7 @@
             </div>
           </div>
 
-          <div class="card-body border-top">
+          <div class="card-body border-top app-chat-composer">
             <form th:action="@{/messages/send}" method="post" class="d-flex align-items-end gap-2">
               <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
               <input type="hidden" name="recipientId" th:value="${partnerId}">

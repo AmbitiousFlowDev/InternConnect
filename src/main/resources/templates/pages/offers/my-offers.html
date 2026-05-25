@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -35,7 +35,7 @@
         <div>
             <h1 class="fw-bold">Mes offres</h1>
             <p class="text-muted">
-                GÃ©rez les offres de stage que vous avez publiÃ©es.
+                Gérez les offres de stage que vous avez publiées.
             </p>
         </div>
 
@@ -49,7 +49,7 @@
 
             <div th:if="${#lists.isEmpty(offers)}"
                  class="text-center text-muted py-5">
-                Aucune offre publiÃ©e pour le moment.
+                Aucune offre publiée pour le moment.
             </div>
 
             <div class="list-group" th:if="${!#lists.isEmpty(offers)}">
@@ -65,7 +65,7 @@
 
                             <p class="text-muted mb-1">
                                 <span th:text="${offer.company}">Entreprise</span>
-                                <span th:if="${offer.company != null && offer.location != null}"> Â· </span>
+                                <span th:if="${offer.company != null && offer.location != null}"> · </span>
                                 <span th:text="${offer.location}">Localisation</span>
                             </p>
 
@@ -168,7 +168,6 @@
 
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

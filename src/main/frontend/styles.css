@@ -299,16 +299,21 @@ textarea {
 
 /* Messages */
 .app-messages-shell {
-  min-height: calc(100vh - 8.5rem);
+  min-height: 0;
 }
 
 .app-messages-panel,
 .app-chat-panel {
-  min-height: 36rem;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 8.5rem);
+  min-height: 32rem;
+  overflow: hidden;
 }
 
 .app-conversation-list {
-  max-height: calc(100vh - 15rem);
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -320,8 +325,23 @@ textarea {
 .app-message-thread {
   background-color: #f8fafc;
   flex: 1 1 auto;
-  max-height: calc(100vh - 19rem);
+  min-height: 0;
   overflow-y: auto;
+  padding: 1rem;
+}
+
+.app-chat-panel > .d-flex {
+  min-height: 0;
+}
+
+.app-chat-header,
+.app-chat-composer {
+  flex: 0 0 auto;
+}
+
+.app-chat-composer {
+  background-color: var(--bs-white);
+  padding: 0.85rem 1rem;
 }
 
 .app-message-bubble {
@@ -362,12 +382,16 @@ textarea {
 
   .app-messages-panel,
   .app-chat-panel {
-    min-height: auto;
+    height: auto;
+    min-height: 26rem;
   }
 
-  .app-conversation-list,
-  .app-message-thread {
-    max-height: none;
+  .app-messages-panel {
+    max-height: 22rem;
+  }
+
+  .app-chat-panel {
+    height: calc(100vh - 7rem);
   }
 }
 

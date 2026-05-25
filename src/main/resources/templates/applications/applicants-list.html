@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -32,7 +32,7 @@
         <div>
             <h1 class="fw-bold mb-1">Candidats</h1>
             <p class="text-muted mb-0">
-                Liste des Ã©tudiants ayant postulÃ© Ã  cette offre.
+                Liste des étudiants ayant postulé à cette offre.
             </p>
         </div>
 
@@ -96,7 +96,7 @@
 
             <div th:if="${#lists.isEmpty(applications)}"
                  class="text-center text-muted py-5">
-                Aucune candidature trouvÃ©e.
+                Aucune candidature trouvée.
             </div>
 
             <div class="table-responsive" th:if="${!#lists.isEmpty(applications)}">
@@ -104,7 +104,7 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                     <tr>
-                        <th>Ã‰tudiant</th>
+                        <th>Étudiant</th>
                         <th>Email</th>
                         <th>Date</th>
                         <th>Statut</th>
@@ -132,7 +132,7 @@
                                          th:text="${app.applicant != null
                                          ? app.applicant.firstName + ' ' + app.applicant.lastName
                                          : 'Utilisateur inconnu'}">
-                                        Nom Ã©tudiant
+                                        Nom étudiant
                                     </div>
 
                                     <small class="text-muted"
@@ -186,7 +186,7 @@
 
                                 <button type="submit"
                                         class="btn btn-primary btn-sm">
-                                    Mettre Ã  jour
+                                    Mettre à jour
                                 </button>
 
                             </form>
@@ -205,7 +205,6 @@
 
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
