@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternConnect - Offre</title>
+  <link rel="stylesheet" th:href="@{/assets/css/main.css}">
+  <script th:src="@{/assets/js/main.js}" defer></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/navbar :: main('internships')}"></div>
+
+<main class="container-xl py-5">
+  <section class="card card-soft mb-4">
+    <div class="card-body p-4">
+      <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+        <div>
+          <span class="badge text-bg-primary mb-3" th:text="${offer.sector != null ? offer.sector : 'Stage'}">Stage</span>
+          <h1 class="display-6 fw-bold mb-2" th:text="${offer.title}">Titre de l'offre</h1>
+          <p class="text-muted mb-0">
+            <span th:text="${offer.company != null ? offer.company : 'Entreprise'}">Entreprise</span>
+            <span th:if="${offer.location != null}"> · <span th:text="${offer.location}">Ville</span></span>
+          </p>
+        </div>
+        <div class="text-lg-end">
+          <span class="badge text-bg-success" th:text="${offer.status}">ACTIVE</span>
+          <p class="small text-muted mt-2 mb-0" th:if="${offer.duration != null}" th:text="${offer.duration}">3 mois</p>
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <h2 class="h5 fw-bold">Description</h2>
+          <p class="text-muted" th:text="${offer.description != null ? offer.description : 'Description non disponible.'}">
+            Description de l'offre.
+          </p>
+        </div>
+        <div class="col-lg-4">
+          <div class="card bg-light border-0">
+            <div class="card-body">
+              <h2 class="h6 fw-bold">Profil recherche</h2>
+              <dl class="small mb-0">
+                <dt>Competences</dt>
+                <dd th:text="${offer.requiredSkills != null ? offer.requiredSkills : 'Non precise'}">Java</dd>
+                <dt>Niveau</dt>
+                <dd th:text="${offer.educationLevel != null ? offer.educationLevel : 'Non precise'}">Master</dd>
+                <dt>Contact</dt>
+                <dd th:text="${offer.contactEmail != null ? offer.contactEmail : 'Non precise'}">contact@example.com</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card card-soft" sec:authorize="hasAnyRole('POSTER','ADMIN')">
+    <div class="card-body p-4">
+      <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+        <div>
+          <h2 class="h4 fw-bold mb-1">Recommended Candidates</h2>
+          <p class="text-muted mb-0">Candidates with a score of 50 or higher for this offer.</p>
+        </div>
+        <span class="badge text-bg-primary rounded-pill"
+              th:text="${candidateMatches != null ? #lists.size(candidateMatches) : 0}">0</span>
+      </div>
+
+      <div th:if="${candidateMatches == null || #lists.isEmpty(candidateMatches)}"
+           class="alert alert-secondary mb-0">
+        No relevant candidates found for this offer.
+      </div>
+
+      <div th:if="${candidateMatches != null && !#lists.isEmpty(candidateMatches)}"
+           class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+          <tr>
+            <th>Candidate</th>
+            <th>Email</th>
+            <th>Score</th>
+            <th>Matched Criteria</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="match : ${candidateMatches}">
+            <td class="fw-semibold" th:text="${match.fullName}">Candidate Name</td>
+            <td th:text="${match.email}">candidate@example.com</td>
+            <td>
+              <span class="badge text-bg-success" th:text="${match.score + '/100'}">85/100</span>
+            </td>
+            <td>
+              <span th:each="criterion : ${match.matchedCriteria}"
+                    class="badge text-bg-light border me-1 mb-1"
+                    th:text="${criterion}">Skills</span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
