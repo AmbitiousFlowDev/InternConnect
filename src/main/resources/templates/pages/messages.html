@@ -33,7 +33,7 @@
           <div class="d-flex align-items-center justify-content-between gap-3">
             <div>
               <h1 class="h4 fw-bold mb-1">Messages</h1>
-              <p class="text-muted small mb-0">Conversations recentes</p>
+              <p class="text-muted small mb-0">Conversations récentes</p>
             </div>
             <span class="badge text-bg-primary rounded-pill"
                   th:text="${partners != null ? #lists.size(partners) : 0}">0</span>
@@ -44,7 +44,7 @@
           <div th:if="${partners == null or partners.isEmpty()}"
                class="text-center text-muted p-5">
             <i class="bi bi-chat-dots fs-1 d-block mb-3 opacity-25"></i>
-            <p class="mb-0">Aucune conversation pour l'instant.</p>
+            <p class="mb-0">Aucune conversation pour le moment.</p>
           </div>
 
           <a th:each="partner : ${partners}"
@@ -53,7 +53,7 @@
              th:classappend="${partnerId != null and partner.id == partnerId} ? ' active' : ''">
             <span class="avatar-box"
                   th:classappend="${partnerId != null and partner.id == partnerId} ? ' border-light text-primary bg-white' : ''"
-                  th:text="${#strings.substring(partner.firstName,0,1) + #strings.substring(partner.lastName,0,1)}">AB</span>
+                  th:text="${@userDisplayService.getInitials(partner)}">AB</span>
             <span class="min-w-0">
               <span class="d-block fw-semibold text-truncate"
                     th:text="${partner.firstName + ' ' + partner.lastName}">Nom Prenom</span>
@@ -71,7 +71,7 @@
         <div th:if="${partnerId == null}" class="card-body d-flex align-items-center justify-content-center text-center text-muted">
           <div>
             <i class="bi bi-chat-square-text fs-1 d-block mb-3 opacity-25"></i>
-            <h2 class="h5 fw-bold text-dark">Selectionnez une conversation</h2>
+            <h2 class="h5 fw-bold text-dark">Sélectionnez une conversation</h2>
             <p class="mb-0">Choisissez un contact pour lire et envoyer des messages.</p>
           </div>
         </div>
@@ -82,7 +82,7 @@
               <span class="avatar-box avatar-box-lg">
                 <span th:each="partner : ${partners}"
                       th:if="${partner.id == partnerId}"
-                      th:text="${#strings.substring(partner.firstName,0,1) + #strings.substring(partner.lastName,0,1)}">AB</span>
+                      th:text="${@userDisplayService.getInitials(partner)}">AB</span>
               </span>
               <div>
                 <h2 class="h5 fw-bold mb-0">
@@ -105,7 +105,7 @@
             <div th:each="msg : ${messages}" class="mb-3">
               <div th:if="${msg.sender.id != user.id}" class="d-flex align-items-start gap-2">
                 <span class="avatar-box"
-                      th:text="${#strings.substring(msg.sender.firstName,0,1) + #strings.substring(msg.sender.lastName,0,1)}">AB</span>
+                      th:text="${@userDisplayService.getInitials(msg.sender)}">AB</span>
                 <div class="app-message-bubble app-message-bubble-in">
                   <p class="mb-1" th:text="${msg.content}">Message</p>
                   <small class="text-muted" th:text="${#temporals.format(msg.sentAt, 'dd MMM HH:mm')}">Date</small>
@@ -129,14 +129,14 @@
                 <label for="messageInput" class="visually-hidden">Message</label>
                 <textarea id="messageInput"
                           name="content"
-                          placeholder="Ecrivez votre message..."
+                          placeholder="Écrivez votre message..."
                           rows="1"
                           required
                           class="form-control app-message-input"
                           onkeydown="handleKeyDown(event)"
                           oninput="autoResize(this)"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary app-send-button" title="Envoyer">
+              <button type="submit" class="btn btn-primary app-send-button" title="Envoyer le message">
                 <i class="bi bi-send-fill"></i>
               </button>
             </form>

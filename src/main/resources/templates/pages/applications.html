@@ -1,180 +1,83 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InternConnect - Mes Candidatures</title>
+    <title>InternConnect - Mes candidatures</title>
     <link rel="stylesheet" th:href="@{/assets/css/main.css}">
     <script th:src="@{/assets/js/main.js}" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js" defer></script>
-    <script th:src="@{/assets/js/notifications.js}" defer></script>
 </head>
-
-<body  th:attr="data-notifications-realtime=${notificationRealtimeEnabled}">
-
-<!-- NAVBAR -->
+<body class="bg-light" th:attr="data-notifications-realtime=${notificationRealtimeEnabled}">
 <div th:replace="~{fragments/navbar :: main('applications')}"></div>
 
-<!-- MAIN -->
 <main class="container-xl py-5">
+    <div th:if="${successMessage}" class="alert alert-success"><span th:text="${successMessage}"></span></div>
+    <div th:if="${errorMessage}" class="alert alert-danger"><span th:text="${errorMessage}"></span></div>
 
-    <!-- HEADER -->
     <section class="mb-4">
-        <h1 class="display-6 fw-bold mb-1">Mes Candidatures</h1>
+        <h1 class="display-6 fw-bold mb-1">Mes candidatures</h1>
         <p class="text-secondary mb-0">Suivez l'état de toutes vos candidatures en temps réel.</p>
     </section>
 
-    <!-- FILTRES PAR STATUT -->
     <div class="d-flex flex-wrap gap-2 mb-4">
-        <a th:href="@{/applications}"
+        <a th:href="@{/applications(status='ALL')}"
            th:classappend="${selectedStatus == null} ? ' active' : ''"
-           class="btn btn-sm btn-outline-secondary">
-            Toutes
-        </a>
+           class="btn btn-sm btn-outline-secondary">Toutes</a>
         <a th:each="s : ${statuses}"
-           th:href="@{/applications/status(status=${s})}"
+           th:href="@{/applications(status=${s.name()})}"
            th:classappend="${selectedStatus == s} ? ' active' : ''"
            class="btn btn-sm btn-outline-secondary">
-            <span th:text="${s}"></span>
-            <span class="badge bg-secondary ms-1" th:text="${statusSummary[s]}"></span>
+            <span th:text="${statusLabels.applicationFilter(s.name())}">Soumises</span>
+            <span class="badge bg-secondary ms-1" th:text="${statusSummary[s]}">0</span>
         </a>
     </div>
 
-    <!-- AUCUN RÉSULTAT -->
-    <div th:if="${applications == null or applications.isEmpty()}"
-         class="text-center py-5 text-muted">
+    <div th:if="${applications == null or applications.isEmpty()}" class="text-center py-5 text-muted">
         <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
-        <p>Aucune candidature trouvée pour ce filtre.</p>
-        <a th:href="@{/home}" class="btn btn-primary btn-sm px-4">Explorer les stages</a>
+        <p>Aucune candidature trouvée.</p>
+        <a th:href="@{/internships}" class="btn btn-primary btn-sm px-4">Explorer les stages</a>
     </div>
 
-    <!-- LISTE DES CANDIDATURES -->
-    <div class="card overflow-hidden" th:unless="${applications == null or applications.isEmpty()}">
+    <div class="card overflow-hidden border-0 shadow-sm" th:unless="${applications == null or applications.isEmpty()}">
         <div class="list-group list-group-flush">
-
             <div th:each="app : ${applications}" class="list-group-item p-4">
                 <div class="d-flex gap-3">
-
-                    <!-- Avatar entreprise -->
                     <div class="avatar-box avatar-square"
-                         th:text="${app.internship != null && app.internship.company != null
-                           && #strings.length(app.internship.company) >= 2}
-                 ? ${#strings.substring(app.internship.company, 0, 2).toUpperCase()} : 'IC'">
-                    </div>
-
+                         th:text="${app.internship != null && app.internship.company != null && #strings.length(app.internship.company) >= 2}
+                         ? ${#strings.substring(app.internship.company, 0, 2).toUpperCase()} : 'IC'">IC</div>
                     <div class="flex-grow-1">
                         <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-2">
-
                             <div>
-                                <h6 class="fw-bold mb-1" th:text="${app.internship != null ? app.internship.title : 'Stage'}"></h6>
+                                <h2 class="h6 fw-bold mb-1" th:text="${app.internship != null ? app.internship.title : 'Stage'}">Stage</h2>
                                 <div class="d-flex flex-wrap gap-3 text-muted small">
-                    <span>
-                      <i class="bi bi-building me-1"></i>
-                      <span th:text="${app.internship != null ? app.internship.company : 'Entreprise'}"></span>
-                    </span>
-                                    <span>
-                      <i class="bi bi-geo-alt me-1"></i>
-                      <span th:text="${app.internship != null ? app.internship.location : 'Non spécifié'}"></span>
-                    </span>
+                                    <span><i class="bi bi-building me-1"></i><span th:text="${app.internship != null ? app.internship.company : 'Entreprise'}">Entreprise</span></span>
+                                    <span><i class="bi bi-geo-alt me-1"></i><span th:text="${app.internship != null ? app.internship.location : 'Non spécifié'}">Localisation</span></span>
                                 </div>
                             </div>
-
-                            <!-- Badge statut -->
-                            <!-- Badge statut — corrigé UNDER_REVIEW -->
                             <span class="badge align-self-start px-3 py-2"
-                                  th:text="${app.status}"
+                                  th:text="${statusLabels.application(app.status)}"
                                   th:classappend="${app.status.name() == 'ACCEPTED'} ? ' bg-success'
-                    : (${app.status.name() == 'REJECTED'} ? ' bg-danger'
-                    : (${app.status.name() == 'UNDER_REVIEW'} ? ' bg-info'
-                    : ' bg-warning text-dark'))">
-</span>
-
+                                  : (${app.status.name() == 'REJECTED'} ? ' bg-danger'
+                                  : (${app.status.name() == 'UNDER_REVIEW'} ? ' bg-info'
+                                  : ' bg-warning text-dark'))">Soumise</span>
                         </div>
-
-                        <!-- Timeline -->
                         <div class="text-muted small d-flex flex-wrap gap-3">
-                <span>
-                  <i class="bi bi-clock me-1"></i>
-                  Soumise le
-                  <span th:text="${app.submittedAt != null ? #temporals.format(app.submittedAt, 'dd MMM yyyy') : 'Date inconnue'}"></span>
-                </span>
+                            <span><i class="bi bi-clock me-1"></i>Soumise le
+                                <span th:text="${app.submittedAt != null ? #temporals.format(app.submittedAt, 'dd MMM yyyy') : 'Date inconnue'}">01 Jan 2026</span>
+                            </span>
                             <span th:if="${app.updatedAt != null and app.updatedAt != app.submittedAt}">
-                  <i class="bi bi-arrow-repeat me-1"></i>
-                  Mise à jour le
-                  <span th:text="${#temporals.format(app.updatedAt, 'dd MMM yyyy')}"></span>
-                </span>
+                                <i class="bi bi-arrow-repeat me-1"></i>Mise à jour le
+                                <span th:text="${#temporals.format(app.updatedAt, 'dd MMM yyyy')}">02 Jan 2026</span>
+                            </span>
                         </div>
-
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 </main>
-
-<!-- FOOTER -->
-<footer class="mt-5 border-top bg-white">
-    <div class="container-xl py-5">
-        <div class="row g-4">
-
-            <div class="col-lg-4 col-md-6">
-                <a class="navbar-brand fw-bold fs-4 text-primary d-block mb-3" th:href="@{/home}">InternConnect</a>
-                <p class="text-muted small pe-lg-5">
-                    Connecter la prochaine génération de talents avec des opportunités de stage pertinentes.
-                </p>
-                <div class="d-flex gap-3 mt-4">
-                    <a href="#" class="text-secondary"><i class="bi bi-linkedin"></i></a>
-                    <a href="#" class="text-secondary"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#" class="text-secondary"><i class="bi bi-github"></i></a>
-                </div>
-            </div>
-
-            <div class="col-lg-2 col-md-3 col-6">
-                <h6 class="fw-bold mb-3">Plateforme</h6>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a th:href="@{/home}" class="text-muted text-decoration-none">Stages</a></li>
-                    <li class="mb-2"><a th:href="@{/dashboard}" class="text-muted text-decoration-none">Tableau de bord</a></li>
-                    <li class="mb-2"><a th:href="@{/profile}" class="text-muted text-decoration-none">Profil</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-2 col-md-3 col-6">
-                <h6 class="fw-bold mb-3">Support</h6>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Centre d'aide</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Confidentialité</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Conditions</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-4 col-md-12">
-                <div class="p-4 rounded-4 bg-light">
-                    <h6 class="fw-bold mb-2">Statut du système</h6>
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="p-1 bg-success rounded-circle"></span>
-                        <span class="small text-muted">Tous les systèmes sont opérationnels</span>
-                    </div>
-                    <p class="small text-muted mb-0">
-                        Besoin d'aide ? Contactez-nous à
-                        <span class="text-primary fw-medium">support@internconnect.univ.fr</span>
-                    </p>
-                </div>
-            </div>
-
-        </div>
-        <hr class="my-5">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-            <p class="text-muted small mb-0">&copy; 2026 InternConnect. Conçu pour les étudiants.</p>
-            <span class="text-muted small">Version 1.0.0</span>
-        </div>
-    </div>
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import uca.github.org.matching.CandidateMatchingService;
 import uca.github.org.models.User;
 import uca.github.org.repositories.InternshipRepository;
+import uca.github.org.services.AccessControlService;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class InternshipController {
 
     private final InternshipRepository internshipRepository;
     private final CandidateMatchingService candidateMatchingService;
+    private final AccessControlService accessControlService;
 
     @GetMapping("/internships")
     public String internships(
@@ -50,6 +52,9 @@ public class InternshipController {
 
         model.addAttribute("offer", offer.get());
         model.addAttribute("user", currentUser);
+        model.addAttribute("canApplyToOffers", accessControlService.canApplyToOffers(currentUser));
+        model.addAttribute("canSaveOffers", accessControlService.canSaveOffers(currentUser));
+        model.addAttribute("isRecruiterView", currentUser != null && currentUser.getRole() == User.Role.POSTER);
 
         if (canViewCandidateMatches(currentUser)) {
             model.addAttribute("candidateMatches", candidateMatchingService.findMatchesForOffer(id));

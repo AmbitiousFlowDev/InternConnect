@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>InternConnect - Offre</title>
+  <title>InternConnect - Détails de l'offre</title>
   <link rel="stylesheet" th:href="@{/assets/css/main.css}">
   <script th:src="@{/assets/js/main.js}" defer></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,6 +14,9 @@
 <div th:replace="~{fragments/navbar :: main('internships')}"></div>
 
 <main class="container-xl py-5">
+  <div th:if="${successMessage}" class="alert alert-success"><span th:text="${successMessage}"></span></div>
+  <div th:if="${errorMessage}" class="alert alert-danger"><span th:text="${errorMessage}"></span></div>
+
   <section class="card card-soft mb-4">
     <div class="card-body p-4">
       <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
@@ -24,11 +25,11 @@
           <h1 class="display-6 fw-bold mb-2" th:text="${offer.title}">Titre de l'offre</h1>
           <p class="text-muted mb-0">
             <span th:text="${offer.company != null ? offer.company : 'Entreprise'}">Entreprise</span>
-            <span th:if="${offer.location != null}"> · <span th:text="${offer.location}">Ville</span></span>
+            <span th:if="${offer.location != null}"> - <span th:text="${offer.location}">Localisation</span></span>
           </p>
         </div>
         <div class="text-lg-end">
-          <span class="badge text-bg-success" th:text="${offer.status}">ACTIVE</span>
+          <span class="badge text-bg-success">Active</span>
           <p class="small text-muted mt-2 mb-0" th:if="${offer.duration != null}" th:text="${offer.duration}">3 mois</p>
         </div>
       </div>
@@ -38,21 +39,48 @@
       <div class="row g-4">
         <div class="col-lg-8">
           <h2 class="h5 fw-bold">Description</h2>
-          <p class="text-muted" th:text="${offer.description != null ? offer.description : 'Description non disponible.'}">
-            Description de l'offre.
-          </p>
+          <p class="text-muted" th:text="${offer.description != null ? offer.description : 'Description non disponible.'}">Description</p>
+
+          <div class="d-flex flex-wrap gap-2 mt-4" sec:authorize="isAuthenticated()">
+            <form th:if="${canApplyToOffers}" th:action="@{/applications/apply}" method="post" class="m-0">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              <input type="hidden" name="offerId" th:value="${offer.id}">
+              <input type="hidden" name="coverLetter" value="">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-send me-1"></i>Postuler
+              </button>
+            </form>
+            <form th:if="${canSaveOffers}" th:action="@{/offers/save}" method="post" class="m-0">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              <input type="hidden" name="id" th:value="${offer.id}">
+              <button type="submit" class="btn btn-outline-primary">
+                <i class="bi bi-bookmark me-1"></i>Sauvegarder l'offre
+              </button>
+            </form>
+            <form th:if="${canApplyToOffers}" th:action="@{/conversations/start}" method="post" class="m-0">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              <input type="hidden" name="internshipId" th:value="${offer.id}">
+              <button type="submit" class="btn btn-outline-secondary">
+                <i class="bi bi-chat-dots me-1"></i>Contacter le recruteur
+              </button>
+            </form>
+          </div>
+
+          <div th:if="${isRecruiterView}" class="alert alert-info mt-4 mb-0">
+            Vous consultez cette offre en tant que recruteur.
+          </div>
         </div>
         <div class="col-lg-4">
           <div class="card bg-light border-0">
             <div class="card-body">
-              <h2 class="h6 fw-bold">Profil recherche</h2>
+              <h2 class="h6 fw-bold">Profil recherché</h2>
               <dl class="small mb-0">
-                <dt>Competences</dt>
-                <dd th:text="${offer.requiredSkills != null ? offer.requiredSkills : 'Non precise'}">Java</dd>
+                <dt>Prérequis</dt>
+                <dd th:text="${offer.requiredSkills != null ? offer.requiredSkills : 'Non précisé'}">Java</dd>
                 <dt>Niveau</dt>
-                <dd th:text="${offer.educationLevel != null ? offer.educationLevel : 'Non precise'}">Master</dd>
+                <dd th:text="${offer.educationLevel != null ? offer.educationLevel : 'Non précisé'}">Master</dd>
                 <dt>Contact</dt>
-                <dd th:text="${offer.contactEmail != null ? offer.contactEmail : 'Non precise'}">contact@example.com</dd>
+                <dd th:text="${offer.contactEmail != null ? offer.contactEmail : 'Non précisé'}">contact@example.com</dd>
               </dl>
             </div>
           </div>
@@ -65,40 +93,33 @@
     <div class="card-body p-4">
       <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
         <div>
-          <h2 class="h4 fw-bold mb-1">Recommended Candidates</h2>
-          <p class="text-muted mb-0">Candidates with a score of 50 or higher for this offer.</p>
+          <h2 class="h4 fw-bold mb-1">Candidats recommandés</h2>
+          <p class="text-muted mb-0">Candidats avec un score de 50 ou plus pour cette offre.</p>
         </div>
-        <span class="badge text-bg-primary rounded-pill"
-              th:text="${candidateMatches != null ? #lists.size(candidateMatches) : 0}">0</span>
+        <span class="badge text-bg-primary rounded-pill" th:text="${candidateMatches != null ? #lists.size(candidateMatches) : 0}">0</span>
       </div>
 
-      <div th:if="${candidateMatches == null || #lists.isEmpty(candidateMatches)}"
-           class="alert alert-secondary mb-0">
-        No relevant candidates found for this offer.
+      <div th:if="${candidateMatches == null || #lists.isEmpty(candidateMatches)}" class="alert alert-secondary mb-0">
+        Aucun candidat pertinent trouvé pour cette offre.
       </div>
 
-      <div th:if="${candidateMatches != null && !#lists.isEmpty(candidateMatches)}"
-           class="table-responsive">
+      <div th:if="${candidateMatches != null && !#lists.isEmpty(candidateMatches)}" class="table-responsive">
         <table class="table align-middle mb-0">
           <thead>
           <tr>
-            <th>Candidate</th>
+            <th>Candidat</th>
             <th>Email</th>
             <th>Score</th>
-            <th>Matched Criteria</th>
+            <th>Critères correspondants</th>
           </tr>
           </thead>
           <tbody>
           <tr th:each="match : ${candidateMatches}">
-            <td class="fw-semibold" th:text="${match.fullName}">Candidate Name</td>
+            <td class="fw-semibold" th:text="${match.fullName}">Nom du candidat</td>
             <td th:text="${match.email}">candidate@example.com</td>
+            <td><span class="badge text-bg-success" th:text="${match.score + '/100'}">85/100</span></td>
             <td>
-              <span class="badge text-bg-success" th:text="${match.score + '/100'}">85/100</span>
-            </td>
-            <td>
-              <span th:each="criterion : ${match.matchedCriteria}"
-                    class="badge text-bg-light border me-1 mb-1"
-                    th:text="${criterion}">Skills</span>
+              <span th:each="criterion : ${match.matchedCriteria}" class="badge text-bg-light border me-1 mb-1" th:text="${criterion}">Compétences</span>
             </td>
           </tr>
           </tbody>
@@ -108,5 +129,6 @@
   </section>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

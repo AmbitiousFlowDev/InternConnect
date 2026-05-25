@@ -78,6 +78,7 @@ class OfferServiceTest {
                 .build();
 
         when(internshipRepository.findById(10L)).thenReturn(Optional.of(offer));
+        when(accessControlService.canSaveOffers(user)).thenReturn(true);
         when(bookmarkRepository.findByUserAndInternship(user, offer)).thenReturn(Optional.empty());
         when(bookmarkRepository.save(any(Bookmark.class))).thenReturn(savedBookmark);
 
@@ -106,6 +107,7 @@ class OfferServiceTest {
                 .build();
 
         when(internshipRepository.findById(10L)).thenReturn(Optional.of(offer));
+        when(accessControlService.canSaveOffers(user)).thenReturn(true);
         when(bookmarkRepository.findByUserAndInternship(user, offer)).thenReturn(Optional.of(existingBookmark));
 
         Bookmark result = offerService.saveOffer(10L, user);
@@ -133,6 +135,7 @@ class OfferServiceTest {
                 .build();
 
         when(internshipRepository.findById(10L)).thenReturn(Optional.of(offer));
+        when(accessControlService.canSaveOffers(user)).thenReturn(true);
         when(bookmarkRepository.findByUserAndInternship(user, offer)).thenReturn(Optional.of(bookmark));
 
         offerService.removeSavedOffer(10L, user);

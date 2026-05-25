@@ -102,7 +102,13 @@
                         <span th:text="${internship.requiredSkills}">Java, Spring Boot</span>
                     </div>
 
-                    <form th:action="@{/applications/apply}" method="post">
+                    <div class="d-flex gap-2 mb-3">
+                        <a th:href="@{/internships/{id}(id=${internship.id})}" class="btn btn-outline-primary rounded-pill flex-fill">
+                            <i class="bi bi-eye me-1"></i>Voir l'offre
+                        </a>
+                    </div>
+
+                    <form th:action="@{/applications/apply}" method="post" sec:authorize="hasRole('USER')">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <input type="hidden" name="offerId" th:value="${internship.id}">
                         <div class="mb-3">
@@ -114,6 +120,9 @@
                             <i class="bi bi-send me-1"></i>Postuler
                         </button>
                     </form>
+                    <div class="alert alert-info mb-0" sec:authorize="hasRole('POSTER')">
+                        Vous consultez cette offre en tant que recruteur.
+                    </div>
                 </div>
             </div>
         </div>

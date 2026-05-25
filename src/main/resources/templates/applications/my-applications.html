@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>My Applications</title>
+    <title>Mes candidatures</title>
 </head>
 
 <body>
@@ -12,17 +12,17 @@
 
         <div>
             <h1 class="ic-page-header__title">
-                My Applications
+                Mes candidatures
             </h1>
 
             <p class="ic-page-header__subtitle">
-                Track all your internship applications
+                Suivez toutes vos candidatures de stage.
             </p>
         </div>
 
     </div>
 
-    <!-- Empty State -->
+    <!-- Etat vide -->
     <div th:if="${#lists.isEmpty(applications)}"
          class="ic-empty-state">
 
@@ -31,11 +31,11 @@
         </div>
 
         <h3 class="ic-empty-state__title">
-            No applications yet
+            Aucune candidature trouvée.
         </h3>
 
         <p class="ic-empty-state__description">
-            Start applying for internships to see them here.
+            Postulez à une offre de stage pour la retrouver ici.
         </p>
 
     </div>
@@ -62,27 +62,27 @@
                         </p>
                     </div>
 
-                    <!-- Status -->
+                    <!-- Statut -->
                     <div>
 
                         <span th:if="${submittedApplication.status.name() == 'SUBMITTED'}"
                               class="ic-badge ic-badge--submitted">
-                            Submitted
+                            Soumise
                         </span>
 
                         <span th:if="${submittedApplication.status.name() == 'UNDER_REVIEW'}"
                               class="ic-badge ic-badge--under-review">
-                            Under Review
+                            En cours d'examen
                         </span>
 
                         <span th:if="${submittedApplication.status.name() == 'ACCEPTED'}"
                               class="ic-badge ic-badge--accepted">
-                            Accepted
+                            Acceptée
                         </span>
 
                         <span th:if="${submittedApplication.status.name() == 'REJECTED'}"
                               class="ic-badge ic-badge--rejected">
-                            Rejected
+                            Refusée
                         </span>
 
                     </div>
@@ -92,7 +92,7 @@
                 <div class="ic-app-card__meta">
 
                     <div class="ic-app-card__meta-item">
-                        Applied on:
+                        Soumise le :
                         <span th:text="${submittedApplication.createdAt}">
                         </span>
                     </div>
@@ -111,7 +111,7 @@
 
                         <button type="submit"
                                 class="ic-btn ic-btn--danger-outline">
-                            Withdraw
+                            Retirer
                         </button>
 
                     </form>

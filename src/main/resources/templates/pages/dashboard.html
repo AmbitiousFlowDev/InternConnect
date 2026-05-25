@@ -144,8 +144,8 @@
                         </div>
                       </div>
 
-                      <span class="status-badge bg-primary text-white align-self-start" th:text="${app.status}">
-                        Under Review
+                      <span class="status-badge bg-primary text-white align-self-start" th:text="${statusLabels.application(app.status)}">
+                        En cours d'examen
                       </span>
 
                     </div>
@@ -217,7 +217,7 @@
 
                     <a th:if="${bookmark.internship != null}" th:href="@{'/internships/' + ${bookmark.internship.id}}"
                       class="btn btn-outline-primary btn-sm rounded-pill">
-                      Voir
+                      Voir l'offre
                     </a>
 
                   </div>
