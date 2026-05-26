@@ -2,7 +2,7 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Mes stages sauvegardés</title>
+    <title>Mes stages sauvegardÃ©s</title>
     <link rel="stylesheet" th:href="@{/assets/css/main.css}">
     <script th:src="@{/assets/js/main.js}" defer></script>
     
@@ -25,7 +25,7 @@
     </div>
 
     <div class="mb-4">
-        <h1 class="fw-bold">Mes stages sauvegardés</h1>
+        <h1 class="fw-bold">Mes stages sauvegardÃ©s</h1>
         <p class="text-muted">Retrouvez ici les offres que vous souhaitez consulter plus tard.</p>
     </div>
 
@@ -33,7 +33,7 @@
         <div class="card-body">
 
             <div th:if="${#lists.isEmpty(bookmarks)}" class="text-center text-muted py-5">
-                Vous n'avez encore sauvegardé aucune offre.
+                Vous n'avez encore sauvegardï¿½ aucune offre.
             </div>
 
             <div class="list-group" th:if="${!#lists.isEmpty(bookmarks)}">
@@ -55,7 +55,7 @@
                     </p>
 
                     <small class="text-muted">
-                        Sauvegardée le
+                        SauvegardÃ©s le
                         <span th:text="${bookmark.addedAt != null ? #temporals.format(bookmark.addedAt, 'dd/MM/yyyy') : 'date inconnue'}">
                             04/05/2026
                         </span>

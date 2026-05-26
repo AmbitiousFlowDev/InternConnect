@@ -317,6 +317,14 @@ textarea {
   overflow-y: auto;
 }
 
+.app-messages-sidebar-header {
+  padding: 0.85rem 1rem;
+}
+
+.app-messages-sidebar-header .h4 {
+  font-size: 1.05rem;
+}
+
 .app-conversation-list .list-group-item.active {
   background-color: var(--bs-primary);
   border-color: var(--bs-primary);

@@ -78,7 +78,7 @@
 
         <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
           <a class="nav-link dropdown-toggle"
-             th:classappend="${activePage == 'publish' || activePage == 'my-offers' || activePage == 'recommendations' || activePage == 'bookmarks'} ? ' active'"
+             th:classappend="${activePage == 'publish' || activePage == 'my-offers' || activePage == 'recommendations' || activePage == 'bookmarks' || activePage == 'recruiter-verification' || activePage == 'recruiter-verifications'} ? ' active'"
              href="#"
              role="button"
              data-bs-toggle="dropdown"
@@ -113,6 +113,11 @@
                 <i class="bi bi-patch-check me-2"></i>Vérification recruteur
               </a>
             </li>
+            <li sec:authorize="hasRole('ADMIN')">
+              <a class="dropdown-item" th:classappend="${activePage == 'recruiter-verifications'} ? ' active'" th:href="@{/admin/recruiter-verifications}">
+                <i class="bi bi-patch-check me-2"></i>Vérifications recruteurs
+              </a>
+            </li>
           </ul>
         </li>
 
@@ -120,12 +125,6 @@
           <a class="nav-link" th:classappend="${activePage == 'roles'} ? ' active'" th:href="@{/roles}">
             <i class="bi bi-shield-lock"></i>
             Rôles
-          </a>
-        </li>
-        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-          <a class="nav-link" th:classappend="${activePage == 'recruiter-verifications'} ? ' active'" th:href="@{/admin/recruiter-verifications}">
-            <i class="bi bi-patch-check"></i>
-            Vérifications recruteurs
           </a>
         </li>
       </ul>
